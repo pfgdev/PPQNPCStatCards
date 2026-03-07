@@ -1,4 +1,35 @@
 <!DOCTYPE html>
+<!--
+  StatCard.html — NPC Card Front Face
+  =====================================
+  Renders the front of a 2.5" × 3.5" NPC stat card.
+  Included as a partial by CombinedView.html and PrintCards.html.
+
+  Expected data: cardData object (see getCardDataFromSheet() in Code.js)
+    cardData.name             — NPC name
+    cardData.class            — class string (may contain HTML, e.g. italic)
+    cardData.size             — size category (e.g. "Medium")
+    cardData.race             — race (e.g. "Dwarf")
+    cardData.ac               — armor class (e.g. "16*")
+    cardData.hp               — hit points
+    cardData.speed            — base walk speed
+    cardData.climb_speed      — climb speed (optional)
+    cardData.swim_speed       — swim speed (optional)
+    cardData.fly_speed        — fly speed (optional)
+    cardData.damage           — damage resistances/immunities/vulnerabilities (HTML string)
+    cardData.conditions       — condition immunities/resistances (HTML string)
+    cardData.strength / strength_mod / strength_save
+    cardData.dexterity / dexterity_mod / dexterity_save
+    cardData.constitution / constitution_mod / constitution_save
+    cardData.intelligence / intelligence_mod / intelligence_save
+    cardData.wisdom / wisdom_mod / wisdom_save
+    cardData.charisma / charisma_mod / charisma_save
+    cardData.skills.proficiency       — proficiency bonus (e.g. "+3")
+    cardData.skills.initiative        — initiative modifier
+    cardData.skills.passive_perception
+    cardData.skills.vision            — vision type/range (e.g. "60ts", "darkvision 60ft")
+    cardData.skills.skills            — comma-separated abbreviated skill list
+-->
 <html>
   <head>
     <base target="_top">

@@ -1,4 +1,22 @@
 <!DOCTYPE html>
+<!--
+  StatCardBack.html — NPC Card Back Face (Combat Actions)
+  =========================================================
+  Renders the back of a 2.5" × 3.5" NPC stat card.
+  Included as a partial by CombinedView.html and PrintCards.html.
+
+  Expected data: cardData object (see getCardDataFromSheet() in Code.js)
+    cardData.back.actions       — HTML string of action lines (joined by <br>)
+                                  Each line: "[cost] <strong>Name:</strong> description"
+    cardData.back.bonus_actions — HTML string of bonus action lines (same format)
+    cardData.back.reactions     — HTML string of reaction lines (same format)
+    cardData.back.special       — HTML string of special ability lines (joined by <br>)
+    cardData.spells.spellsTitle — bracketed slot summary, e.g. "[2/1/0]"
+    cardData.spells.spellsString— HTML lines for cantrips and leveled spells
+
+  Sections are conditionally rendered — a section header is omitted if its
+  data string is empty.
+-->
 <html>
   <head>
     <base target="_top">

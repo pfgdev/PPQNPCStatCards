@@ -1,6 +1,20 @@
 <!DOCTYPE html>
-<? 
-  // Our include function (same as before) to load partials and pass cardData.
+<!--
+  PrintCards.html — Print Layout Page
+  =====================================
+  Renders a print-ready grid of NPC stat cards for browser printing.
+  Opened as a web app via doGet() in Code.js, or via the Print Selector modal.
+
+  Expected data: cardsData — array of cardData objects (see getCardDataFromSheet()).
+  Currently supports up to 4 cards in a hardcoded 3×3 grid:
+    Row 1: Fronts for cards 1, 2, 3
+    Row 2: Backs  for cards 1, 2, 3
+    Row 3: Front for card 4 | Back for card 4 | (empty)
+
+  NOTE: The grid is hardcoded. Cards beyond index 3 are silently dropped.
+  See KNOWN ISSUES in README.md.
+-->
+<?
   function include(filename, cardData) {
     var t = HtmlService.createTemplateFromFile(filename);
     t.cardData = cardData;

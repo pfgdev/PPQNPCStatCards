@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<!--
+  CombinedView.html — Modal Preview (Front + Back Side by Side)
+  ==============================================================
+  Renders a side-by-side preview of one NPC's front and back card
+  inside a modal dialog (600×450px). Used by openStatCardModal().
+
+  Expected data: cardData object passed from openStatCardModal() in Code.js.
+  See StatCard.html and StatCardBack.html for full data shape.
+-->
 <? function include(filename, cardData) {
      var t = HtmlService.createTemplateFromFile(filename);
      // Pass cardData into the partial

@@ -1,3 +1,29 @@
+/**
+ * @fileoverview PPQ NPC Stat Cards — Google Apps Script backend.
+ *
+ * Architecture overview:
+ *   - One Google Sheet tab per NPC. Data lives in columns B–E:
+ *       Col B: Category label  (e.g. "Name", "Action", "Skills")
+ *       Col C: Primary value   (e.g. "Khelkur the Gull", "[1/day]", "Arcana")
+ *       Col D: Secondary value (e.g. skill modifier, action name, damage flag)
+ *       Col E: Tertiary value  (e.g. action description HTML, adv/disadv flag)
+ *   - The "Combat Tools" menu provides two entry points:
+ *       1. "View Stat Card"     → modal showing front + back for the active sheet
+ *       2. "Show Print Selector"→ modal checklist → opens web app with selected sheets
+ *   - The web app (doGet) renders PrintCards.html: a print-ready grid of card fronts
+ *     and backs for the selected sheets.
+ *
+ * HTML templates:
+ *   StatCard.html      — Front face: name, subtitle, AC/HP/SPD, defenses, attributes, skills
+ *   StatCardBack.html  — Back face:  actions, bonus actions, reactions, spells, specials
+ *   CombinedView.html  — Modal preview: front + back side by side
+ *   PrintCards.html    — Print page: grid layout of multiple fronts and backs
+ *   PrintSelector.html — Modal checklist for selecting which sheets to print
+ */
+
+/**
+ * Adds the "Combat Tools" menu to the spreadsheet UI on open.
+ */
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu("Combat Tools")
@@ -6,19 +32,27 @@ function onOpen() {
     .addToUi();
 }
 
+/**
+ * Web app entry point. Renders PrintCards.html for the requested sheets.
+ *
+ * URL parameter:
+ *   ?sheets=SheetName1,SheetName2,...  (comma-separated NPC sheet names)
+ *   If omitted, falls back to all printable sheets (any sheet with a non-empty C2).
+ *
+ * @param {GoogleAppsScript.Events.DoGet} e - The request event object.
+ * @returns {GoogleAppsScript.HTML.HtmlOutput}
+ */
 function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var template = HtmlService.createTemplateFromFile('PrintCards');
-  
-  // e.parameter.sheets should be a comma-separated list of sheet names.
+
   var sheetNames = [];
   if (e.parameter.sheets) {
     sheetNames = e.parameter.sheets.split(',');
   } else {
-    // If no parameter is provided, fall back to all printable sheets.
     sheetNames = getPrintableSheetNames();
   }
-  
+
   var cardsData = [];
   sheetNames.forEach(function(name) {
     var sheet = ss.getSheetByName(name.trim());
@@ -26,13 +60,17 @@ function doGet(e) {
       cardsData.push(getCardDataFromSheet(sheet));
     }
   });
-  
+
   template.cardsData = cardsData;
   return template.evaluate().setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
 
 
 
+/**
+ * Opens a modal dialog showing the front and back stat card for the active sheet.
+ * Triggered from Combat Tools > View Stat Card.
+ */
 function openStatCardModal() {
   const template = HtmlService.createTemplateFromFile('CombinedView');
   template.cardData = getCardData();
@@ -45,70 +83,109 @@ function openStatCardModal() {
   SpreadsheetApp.getUi().showModalDialog(html, 'Stat Card Preview');
 }
 
+/**
+ * @deprecated Use showPrintSelector() instead, which dynamically discovers
+ * printable sheets. This function has a hardcoded sheet list and is no longer
+ * called from the menu.
+ */
 function printStatCards() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  // List your character sheet names here.
   var sheetNames = ["Iwo", "Lysara", "Enigma", "Arch Mage"];
   var cardsData = [];
-  
+
   sheetNames.forEach(function(name) {
     var sheet = ss.getSheetByName(name);
     if (sheet) {
       cardsData.push(getCardDataFromSheet(sheet));
     }
   });
-  
-  // Use a new HTML template that will lay out multiple cards.
+
   var template = HtmlService.createTemplateFromFile('PrintCards');
-  // Pass the array of card data objects to the template.
   template.cardsData = cardsData;
-  
+
   var html = template.evaluate()
       .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-      .setWidth(850)   // Adjust dimensions as needed
+      .setWidth(850)
       .setHeight(1100);
-  
+
   SpreadsheetApp.getUi().showModalDialog(html, 'Print Stat Cards');
 }
 
+/**
+ * @deprecated Replaced by showPrintSelector(), which lets the user choose
+ * which sheets to print rather than opening all sheets at once.
+ */
 function showPrintLink() {
-  const url = "https://script.google.com/macros/s/AKfycbwsbPSLY-vZ-f8jP6Jjg1U_HbqAcfYDzgt1Z_tkdiQk/dev"; // Use your deployed Web App URL
+  const url = "https://script.google.com/macros/s/AKfycbwsbPSLY-vZ-f8jP6Jjg1U_HbqAcfYDzgt1Z_tkdiQk/dev";
   const html = HtmlService.createHtmlOutput(`<p><a href="${url}" target="_blank">Click here to print cards</a></p>`);
   SpreadsheetApp.getUi().showModalDialog(html, "Open Print View");
 }
 
 
+/**
+ * Returns the names of all sheets that have a non-empty value in cell C2.
+ * This is the convention used to mark a sheet as a printable NPC card
+ * (C2 holds the NPC's Name value).
+ *
+ * @returns {string[]} Array of sheet names.
+ */
 function getPrintableSheetNames() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheets = ss.getSheets();
   var printable = [];
-  
+
   sheets.forEach(function(sheet) {
-    // For example, check if cell A1 equals "Printable"
-    // (Adjust the cell or condition as needed.)
-    var cellValue = sheet.getRange("c2").getDisplayValue();
+    var cellValue = sheet.getRange("C2").getDisplayValue();
     if (cellValue.trim() !== "") {
       printable.push(sheet.getName());
     }
-      });
-  
+  });
+
   return printable;
 }
 
+/**
+ * Opens a modal dialog listing all printable sheets as checkboxes.
+ * The user selects which NPCs to print, then clicks "Print Cards" which
+ * opens the web app URL with the selected sheet names as a query parameter.
+ * Triggered from Combat Tools > Show Print Selector.
+ */
 function showPrintSelector() {
   var printableSheets = getPrintableSheetNames();
   var template = HtmlService.createTemplateFromFile('PrintSelector');
-  template.printableSheets = printableSheets; // pass array into template
+  template.printableSheets = printableSheets;
   var html = template.evaluate().setWidth(300).setHeight(250);
   SpreadsheetApp.getUi().showModalDialog(html, "Select Sheets to Print");
 }
 
 
 
+/**
+ * Includes raw HTML file content as a string (used in non-templated contexts).
+ * For templated includes that need to pass data, see the local include()
+ * functions defined inside PrintCards.html and CombinedView.html.
+ *
+ * @param {string} filename - The Apps Script HTML file name (without .html).
+ * @returns {string} Raw HTML content of the file.
+ */
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
+/**
+ * Converts a flag dropdown value from the spreadsheet into its display symbol.
+ * Used when building damage and condition strings.
+ *
+ * Supported flags:
+ *   'Resistance'   → Ⓡ (bold)
+ *   'Vulnerability'→ Ⓥ (bold)
+ *   'Immunity'     → ⓘ (bold)
+ *   'Advantage'    → ▲
+ *   'Disadvantage' → ▼
+ *
+ * @param {string} flag - The flag value from the spreadsheet dropdown.
+ * @returns {string} HTML symbol string, or empty string if flag is unrecognized.
+ */
 function mapFlag(flag) {
   const map = {
     'Resistance': ' <b>Ⓡ</b>',
@@ -120,6 +197,12 @@ function mapFlag(flag) {
   return map[flag] || '';
 }
 
+/**
+ * Reads card data from the currently active sheet.
+ * Convenience wrapper around getCardDataFromSheet() for modal previews.
+ *
+ * @returns {Object} cardData — see getCardDataFromSheet() for the full shape.
+ */
 function getCardData() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const range = sheet.getRange("B2:E" + sheet.getLastRow());
@@ -178,6 +261,40 @@ function getCardData() {
 }
 
 
+/**
+ * Reads and transforms all NPC data from a given sheet into a flat cardData object
+ * ready for use in HTML templates.
+ *
+ * Spreadsheet column layout (B–E):
+ *   B: Category label  — drives which field the row populates
+ *   C: Primary value   — the main data value for most rows
+ *   D: Secondary value — skill modifier, action name, or damage/condition flag
+ *   E: Tertiary value  — action description HTML, or adv/disadv flag
+ *
+ * Most categories (Name, AC, HP, Strength, etc.) map directly to a key via
+ * lowercased/underscored category name. Multi-row categories (damage, conditions,
+ * actions, etc.) are joined with a category-specific separator (see specialFormatting).
+ *
+ * Skills, back-card (actions/bonus/reactions/special), and spells are built by
+ * dedicated helper functions: buildSkillsData(), buildBackCardData(), buildSpellsData().
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - The NPC sheet to read.
+ * @returns {{
+ *   name: string, class: string, size: string, race: string,
+ *   ac: string, hp: string, speed: string,
+ *   climb_speed: string, swim_speed: string, fly_speed: string,
+ *   damage: string, conditions: string,
+ *   strength: string, strength_mod: string, strength_save: string,
+ *   dexterity: string, dexterity_mod: string, dexterity_save: string,
+ *   constitution: string, constitution_mod: string, constitution_save: string,
+ *   intelligence: string, intelligence_mod: string, intelligence_save: string,
+ *   wisdom: string, wisdom_mod: string, wisdom_save: string,
+ *   charisma: string, charisma_mod: string, charisma_save: string,
+ *   skills: { proficiency: string, initiative: string, passive_perception: string, vision: string, skills: string },
+ *   back: { actions: string, bonus_actions: string, reactions: string, special: string },
+ *   spells: { spellsTitle: string, spellsString: string }
+ * }}
+ */
 function getCardDataFromSheet(sheet) {
   const range = sheet.getRange("B2:E" + sheet.getLastRow());
   const values = range.getDisplayValues();
@@ -235,8 +352,26 @@ function getCardDataFromSheet(sheet) {
 
 
 
+/**
+ * Builds the skills & senses sub-object from the sheet data.
+ * Reads Proficiency Bonus, Initiative, Passive Perception, Vision, and
+ * individual skill rows, abbreviating skill names for compact display.
+ *
+ * Skill rows (category = "Skills"):
+ *   C: skill name (e.g. "Arcana")
+ *   D: modifier   (e.g. "+8")
+ *   E: optional advantage/disadvantage flag → ▲ or ▼
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet
+ * @returns {{
+ *   proficiency: string,
+ *   initiative: string,
+ *   passive_perception: string,
+ *   vision: string,
+ *   skills: string  — comma-separated abbreviated skill list, e.g. "Arc +8, Dec +11"
+ * }}
+ */
 function buildSkillsData(sheet) {
-  // Grab rows from B2 to E(lastRow)
   const values = sheet.getRange("B2:E" + sheet.getLastRow()).getDisplayValues();
 
   // We'll store the special values individually.
@@ -319,8 +454,28 @@ function buildSkillsData(sheet) {
 
 
 
+/**
+ * Builds the back-card sub-object (Combat Actions face) from the sheet data.
+ *
+ * Row layouts by category:
+ *   Action / Bonus Action / Reaction:
+ *     C: cost or frequency  (e.g. "[1/day]", "[1 Ki]") — optional
+ *     D: ability name       (e.g. "Crimson Bolt")       — required to include row
+ *     E: description HTML   (e.g. "+8 <i>(4d10+5 psy)</i> (melee or ranged 60ft)")
+ *
+ *   Special:
+ *     C: full text with optional inline HTML (e.g. "<b>Alien Mind</b> If a creature...")
+ *     D: "TRUE" to start a new line, "FALSE" to append to the previous line with " • "
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet
+ * @returns {{
+ *   actions: string,       — HTML string of action lines joined by <br>
+ *   bonus_actions: string, — HTML string of bonus action lines joined by <br>
+ *   reactions: string,     — HTML string of reaction lines joined by <br>
+ *   special: string        — HTML string of special ability lines joined by <br>
+ * }}
+ */
 function buildBackCardData(sheet) {
-  // 1) Read rows B2:E
   const values = sheet.getRange("B2:E" + sheet.getLastRow()).getDisplayValues();
 
   // 2) Arrays for each category
@@ -414,8 +569,28 @@ function buildBackCardData(sheet) {
 
 
 
+/**
+ * Builds the spells sub-object from the sheet data.
+ *
+ * Reads cantrips and spell slots/lists for levels 1–9.
+ * Spell slot counts are grouped into tiers of 3 levels and displayed as
+ * bracketed slot strings, e.g. "[2/1/0]" for levels 1/2/3.
+ * Only tiers up to the highest level with actual spells are shown.
+ * All spell names are italicized.
+ *
+ * Row layouts (read from full sheet data range, cols B & C):
+ *   B: "Cantrips"               C: comma-separated cantrip names
+ *   B: "1st Level Spell Slots"  C: number of slots (e.g. "2")
+ *   B: "1st Level Spells"       C: comma-separated spell names
+ *   (repeat for 2nd–9th levels)
+ *
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet
+ * @returns {{
+ *   spellsTitle: string,  — bracketed slot summary, e.g. "[2/1/0]"
+ *   spellsString: string  — HTML lines: "[C] <i>fire bolt</i>...<br>[1] <i>charm person</i>..."
+ * }}
+ */
 function buildSpellsData(sheet) {
-  // 1) Grab raw data
   const values = sheet.getDataRange().getDisplayValues();
   
   let spellsData = {

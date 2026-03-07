@@ -1,4 +1,19 @@
 <!DOCTYPE html>
+<!--
+  PrintSelector.html — Print Sheet Selector Modal
+  =================================================
+  Renders a checklist of all printable NPC sheets so the user can choose
+  which cards to include in the print run. Opened by showPrintSelector().
+
+  Expected data: printableSheets — string[] of sheet names, passed from
+  showPrintSelector() in Code.js (sheets are "printable" if C2 is non-empty).
+
+  On submit, opens the deployed web app URL with a ?sheets= query param
+  containing the selected sheet names (comma-separated).
+
+  NOTE: The web app URL is currently hardcoded in this file's <script> block.
+  Update it after each new deployment. See README.md for deployment steps.
+-->
 <html>
   <head>
     <base target="_top">
