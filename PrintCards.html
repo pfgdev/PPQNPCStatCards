@@ -25,37 +25,52 @@
   <head>
     <base target="_top">
     <style>
-      body {
+      /* Lock the page to Letter with no browser-added margins */
+      @page {
+        size: 8.5in 11in;
         margin: 0;
-        padding: 0px;
-        background: #f8f8f8;
       }
-      /* Define a 3 x 3 grid */
+
+      /*
+       * Force body padding to 0 with !important because StatCard.html and
+       * StatCardBack.html each inject "body { padding: 8px }" via their own
+       * <style> blocks when included as partials, and those rules appear later
+       * in the document so they would otherwise win the cascade.
+       */
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white;
+        /* Center the card grid horizontally on the page */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      /* Fixed-size columns and rows — no auto-sizing, no fractions */
       .grid-container {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 0px;
+        grid-template-columns: repeat(3, 2.5in);
+        grid-template-rows: repeat(3, 3.5in);
+        gap: 0;
         padding: 0;
         margin: 0;
-        
-        /* Optional: if you want the grid to center on the page */
-        justify-items: center;
-        align-items: center;
-        
+        grid-template-areas:
+          "a b c"
+          "d e f"
+          "g h i";
       }
-      /* Each cell is a fixed-size container for a front or a back */
+
+      /* Each cell is exactly one card face — hard-clipped, no overflow */
       .cell {
         width: 2.5in;
         height: 3.5in;
-        border: 0px solid #ccc;  /* optional cutting border */
         box-sizing: border-box;
-        overflow: visible;
-        /* You might add padding if needed */
-        padding: 0px;
-        margin: 0px;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
       }
-      /* Map grid areas to classes */
+
       .a { grid-area: a; }
       .b { grid-area: b; }
       .c { grid-area: c; }
@@ -66,17 +81,12 @@
       .h { grid-area: h; }
       .i { grid-area: i; }
 
-      /* Optionally, define the grid layout areas explicitly */
-      .grid-container {
-        grid-template-areas: 
-          "a b c"
-          "d e f"
-          "g h i";
-      }
-
       @media print {
         body {
-          overflow: hidden !important;
+          background: white !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          overflow: visible !important;
         }
       }
     </style>
