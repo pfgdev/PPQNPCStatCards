@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<? function include(filename, cardData) {
+     var t = HtmlService.createTemplateFromFile(filename);
+     // Pass cardData into the partial
+     t.cardData = cardData;  
+     return t.evaluate().getContent();
+   } 
+?>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        background: #f8f8f8;
+        margin: 0;
+        padding: 8px;
+      }
+      .card-container {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="card-container">
+      <?!= include('StatCard', cardData) ?>
+      <?!= include('StatCardBack', cardData) ?>
+    </div>
+  </body>
+</html>

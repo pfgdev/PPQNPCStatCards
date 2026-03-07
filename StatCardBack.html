@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f8f8f8;
+        margin: 0;
+        padding: 8px;
+        font-size: 14px;
+      }
+      .card {
+        width: 2.50in;
+        height: 3.5in;
+        background: white;
+        border-radius: 6px;
+        padding: 6px;
+        box-shadow: 0 0 4px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        box-sizing: border-box;
+      }
+      .subtitle {
+        font-size: 11px;
+        font-style: italic;
+        color: #555;
+        text-align: center;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        width: 100%;
+      }
+      .block-title, .description-header {
+        width: 100%;
+        text-align: left;
+        font-weight: bold;
+        margin: 4px 0 2px 0;
+        font-size: 12px;
+        border-bottom: 1px solid #ccc;
+      }
+      .text-line {
+        width: 100%;
+        font-size: 10px;
+        line-height: 1.2;
+      }
+      .description-block {
+        width: 100%;
+        margin: 2px 0 4px 0;
+        font-size: 10px;
+        line-height: 1.2;
+      }
+      .description-block strong {
+        font-weight: bold;
+      }
+
+
+      .spells-line {
+        /* Make this container positioned so we can absolutely-position the brackets */
+        position: relative;
+      }
+
+      .spells-label {
+        /* “Spells:” stays in normal flow on the left. */
+        /* No special rules needed, it just flows in. */
+      }
+
+      .spells-brackets {
+        /* This absolutely-positioned span is centered in the container, */
+        /* ignoring the space taken by "Spells:". */
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+
+
+      @media print {
+        body {
+          background: white !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .card {
+          box-shadow: none !important;
+          border: 1px solid black !important;
+        }
+        .description-block, .text-line {
+          color: black !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="subtitle">Combat Actions</div>
+      
+      <? if (cardData.back.actions) { ?>
+        <div class="block-title">Actions</div>
+        <div class="text-line"><?!= cardData.back.actions ?></div>
+      <? } ?>
+      
+      <? if (cardData.back.bonus_actions) { ?>
+        <div class="block-title">Bonus Actions</div>
+        <div class="text-line"><?!= cardData.back.bonus_actions ?></div>
+      <? } ?>
+      
+      <? if (cardData.back.reactions) { ?>
+        <div class="block-title">Reactions</div>
+        <div class="text-line"><?!= cardData.back.reactions ?></div>
+      <? } ?>
+
+      <? if (cardData.spells && cardData.spells.spellsString) { ?>
+        <!-- e.g. "Spells [4/3/3] [1/0/0]" all on one line -->
+        <div class="block-title spells-line">
+          <span class="spells-label">Spells:</span>
+          <span class="spells-brackets"><?!= cardData.spells.spellsTitle ?></span>
+        </div>
+        
+        <!-- The rest of the spells (cantrips, levels) on subsequent lines -->
+        <div class="text-line"><?!= cardData.spells.spellsString ?></div>
+      <? } ?>
+
+
+
+      <? if (cardData.back.special) { ?>
+        <div class="block-title">Special</div>
+        <div class="text-line"><?!= cardData.back.special ?></div>
+      <? } ?>
+    </div>
+  </body>
+</html>

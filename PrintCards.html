@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<? 
+  // Our include function (same as before) to load partials and pass cardData.
+  function include(filename, cardData) {
+    var t = HtmlService.createTemplateFromFile(filename);
+    t.cardData = cardData;
+    return t.evaluate().getContent();
+  }
+?>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        margin: 0;
+        padding: 0px;
+        background: #f8f8f8;
+      }
+      /* Define a 3 x 3 grid */
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 0px;
+        padding: 0;
+        margin: 0;
+        
+        /* Optional: if you want the grid to center on the page */
+        justify-items: center;
+        align-items: center;
+        
+      }
+      /* Each cell is a fixed-size container for a front or a back */
+      .cell {
+        width: 2.5in;
+        height: 3.5in;
+        border: 0px solid #ccc;  /* optional cutting border */
+        box-sizing: border-box;
+        overflow: visible;
+        /* You might add padding if needed */
+        padding: 0px;
+        margin: 0px;
+      }
+      /* Map grid areas to classes */
+      .a { grid-area: a; }
+      .b { grid-area: b; }
+      .c { grid-area: c; }
+      .d { grid-area: d; }
+      .e { grid-area: e; }
+      .f { grid-area: f; }
+      .g { grid-area: g; }
+      .h { grid-area: h; }
+      .i { grid-area: i; }
+
+      /* Optionally, define the grid layout areas explicitly */
+      .grid-container {
+        grid-template-areas: 
+          "a b c"
+          "d e f"
+          "g h i";
+      }
+
+      @media print {
+        body {
+          overflow: hidden !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container">
+      <!-- Card 1 Front (cell "a") -->
+      <div class="cell a">
+        <? if (cardsData[0]) { ?>
+          <?!= include('StatCard', cardsData[0]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 2 Front (cell "b") -->
+      <div class="cell b">
+        <? if (cardsData[1]) { ?>
+          <?!= include('StatCard', cardsData[1]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 3 Front (cell "c") -->
+      <div class="cell c">
+        <? if (cardsData[2]) { ?>
+          <?!= include('StatCard', cardsData[2]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 1 Back (cell "d") -->
+      <div class="cell d">
+        <? if (cardsData[0]) { ?>
+          <?!= include('StatCardBack', cardsData[0]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 2 Back (cell "e") -->
+      <div class="cell e">
+        <? if (cardsData[1]) { ?>
+          <?!= include('StatCardBack', cardsData[1]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 3 Back (cell "f") -->
+      <div class="cell f">
+        <? if (cardsData[2]) { ?>
+          <?!= include('StatCardBack', cardsData[2]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 4 Front (cell "g") -->
+      <div class="cell g">
+        <? if (cardsData[3]) { ?>
+          <?!= include('StatCard', cardsData[3]) ?>
+        <? } ?>
+      </div>
+      <!-- Card 4 Back (cell "h") -->
+      <div class="cell h">
+        <? if (cardsData[3]) { ?>
+          <?!= include('StatCardBack', cardsData[3]) ?>
+        <? } ?>
+      </div>
+      <!-- Cell "i" remains empty -->
+      <div class="cell i"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f8f8f8;
+        margin: 0;
+        padding: 8px;
+        font-size: 14px;
+      }
+      .card {
+        width: 2.5in;
+        height: 3.5in;
+        background: white;
+        border-radius: 6px;
+        padding: 6px;
+        box-shadow: 0 0 4px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        box-sizing: border-box;
+      }
+      .name {
+        font-size: 22px;
+        font-weight: bold;
+        width: 100%;
+        text-align: left;
+      }
+
+      .subtitle {
+        font-size: 11px;
+        font-style: italic;
+        color: #555;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 4px;
+        white-space: nowrap;
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 2px;
+      }
+      .unified-card {
+        flex: 1;
+        background: #f0f0f0;
+        border-radius: 4px;
+        padding: 4px;
+        margin: 0 2px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+      }
+      .unified-card .label {
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 1px;
+      }
+      .value-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+      .primary-value {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .secondary-stack {
+        display: flex;
+        flex-direction: column;
+        font-size: 10px;
+        line-height: 1;
+        text-align: left;
+        min-width: 20px;
+        justify-content: center;
+      }
+      .block-title, .description-header {
+        width: 100%;
+        text-align: left;
+        font-weight: bold;
+        margin: 4px 0 2px 0;
+        font-size: 12px;
+        border-bottom: 1px solid #ccc;
+      }
+      .text-line {
+        width: 100%;
+        font-size: 10px;
+        line-height: 1.2;
+      }
+      .description-block {
+        width: 100%;
+        margin: 2px 0 4px 0;
+        font-size: 10px;
+        line-height: 1.2;
+      }
+      .description-block strong {
+        font-weight: bold;
+      }
+
+      @media print {
+      body {
+        background: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .card {
+        box-shadow: none !important;
+        border: 1px solid black !important; /* optional cut border */
+      }
+
+      .unified-card {
+        background: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .description-block, .text-line {
+        color: black !important;
+      }
+    }
+    </style>
+
+  </head>
+  <body>
+    <div class="card">
+      <div class="name"><?= cardData.name ?></div>
+      <div class="subtitle" style="width: 100%; text-align: left;">
+        <?!= cardData.class ?> • <?= cardData.size ?> <?= cardData.race ?>
+      </div>
+
+      <div class="row">
+        <div class="unified-card">
+          <div class="label">AC</div>
+          <div class="value-row">
+            <div class="primary-value"><?= cardData.ac ?></div>
+          </div>
+        </div>
+        <div class="unified-card">
+          <div class="label">HP</div>
+          <div class="value-row">
+            <div class="primary-value"><?= cardData.hp ?></div>
+          </div>
+        </div>
+        <div class="unified-card">
+          <div class="label">SPD</div>
+          <div class="value-row <?= (!cardData.swim_speed && !cardData.fly_speed) ? 'centered-only' : '' ?>">
+            <div class="primary-value"><?= cardData.speed ?></div>
+            <? if (cardData.swim_speed || cardData.fly_speed) { ?>
+              <div class="secondary-stack">
+                <? if (cardData.climb_speed) { ?>
+                  <div><?= cardData.climb_speed ?>c</div>
+                <? } ?>
+                <? if (cardData.swim_speed) { ?>
+                  <div><?= cardData.swim_speed ?>s</div>
+                <? } ?>
+                <? if (cardData.fly_speed) { ?>
+                  <div><?= cardData.fly_speed ?>f</div>
+                <? } ?>
+              </div>
+            <? } ?>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="description-header">Defenses</div>
+      <div class="description-block">
+        <div><strong>Damage: </strong><?!= cardData.damage ?></div>
+        <div><strong>Conditions: </strong><?!= cardData.conditions ?></div>
+      </div>
+
+      <div class="description-header">Attributes</div>
+
+      <div class="row">
+        <div class="unified-card">
+          <div class="label">STR <?!= cardData.strength ?></div>
+          <div class="value-row">
+            <div class="primary-value"><?!= cardData.strength_mod ?></div>
+            <div class="secondary-stack" style="justify-content: center;">
+              <div>
+                <?!= cardData.strength_save.replace(/([▲▼])$/, '') ?>sv<?!= (cardData.strength_save.match(/([▲▼])$/) || [""])[0] ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="unified-card">
+          <div class="label">DEX <?!= cardData.dexterity ?></div>
+          <div class="value-row">
+            <div class="primary-value"><?!= cardData.dexterity_mod ?></div>
+            <div class="secondary-stack" style="justify-content: center;">
+              <div>
+                <?!= cardData.dexterity_save.replace(/([▲▼])$/, '') ?>sv<?!= (cardData.dexterity_save.match(/([▲▼])$/) || [""])[0] ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="unified-card">
+          <div class="label">CON <?!= cardData.constitution ?></div>
+          <div class="value-row">
+            <div class="primary-value"><?!= cardData.constitution_mod ?></div>
+            <div class="secondary-stack" style="justify-content: center;">
+              <div>
+                <?!= cardData.constitution_save.replace(/([▲▼])$/, '') ?>sv<?!= (cardData.constitution_save.match(/([▲▼])$/) || [""])[0] ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="unified-card">
+          <div class="label">INT <?!= cardData.intelligence ?></div>
+          <div class="value-row">
+            <div class="primary-value"><?!= cardData.intelligence_mod ?></div>
+            <div class="secondary-stack" style="justify-content: center;">
+              <div>
+                <?!= cardData.intelligence_save.replace(/([▲▼])$/, '') ?>sv<?!= (cardData.intelligence_save.match(/([▲▼])$/) || [""])[0] ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="unified-card">
+          <div class="label">WIS <?!= cardData.wisdom ?></div>
+          <div class="value-row">
+            <div class="primary-value"><?!= cardData.wisdom_mod ?></div>
+            <div class="secondary-stack" style="justify-content: center;">
+              <div>
+                <?!= cardData.wisdom_save.replace(/([▲▼])$/, '') ?>sv<?!= (cardData.wisdom_save.match(/([▲▼])$/) || [""])[0] ?>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="unified-card">
+          <div class="label">CHA <?!= cardData.charisma ?></div>
+          <div class="value-row">
+            <div class="primary-value"><?!= cardData.charisma_mod ?></div>
+            <div class="secondary-stack" style="justify-content: center;">
+              <div>
+                <?!= cardData.charisma_save.replace(/([▲▼])$/, '') ?>sv<?!= (cardData.charisma_save.match(/([▲▼])$/) || [""])[0] ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<div class="block-title">Skills & Senses</div>
+
+<!-- Line 1: Proficiency Bonus & Initiative -->
+<div class="text-line">
+  <strong>Proficiency Bonus:</strong> <?!= cardData.skills.proficiency ?>
+  •
+  <strong>Initiative:</strong> <?!= cardData.skills.initiative ?>
+</div>
+
+<!-- Line 2: Passive Perception & Vision -->
+<div class="text-line">
+  <strong>Passive Perception:</strong> <?!= cardData.skills.passive_perception ?>
+  •
+  <strong>Vision:</strong> <?!= cardData.skills.vision ?>
+</div>
+
+<!-- Skills line -->
+<div class="text-line">
+  <strong>Skills:</strong> <?!= cardData.skills.skills ?>
+</div>
+
+
+
+    </div>
+  </body>
+</html>

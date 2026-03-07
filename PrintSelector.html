@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 16px;
+      }
+      h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      label {
+        font-size: 14px;
+        display: block;
+        margin: 4px 0;
+      }
+      button {
+        margin-top: 12px;
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Select Sheets to Print</h2>
+    <form id="printForm">
+      <? 
+        // cards, or in this context, sheetsData is our array of sheet names.
+        // In our doGet or another function, we'll assign printableSheets to this variable.
+        if (printableSheets && printableSheets.length > 0) {
+          printableSheets.forEach(function(name) { 
+      ?>
+            <label>
+              <input type="checkbox" name="sheet" value="<?= name ?>" checked> <?= name ?>
+            </label>
+      <? 
+          }); 
+        } else { 
+      ?>
+        <p>No printable sheets found.</p>
+      <? } ?>
+      <button type="button" onclick="printCards()">Print Cards</button>
+    </form>
+    
+    <script>
+      function printCards() {
+        var form = document.getElementById('printForm');
+        var checkboxes = form.elements['sheet'];
+        var selected = [];
+        if (!checkboxes.length) {
+          // Only one checkbox exists
+          if (checkboxes.checked) {
+            selected.push(checkboxes.value);
+          }
+        } else {
+          for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+              selected.push(checkboxes[i].value);
+            }
+          }
+        }
+        var sheetsParam = selected.join(',');
+        // Construct URL to your published web app for printing.
+        // Replace the URL below with your actual deployed web app URL.
+        var url = 'https://script.google.com/macros/s/AKfycbwsbPSLY-vZ-f8jP6Jjg1U_HbqAcfYDzgt1Z_tkdiQk/dev?sheets='
+                  + encodeURIComponent(sheetsParam);
+        window.open(url, '_blank');
+
+
+      }
+    </script>
+  </body>
+</html>
