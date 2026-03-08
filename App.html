@@ -134,6 +134,13 @@
       flex-wrap: wrap;
     }
 
+    #library-print-meta {
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 128px;
+      text-align: right;
+    }
+
     .npc-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -146,7 +153,6 @@
       background: linear-gradient(120deg, #ffffff 0%, #f8fbff 100%);
       padding: 12px;
       text-align: left;
-      cursor: pointer;
       transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
     }
 
@@ -176,6 +182,24 @@
 
     .npc-card.new-card h3 {
       color: #0f5da8;
+    }
+
+    .npc-card.selected-for-print {
+      border-color: #6d9acd;
+      box-shadow: 0 0 0 2px rgba(15, 93, 168, 0.12) inset;
+      background: linear-gradient(120deg, #f3f8ff 0%, #ffffff 100%);
+    }
+
+    .npc-card-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .npc-card-actions .btn {
+      padding: 5px 8px;
+      font-size: 11px;
     }
 
     .empty-note {
@@ -363,7 +387,7 @@
       width: 100%;
       text-align: left;
       font-weight: bold;
-      margin: 4px 0 2px;
+      margin: 3px 0 2px;
       font-size: 12px;
       border-bottom: 1px solid #ccc;
     }
@@ -376,9 +400,19 @@
 
     .card-preview .description-block {
       width: 100%;
-      margin: 2px 0 4px 0;
+      margin: 1px 0 2px 0;
       font-size: 10px;
       line-height: 1.2;
+    }
+    .card-preview .attributes-grid {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+    .card-preview .attributes-grid .row {
+      margin-bottom: 0;
     }
 
     .card-preview .description-block strong {
@@ -1680,8 +1714,10 @@
           </div>
           <div class="home-controls">
             <input id="search-input" type="text" placeholder="Search tab names...">
+            <button id="print-library-btn" class="btn">Print Card Page</button>
             <button id="create-btn" class="btn primary">New NPC</button>
             <button id="refresh-btn" class="btn">Refresh List</button>
+            <span id="library-print-meta">0 selected</span>
           </div>
         </div>
         <div id="npc-grid" class="npc-grid"></div>
@@ -1724,6 +1760,7 @@
     var state = {
       npcNames: [],
       filteredNames: [],
+      selectedForPrint: {},
       currentSheetName: null,
       rawRows: null,
       parsedData: null,
@@ -1814,6 +1851,7 @@
     function init() {
       document.getElementById("refresh-btn").addEventListener("click", loadNpcList);
       document.getElementById("create-btn").addEventListener("click", createNewNpc);
+      document.getElementById("print-library-btn").addEventListener("click", printLibraryPage);
       document.getElementById("search-input").addEventListener("input", onSearchChanged);
       document.getElementById("back-btn").addEventListener("click", backToLibrary);
       document.getElementById("save-btn").addEventListener("click", saveNpc);
@@ -1854,6 +1892,7 @@
         .withSuccessHandler(function(names) {
           state.npcNames = names || [];
           state.filteredNames = state.npcNames.slice();
+          pruneSelectedForPrint();
           renderNpcGrid();
           setStatus("Loaded " + state.npcNames.length + " NPC tabs.", "ok");
         })
@@ -1893,19 +1932,84 @@
           ? "No NPC tabs match your search."
           : "No printable NPC tabs found in this spreadsheet.";
         grid.appendChild(empty);
+        updateLibraryPrintMeta();
         return;
       }
 
       state.filteredNames.forEach(function(sheetName) {
-        var button = document.createElement("button");
-        button.className = "npc-card";
-        button.type = "button";
-        button.innerHTML = "<h3>" + escHtml(sheetName) + "</h3><p>Open editor</p>";
-        button.addEventListener("click", function() {
+        var selected = !!state.selectedForPrint[sheetName];
+        var card = document.createElement("article");
+        card.className = "npc-card" + (selected ? " selected-for-print" : "");
+
+        var heading = document.createElement("h3");
+        heading.textContent = sheetName;
+        card.appendChild(heading);
+
+        var subtitle = document.createElement("p");
+        subtitle.textContent = selected ? "Selected for print page" : "Ready";
+        card.appendChild(subtitle);
+
+        var actions = document.createElement("div");
+        actions.className = "npc-card-actions";
+
+        var openBtn = document.createElement("button");
+        openBtn.type = "button";
+        openBtn.className = "btn";
+        openBtn.textContent = "Open Editor";
+        openBtn.addEventListener("click", function() {
           openNpc(sheetName);
         });
-        grid.appendChild(button);
+        actions.appendChild(openBtn);
+
+        var selectBtn = document.createElement("button");
+        selectBtn.type = "button";
+        selectBtn.className = "btn";
+        selectBtn.textContent = selected ? "Unselect" : "Select for Print";
+        selectBtn.addEventListener("click", function() {
+          togglePrintSelection(sheetName);
+        });
+        actions.appendChild(selectBtn);
+
+        card.appendChild(actions);
+        grid.appendChild(card);
       });
+
+      updateLibraryPrintMeta();
+    }
+
+    function pruneSelectedForPrint() {
+      var valid = {};
+      state.npcNames.forEach(function(name) {
+        if (state.selectedForPrint[name]) valid[name] = true;
+      });
+      state.selectedForPrint = valid;
+    }
+
+    function togglePrintSelection(sheetName) {
+      if (state.selectedForPrint[sheetName]) {
+        delete state.selectedForPrint[sheetName];
+      } else {
+        state.selectedForPrint[sheetName] = true;
+      }
+      renderNpcGrid();
+    }
+
+    function getSelectedPrintNames() {
+      return Object.keys(state.selectedForPrint).filter(function(name) {
+        return !!state.selectedForPrint[name];
+      });
+    }
+
+    function updateLibraryPrintMeta() {
+      var meta = document.getElementById("library-print-meta");
+      if (!meta) return;
+      var selectedCount = getSelectedPrintNames().length;
+      var filteredCount = state.filteredNames.length;
+      if (selectedCount) {
+        meta.textContent = selectedCount + " selected";
+        return;
+      }
+      meta.textContent = filteredCount + " visible";
     }
 
     function createNewNpc() {
@@ -1947,6 +2051,54 @@
       document.getElementById("preview-back").innerHTML = "";
       setDirty(false);
       setStatus("Back to NPC library.", "");
+    }
+
+    function printLibraryPage() {
+      var selected = getSelectedPrintNames();
+      var sourceNames = selected.length ? selected : state.filteredNames.slice();
+      if (!sourceNames.length) {
+        setStatus("No NPCs selected (or visible) to print.", "warn");
+        return;
+      }
+
+      var names = sourceNames.slice(0, 4);
+      if (sourceNames.length > 4) {
+        setStatus("Print layout currently supports 4 cards per page. Printing first 4.", "warn");
+      } else {
+        setStatus("Rendering print page...", "");
+      }
+
+      var printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        setStatus("Pop-up blocked. Allow pop-ups to print.", "warn");
+        return;
+      }
+      printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;'>Rendering print view...</p>");
+
+      google.script.run
+        .withSuccessHandler(function(cardsData) {
+          var data = cardsData || [];
+          if (!data.length) {
+            printWindow.document.open();
+            printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;color:#b00020;'>No printable cards returned for the selected tabs.</p>");
+            printWindow.document.close();
+            setStatus("No printable cards found for selected tabs.", "warn");
+            return;
+          }
+          var html = buildUnifiedPrintHtml(data);
+          printWindow.document.open();
+          printWindow.document.write(html || "");
+          printWindow.document.close();
+          setStatus("Print page ready (" + data.length + " card" + (data.length === 1 ? "" : "s") + ").", "ok");
+        })
+        .withFailureHandler(function(err) {
+          printWindow.document.open();
+          printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;color:#b00020;'>Print render failed: "
+            + escHtml((err && err.message ? err.message : err) + "") + "</p>");
+          printWindow.document.close();
+          setStatus("Print render failed: " + (err && err.message ? err.message : err), "error");
+        })
+        .webApp_getCardsData(names);
     }
 
     function openNpc(sheetName) {
@@ -4516,14 +4668,24 @@
 
     function renderFrontPreview(cardData) {
       var frontEl = document.getElementById("preview-front");
+      frontEl.innerHTML = buildFrontCardHtml(cardData);
+    }
+
+    function renderBackPreview(cardData) {
+      var backEl = document.getElementById("preview-back");
+      backEl.innerHTML = buildBackCardHtml(cardData);
+    }
+
+    function buildFrontCardHtml(cardData) {
       var subtitleBits = [];
-      if (cardData.classHtml) subtitleBits.push(cardData.classHtml);
+      var classMarkup = (cardData.classHtml || cardData.class || "");
+      if (classMarkup) subtitleBits.push(classMarkup);
       var sizeRace = (cardData.size + " " + cardData.race).trim();
       if (sizeRace) subtitleBits.push(escHtml(sizeRace));
       if (cardData.cr) subtitleBits.push("CR " + escHtml(cardData.cr));
       var subtitle = subtitleBits.join(" &bull; ");
 
-      frontEl.innerHTML = ""
+      return ""
         + "<div class='name'>" + escHtml(cardData.name) + "</div>"
         + "<div class='subtitle'>" + subtitle + "</div>"
         + "<div class='row'>"
@@ -4544,37 +4706,39 @@
         + "<div class='text-line'><strong>Skills:</strong> " + (cardData.skills.skills || "") + "</div>";
     }
 
-    function renderBackPreview(cardData) {
-      var backEl = document.getElementById("preview-back");
+    function buildBackCardHtml(cardData) {
+      var back = cardData.back || {};
+      var spells = cardData.spells || {};
       var html = "<div class='subtitle' style='text-align:center;'>Combat Actions</div>";
 
-      if (cardData.back.actions) {
-        html += "<div class='block-title'>Actions</div><div class='text-line'>" + cardData.back.actions + "</div>";
+      if (back.actions) {
+        html += "<div class='block-title'>Actions</div><div class='text-line'>" + back.actions + "</div>";
       }
-      if (cardData.back.bonus_actions) {
-        html += "<div class='block-title'>Bonus Actions</div><div class='text-line'>" + cardData.back.bonus_actions + "</div>";
+      if (back.bonus_actions) {
+        html += "<div class='block-title'>Bonus Actions</div><div class='text-line'>" + back.bonus_actions + "</div>";
       }
-      if (cardData.back.reactions) {
-        html += "<div class='block-title'>Reactions</div><div class='text-line'>" + cardData.back.reactions + "</div>";
+      if (back.reactions) {
+        html += "<div class='block-title'>Reactions</div><div class='text-line'>" + back.reactions + "</div>";
       }
-      if (cardData.spells && cardData.spells.spellsString) {
-        var spellsTitle = ((cardData.spells.spellsTitle || "") + "").trim();
+      if (spells.spellsString) {
+        var spellsTitle = ((spells.spellsTitle || "") + "").trim();
         if (spellsTitle) {
           html += "<div class='block-title spells-line'><span class='spells-label'>Spells:</span><span class='spells-brackets'>" + spellsTitle + "</span></div>";
         } else {
           html += "<div class='block-title'>Spells:</div>";
         }
-        html += "<div class='text-line'>" + cardData.spells.spellsString + "</div>";
+        html += "<div class='text-line'>" + spells.spellsString + "</div>";
       }
-      if (cardData.back.special) {
-        html += "<div class='block-title'>Special</div><div class='text-line'>" + cardData.back.special + "</div>";
+      if (back.special) {
+        html += "<div class='block-title'>Special</div><div class='text-line'>" + back.special + "</div>";
       }
 
-      backEl.innerHTML = html;
+      return html;
     }
 
     function renderAttributesRows(cardData) {
       return ""
+        + "<div class='attributes-grid'>"
         + "<div class='row'>"
         + renderAttributeCell("STR", cardData.strength, cardData.strength_mod, cardData.strength_save)
         + renderAttributeCell("DEX", cardData.dexterity, cardData.dexterity_mod, cardData.dexterity_save)
@@ -4584,6 +4748,7 @@
         + renderAttributeCell("INT", cardData.intelligence, cardData.intelligence_mod, cardData.intelligence_save)
         + renderAttributeCell("WIS", cardData.wisdom, cardData.wisdom_mod, cardData.wisdom_save)
         + renderAttributeCell("CHA", cardData.charisma, cardData.charisma_mod, cardData.charisma_save)
+        + "</div>"
         + "</div>";
     }
 
@@ -5024,21 +5189,58 @@
         setStatus("Pop-up blocked. Allow pop-ups to print.", "warn");
         return;
       }
-      printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;'>Rendering print view...</p>");
+      var html = buildUnifiedPrintHtml([cardData]);
+      printWindow.document.open();
+      printWindow.document.write(html || "");
+      printWindow.document.close();
+      setStatus("Print page ready (1 card).", "ok");
+    }
 
-      google.script.run
-        .withSuccessHandler(function(html) {
-          printWindow.document.open();
-          printWindow.document.write(html || "");
-          printWindow.document.close();
-        })
-        .withFailureHandler(function(err) {
-          printWindow.document.open();
-          printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;color:#b00020;'>Print render failed: "
-            + escHtml((err && err.message ? err.message : err) + "") + "</p>");
-          printWindow.document.close();
-        })
-        .webApp_renderPrintHtmlFromCardData(cardData);
+    function buildUnifiedPrintHtml(cardsData) {
+      var cards = Array.isArray(cardsData) ? cardsData.slice(0, 4) : [];
+      var styleText = getStyleTextForPrint();
+
+      function renderCell(index, side) {
+        var card = cards[index];
+        if (!card) return "";
+        var body = side === "front" ? buildFrontCardHtml(card) : buildBackCardHtml(card);
+        return "<div class='card-preview print-face'>" + body + "</div>";
+      }
+
+      return ""
+        + "<!DOCTYPE html>"
+        + "<html><head><meta charset='utf-8'><title>NPC Card Print</title>"
+        + "<style>" + styleText + "\n"
+        + "@page { size: 8.5in 11in; margin: 0; }"
+        + "body { margin: 0 !important; padding: 0 !important; background: white; display: flex; justify-content: center; align-items: flex-start; }"
+        + ".print-grid { display: grid; grid-template-columns: repeat(3, 2.5in); grid-template-rows: repeat(3, 3.5in); gap: 0; margin: 0.25in auto 0 auto; }"
+        + ".print-cell { width: 2.5in; height: 3.5in; box-sizing: border-box; overflow: hidden; padding: 0; margin: 0; }"
+        + ".card-preview.print-face { border: 1px solid black; border-radius: 6px; box-shadow: none; width: 2.5in; height: 3.5in; }"
+        + "@media print {"
+        + " body { margin: 0 !important; padding: 0 !important; background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }"
+        + " .card-preview.print-face { border: 1px solid black !important; box-shadow: none !important; }"
+        + "}"
+        + "</style></head><body>"
+        + "<div class='print-grid'>"
+        + "<div class='print-cell'>" + renderCell(0, "front") + "</div>"
+        + "<div class='print-cell'>" + renderCell(1, "front") + "</div>"
+        + "<div class='print-cell'>" + renderCell(2, "front") + "</div>"
+        + "<div class='print-cell'>" + renderCell(0, "back") + "</div>"
+        + "<div class='print-cell'>" + renderCell(1, "back") + "</div>"
+        + "<div class='print-cell'>" + renderCell(2, "back") + "</div>"
+        + "<div class='print-cell'>" + renderCell(3, "front") + "</div>"
+        + "<div class='print-cell'>" + renderCell(3, "back") + "</div>"
+        + "<div class='print-cell'></div>"
+        + "</div></body></html>";
+    }
+
+    function getStyleTextForPrint() {
+      var styles = document.querySelectorAll("style");
+      var parts = [];
+      for (var i = 0; i < styles.length; i++) {
+        parts.push(styles[i].textContent || "");
+      }
+      return parts.join("\n");
     }
 
     function setCellOnRows(rows, rowIndex, colIndex, inputId) {

@@ -7,6 +7,13 @@ Use this as the source of truth for UI work in `App.html`.
 This is a desktop-first power-user authoring tool for compact D&D NPC cards.
 The priority is fast structured entry with persistent preview, not decorative form design.
 
+## Milestone status
+
+- `v0.8` baseline is considered near-stable for authoring + print:
+  - unified standalone preview/print renderer path
+  - print cut-border behavior restored for card cutting
+  - spreadsheet persistence unchanged
+
 ## Non-negotiables
 
 - Preserve spreadsheet save/read behavior (B:E row model).
@@ -16,6 +23,24 @@ The priority is fast structured entry with persistent preview, not decorative fo
 - Avoid section-specific one-off control styles unless unavoidable.
 
 ## Current implementation baseline (as-built)
+
+## 0. Library (Home View)
+
+- NPC library cards now provide two actions:
+  - `Open Editor`
+  - `Select for Print` / `Unselect`
+- Top controls include:
+  - search filter
+  - `Print Card Page`
+  - `New NPC`
+  - `Refresh List`
+- Print behavior:
+  - if one or more NPCs are selected, those are used
+  - otherwise, currently visible (filtered) NPC tabs are used
+  - current print template supports one page (up to 4 cards)
+- Standalone app print uses the same front/back renderer functions as live preview
+  (`buildFrontCardHtml`, `buildBackCardHtml`) to minimize preview/print drift.
+- Legacy `PrintCards.html` remains for spreadsheet menu compatibility only.
 
 ## Shared visual grammar
 
@@ -159,3 +184,5 @@ Spell output rules:
 - Continue standardizing row-editor shells to avoid pseudo-duplicate CSS blocks.
 - Audit any remaining micro-misalignment between row headers and row bodies before style polish.
 - Long-term: plan deprecation path for spreadsheet-coupled persistence after proven stability.
+- Print profiles:
+  - add mode-specific output options for digital-play pages vs fold/sleeve physical card sheets.

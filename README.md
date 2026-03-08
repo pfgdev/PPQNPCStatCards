@@ -15,6 +15,19 @@ This project has two active surfaces:
 - `doGet()` serves `App.html` unless print params are passed.
 - Reads/writes the same sheet tabs as the legacy flow.
 - Keeps live front/back preview visible while editing.
+- Library view supports page printing directly:
+  - Select NPC tabs in library cards, then `Print Card Page`.
+  - If none are selected, print uses currently filtered/visible tabs.
+  - Current print layout supports up to 4 cards per page (extra tabs are ignored).
+  - Print now uses the same renderer functions as live preview (single-source render path).
+
+## Version milestone
+
+- `v0.8` snapshot:
+  - standalone editor flow is stable for day-to-day authoring
+  - live preview and standalone print share one renderer path
+  - cut-border behavior for printing is restored (rounded card border + print border)
+  - spreadsheet remains the persistence backend
 
 ## File map
 
@@ -135,6 +148,14 @@ Key output rules:
   - `[L1/L2/L3] [L4/L5/L6] [L7/L8/L9]` (as needed)
 - Per-Spell Uses mode does not render top slot brackets.
 
+Library print path:
+- Fetches sheet-based `cardData` objects via `webApp_getCardsData(...)`.
+- Renders print HTML client-side in `App.html` via the same functions used by live preview:
+  - `buildFrontCardHtml(...)`
+  - `buildBackCardHtml(...)`
+- Writes that unified HTML into a popup print document.
+- Legacy `PrintCards.html` remains for spreadsheet menu compatibility, but standalone app print is now renderer-unified with preview.
+
 ## Development notes
 
 - Main UI work happens in `App.html`.
@@ -153,3 +174,5 @@ clasp push
 - Additional movement remains capped at 2 rows due current sheet-mapped model.
 - Desktop-first authoring is prioritized over mobile/tablet layout.
 - Future direction: deprecate spreadsheet-coupled editing only after sustained app stability.
+- Next print workstream:
+  - support alternate print formats/profiles (for example digital-play reference sheets vs fold-and-sleeve physical cards).

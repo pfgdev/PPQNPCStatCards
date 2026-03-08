@@ -914,6 +914,27 @@ function webApp_getCardData(sheetName) {
 }
 
 /**
+ * Loads processed card data for multiple sheets (used by unified app print path).
+ * @param {string[]} sheetNames
+ * @returns {Object[]}
+ */
+function webApp_getCardsData(sheetNames) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var names = Array.isArray(sheetNames) ? sheetNames : [];
+  var cards = [];
+
+  names.forEach(function(name) {
+    var safeName = String(name || '').trim();
+    if (!safeName) return;
+    var sheet = ss.getSheetByName(safeName);
+    if (!sheet) return;
+    cards.push(getCardDataFromSheet(sheet));
+  });
+
+  return cards;
+}
+
+/**
  * Renders print HTML for a single NPC from web-app card data using the same
  * PrintCards.html template used by normal print flow.
  *
@@ -923,6 +944,37 @@ function webApp_getCardData(sheetName) {
 function webApp_renderPrintHtmlFromCardData(cardData) {
   var template = HtmlService.createTemplateFromFile('PrintCards');
   template.cardsData = [cardData || {}];
+  return template.evaluate().getContent();
+}
+
+/**
+ * Renders print HTML for multiple NPC sheets using the same PrintCards.html
+ * template as the legacy print flow.
+ *
+ * Notes:
+ * - PrintCards currently lays out one 8.5x11 page with up to 4 cards.
+ * - Extra sheet names beyond 4 are ignored by the template.
+ *
+ * @param {string[]} sheetNames
+ * @returns {string}
+ */
+function webApp_renderPrintHtmlFromSheetNames(sheetNames) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var names = Array.isArray(sheetNames) ? sheetNames : [];
+  if (!names.length) {
+    names = webApp_getSheetNames();
+  }
+
+  var cardsData = [];
+  names.forEach(function(name) {
+    var safeName = String(name || '').trim();
+    if (!safeName) return;
+    var sheet = ss.getSheetByName(safeName);
+    if (sheet) cardsData.push(getCardDataFromSheet(sheet));
+  });
+
+  var template = HtmlService.createTemplateFromFile('PrintCards');
+  template.cardsData = cardsData;
   return template.evaluate().getContent();
 }
 
