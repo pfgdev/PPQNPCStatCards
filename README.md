@@ -1,127 +1,91 @@
 # PPQ NPC Stat Cards
 
-A Google Apps Script project that generates printable D&D 5e NPC stat cards
-from a Google Spreadsheet. Each NPC lives on its own sheet tab; a "Combat Tools"
-menu lets you preview or print cards directly from the spreadsheet.
+Google Apps Script project for creating printable DnD 5e NPC stat cards from a spreadsheet.
 
----
+## Core constraints
+- Card size is fixed at `2.5in x 3.5in`.
+- Card visual structure should not change unless explicitly requested.
+- Existing spreadsheet/menu print workflow must remain functional while the standalone editor evolves.
 
-## Architecture
+## Current app modes
+1. Spreadsheet menu workflow (legacy + still active)
+- `Combat Tools > View Stat Card` opens modal preview (`CombinedView.html`).
+- `Combat Tools > Show Print Selector` opens `PrintSelector.html`, then print web URL.
 
+2. Standalone web editor (active default)
+- `doGet()` serves `App.html` by default.
+- URL launch is supported directly (no spreadsheet menu required).
+- Editor reads/writes the same sheet tabs.
+
+## File map
+- `Code.js`: backend parsing, sheet I/O, menu items, web handlers.
+- `App.html`: standalone editor UI + live preview + save + print.
+- `StatCard.html`: front card template.
+- `StatCardBack.html`: back card template.
+- `PrintCards.html`: print layout grid.
+- `PrintSelector.html`: sheet picker for menu-based print flow.
+- `CombinedView.html`: modal front/back preview from spreadsheet menu.
+
+## Data source and write model
+- Source of truth is spreadsheet tabs (`B:E`, starting row 2).
+- UI writes only columns `C:E`; column `B` labels are preserved.
+- Save path updates existing rows; it does not alter sheet structure.
+
+### Key mappings in current editor
+- Name: blank is saved as `--`.
+- Class: multi-entry editor, saved as a single string like `Monk 8 / Barbarian 3`.
+- AC/HP/Speed: numeric steppers with defaults (`10 / 10 / 25`).
+- Additional speeds: two UI variants (`type + value`) mapped back to:
+  - `Climb Speed`
+  - `Swim Speed`
+  - `Fly Speed`
+- Size: dropdown (`Tiny` to `Gargantuan`).
+- Race field label: `Race / Type`.
+- Damage:
+  - Type dropdown (13 standard types + `Nonmagical Damage` + `Magical Damage`).
+  - Effect (`Resistance/Vulnerability/Immunity`) + Roll Mod (`Advantage/Disadvantage`).
+- Conditions:
+  - Single effect flag (`Immunity/Advantage/Disadvantage`).
+- Attributes:
+  - 3x2 stat card editor layout.
+  - Modifier is derived and readonly.
+  - Save value editable.
+  - Save flag dropdown (`Advantage/Disadvantage`) persists to save row flags.
+
+## Print behavior
+- `Print This NPC` in `App.html` sends current form-derived `cardData` to server.
+- Server renders `PrintCards.html` using that data.
+- Goal is parity between live preview and printed output.
+
+## Deployment / push
+- Local workflow uses `clasp`.
+- Push latest changes:
+```bash
+clasp push
 ```
-Google Spreadsheet
-  └── One tab per NPC (data in columns B–E)
-        │
-        ├── Combat Tools > View Stat Card
-        │     └── openStatCardModal() → CombinedView.html
-        │           ├── StatCard.html     (front face)
-        │           └── StatCardBack.html (back face)
-        │
-        └── Combat Tools > Show Print Selector
-              └── showPrintSelector() → PrintSelector.html
-                    └── [user selects sheets] → opens Web App URL
-                          └── doGet() → PrintCards.html
-                                ├── StatCard.html     (front, per card)
-                                └── StatCardBack.html (back, per card)
-```
 
-**Files:**
+## Parallel handoff (for multiple Codex sessions)
 
-| File | Purpose |
-|------|---------|
-| `Code.js` | All server-side logic: menu, data parsing, web app entry point |
-| `StatCard.html` | Card front face template (2.5" × 3.5") |
-| `StatCardBack.html` | Card back face template — Combat Actions |
-| `CombinedView.html` | Modal: front + back side by side for preview |
-| `PrintCards.html` | Print page: grid of cards for browser printing |
-| `PrintSelector.html` | Modal: checklist to pick which NPCs to print |
+### UI Codex ownership
+Focus on `App.html` UI polish only:
+- Spacing rhythm and alignment.
+- Control ergonomics and visual consistency.
+- Section layout/readability.
+- Keep behavior intact unless explicitly requested.
 
----
+### Data Codex ownership
+Focus on `Code.js` + data handling behavior:
+- Parsing/mapping correctness.
+- Save/read fidelity.
+- Schema normalization and migration helpers.
+- Print/render data contract integrity.
 
-## Spreadsheet Layout
+### Coordination rules
+- Avoid changing the same concerns in both sessions.
+- If a UI tweak needs data changes, document it first in PR/commit note.
+- Preserve backward compatibility with existing sheet tabs.
 
-Each NPC tab uses columns **B–E**. Column A is unused. Columns G–H contain
-decorative legend labels and are not read by the script.
-
-### Column roles
-
-| Column | Role |
-|--------|------|
-| B | Category label (drives which field the row populates) |
-| C | Primary value (name, stat, spell list, etc.) |
-| D | Secondary value (skill modifier, action name, damage flag) |
-| E | Tertiary value (action description HTML, adv/disadv flag) |
-
-### Category reference
-
-| Category (col B) | C | D | E |
-|-----------------|---|---|---|
-| Name / Class / Size / Race | value | — | — |
-| AC / HP / Speed / Climb Speed / Swim Speed / Fly Speed | value | — | — |
-| Damage | damage type | Resistance / Vulnerability / Immunity | Advantage / Disadvantage |
-| Conditions | condition name | Resistance / Vulnerability / Immunity | Advantage / Disadvantage |
-| Strength / Dexterity / Constitution / Intelligence / Wisdom / Charisma | score | — | — |
-| Strength Mod (etc.) | modifier (e.g. "+3") | — | — |
-| Strength Save (etc.) | save bonus | Advantage / Disadvantage | — |
-| Proficiency Bonus / Initiative | value | — | — |
-| Passive Perception / Vision | value | — | — |
-| Skills | skill name (e.g. "Arcana") | modifier (e.g. "+8") | Advantage / Disadvantage |
-| Action / Bonus Action / Reaction | frequency/cost (e.g. "[1/day]") | ability name | description HTML |
-| Cantrips | comma-separated spell names | — | — |
-| 1st Level Spell Slots | number of slots | — | — |
-| 1st Level Spells | comma-separated spell names | — | — |
-| *(2nd–9th same pattern)* | | | |
-| Special | full text (may include HTML tags) | TRUE = new line / FALSE = append | — |
-
-### Printable sheet detection
-
-A sheet is considered printable (shown in the Print Selector) if cell **C2**
-is non-empty. C2 holds the NPC's Name value, so any sheet with a name filled
-in will appear.
-
----
-
-## Deployment
-
-The print workflow requires a deployed web app. After making code changes:
-
-1. In the Apps Script editor: **Deploy > Manage deployments**
-2. For testing: use the **Dev** deployment (always runs the latest saved code)
-3. For production: create or update a versioned deployment
-4. Copy the web app URL and update it in **`PrintSelector.html`** (the `url`
-   variable in the `printCards()` script block)
-
-> **Note:** The web app URL is currently hardcoded in `PrintSelector.html`.
-> This is a known limitation — see Known Issues below.
-
----
-
-## Print Workflow
-
-1. Open the Google Spreadsheet
-2. **Combat Tools > Show Print Selector**
-3. Check the NPCs you want to print, click **Print Cards**
-4. A new browser tab opens with the print layout
-5. Use the browser's print dialog (**Ctrl+P** / **Cmd+P**)
-6. Recommended print settings:
-   - Paper: Letter (8.5" × 11")
-   - Margins: None (or minimum)
-   - Scale: 100% (do not fit to page)
-   - Background graphics: ON
-
----
-
-## Known Issues
-
-- **Print layout is hardcoded for 4 cards.** Cards beyond index 3 are silently
-  dropped. The grid covers 3 fronts (row 1), 3 backs (row 2), and card 4
-  front+back (row 3). This needs to be made dynamic.
-- **Web app URL is hardcoded** in `PrintSelector.html`. Must be manually
-  updated after each new deployment.
-- **`printStatCards()`** and **`showPrintLink()`** in `Code.js` are dead code
-  (not called from the menu). Marked `@deprecated`.
-- **`getCardData()` and `getCardDataFromSheet()`** are nearly identical.
-  `getCardData()` is a thin wrapper that could be simplified.
-- **Print gaps:** The current browser-print approach can produce inconsistent
-  spacing. This is a known issue being addressed in the next iteration of
-  `PrintCards.html`.
+## Known active work areas
+- Continue UI density/alignment polish in Identity, Combat Stats, and Defenses.
+- Keep preview and print in sync as editor fields evolve.
+- Gradually reduce legacy duplication where safe, without breaking menu flow.

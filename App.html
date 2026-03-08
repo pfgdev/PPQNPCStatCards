@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PPQ NPC Builder</title>
+  <style>
+    :root {
+      --bg: #f3f4f8;
+      --panel: #ffffff;
+      --ink: #1a1d24;
+      --muted: #5d6574;
+      --line: #d7dce8;
+      --primary: #0f5da8;
+      --primary-strong: #094882;
+      --success: #127f39;
+      --warn: #b16f00;
+      --danger: #ba1f33;
+      --shadow: 0 10px 30px rgba(20, 31, 56, 0.08);
+      --radius: 12px;
+      --field-ch: 30ch;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% -20%, #fdf7df 0%, #f3f4f8 35%, #eef2f8 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 100vh;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(120deg, #ffffff 0%, #f7f9fd 55%, #fff9e9 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.1;
+      letter-spacing: 0.2px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    #status {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: right;
+      max-width: 440px;
+    }
+
+    #status.ok { color: var(--success); }
+    #status.warn { color: var(--warn); }
+    #status.error { color: var(--danger); }
+
+    .view {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .view.active { display: block; }
+
+    .home-wrap {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .home-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .home-title {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .home-subtitle {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .home-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .npc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .npc-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: linear-gradient(120deg, #ffffff 0%, #f8fbff 100%);
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    }
+
+    .npc-card:hover {
+      transform: translateY(-2px);
+      border-color: #7fa7d5;
+      box-shadow: 0 8px 20px rgba(15, 93, 168, 0.12);
+    }
+
+    .npc-card h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #123761;
+    }
+
+    .npc-card p {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .npc-card.new-card {
+      border-style: dashed;
+      border-color: #8cb2df;
+      background: linear-gradient(120deg, #f5f9ff 0%, #ffffff 100%);
+    }
+
+    .npc-card.new-card h3 {
+      color: #0f5da8;
+    }
+
+    .empty-note {
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: #fbfcff;
+    }
+
+    .editor-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 70vh;
+    }
+
+    .editor-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line);
+      background: #ffffffee;
+      backdrop-filter: blur(6px);
+      padding: 8px 12px;
+    }
+
+    #editor-title {
+      margin-right: auto;
+      font-weight: 700;
+      color: #1a3c66;
+    }
+
+    .editor-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+    }
+
+    .editor-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .preview-pane {
+      position: sticky;
+      top: 56px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fbff;
+      padding: 8px;
+    }
+
+    .preview-title {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: #4f5d72;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+
+    .preview-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .preview-frame {
+      width: 100%;
+      border: 1px solid #d8dfea;
+      border-radius: 8px;
+      padding: 6px;
+      background: #eef4ff;
+      display: flex;
+      justify-content: center;
+    }
+
+    .preview-label {
+      margin: 0 0 6px;
+      font-size: 11px;
+      color: #5b6b81;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 600;
+    }
+
+    .card-preview {
+      font-family: Arial, sans-serif;
+      width: 2.5in;
+      height: 3.5in;
+      background: #fff;
+      border-radius: 6px;
+      padding: 6px;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .card-preview .name {
+      font-size: 22px;
+      font-weight: bold;
+      width: 100%;
+      text-align: left;
+    }
+
+    .card-preview .subtitle {
+      font-size: 11px;
+      font-style: italic;
+      color: #555;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 4px;
+      white-space: normal;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
+    }
+
+    .card-preview .row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 2px;
+    }
+
+    .card-preview .unified-card {
+      flex: 1;
+      background: #f0f0f0;
+      border-radius: 4px;
+      padding: 4px;
+      margin: 0 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: auto;
+    }
+
+    .card-preview .label {
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 1px;
+      color: #111;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .card-preview .value-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .card-preview .primary-value {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Keep stat tiles stable while editing empty values without forcing larger cards. */
+    .card-preview .primary-value:empty::before {
+      content: "\00a0";
+    }
+
+    .card-preview .secondary-stack {
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+      line-height: 1;
+      text-align: left;
+      min-width: 20px;
+      justify-content: center;
+    }
+
+    .card-preview .block-title {
+      width: 100%;
+      text-align: left;
+      font-weight: bold;
+      margin: 4px 0 2px;
+      font-size: 12px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .card-preview .text-line {
+      width: 100%;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .card-preview .description-block {
+      width: 100%;
+      margin: 2px 0 4px 0;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .card-preview .description-block strong {
+      font-weight: bold;
+    }
+
+    .card-preview .spells-line {
+      position: relative;
+    }
+
+    .card-preview .spells-brackets {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #ffffff;
+    }
+
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #163b63;
+    }
+
+    .section h3 {
+      margin: 8px 0 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #546173;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid #e9edf5;
+      padding-bottom: 3px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .grid-stat { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; }
+    .identity-name-wrap { max-width: 34ch; }
+    .identity-class-wrap { max-width: 64ch; }
+    .identity-class-wrap { margin-top: 8px; }
+    .identity-size-race { max-width: 64ch; grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+    .combat-core {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(112px, 128px));
+      gap: 8px;
+      align-items: start;
+      justify-content: start;
+    }
+    .combat-core > label {
+      align-items: center;
+    }
+    .speed-variants {
+      margin-top: 6px;
+      display: grid;
+      grid-template-columns: minmax(260px, 430px);
+      gap: 8px;
+      align-items: start;
+    }
+    .speed-variant-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px;
+      align-items: end;
+    }
+
+    .flag-row {
+      display: grid;
+      grid-template-columns: minmax(22ch, 30ch) minmax(16ch, 20ch) minmax(14ch, 18ch);
+      gap: 10px;
+      margin-bottom: 4px;
+      justify-content: start;
+    }
+    .condition-row {
+      display: grid;
+      grid-template-columns: minmax(22ch, 30ch) minmax(16ch, 20ch);
+      gap: 10px;
+      margin-bottom: 4px;
+      justify-content: start;
+    }
+    .skill-row { display: grid; grid-template-columns: 2fr 100px 1fr; gap: 5px; margin-bottom: 4px; }
+    .spell-row { display: grid; grid-template-columns: 90px 1fr; gap: 6px; margin-bottom: 4px; }
+    .attr-editor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .attr-editor-card {
+      border: 1px solid #e8edf6;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .attr-editor-title {
+      margin: 0;
+      font-size: 11px;
+      color: #1e3f63;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .attr-save-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 110px;
+      gap: 5px;
+    }
+    .expand-row.is-hidden { display: none; }
+    .section-add-row {
+      margin-top: 2px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .add-row-btn {
+      padding: 4px 8px;
+      border-radius: 7px;
+      font-size: 11px;
+    }
+    .action-row {
+      border: 1px solid #e8edf6;
+      border-radius: 8px;
+      background: #fafcff;
+      padding: 6px;
+      margin-bottom: 6px;
+    }
+    .action-top { display: grid; grid-template-columns: 120px 1fr; gap: 5px; margin-bottom: 4px; }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 11px;
+      color: #4d596b;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      font-weight: 600;
+      align-items: flex-start;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      border: 1px solid #cfd7e6;
+      border-radius: 7px;
+      padding: 5px 7px;
+      font-size: 14px;
+      color: var(--ink);
+      background: #fff;
+      font-family: inherit;
+    }
+
+    label > input[type="text"],
+    label > select {
+      width: min(100%, var(--field-ch));
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus,
+    .rt-field:focus {
+      outline: none;
+      border-color: #3f7ec0;
+      box-shadow: 0 0 0 3px rgba(63, 126, 192, 0.12);
+    }
+
+    .class-editor {
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin-top: 4px;
+      max-width: 64ch;
+    }
+
+    .class-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .class-label {
+      font-size: 11px;
+      color: #4d596b;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      font-weight: 700;
+    }
+
+    .class-add-btn,
+    .class-remove-btn {
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 12px;
+    }
+
+    .class-remove-btn {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+      margin-left: 6px;
+      text-align: center;
+    }
+
+    .class-footer {
+      margin-top: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .class-row {
+      display: grid;
+      grid-template-columns: minmax(26ch, 32ch) 120px 36px;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 4px;
+    }
+
+    .class-level-label {
+      align-items: center;
+      text-align: center;
+    }
+
+    .class-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .num-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      width: 116px;
+    }
+
+    .num-stepper .step-btn {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid #b9c7dc;
+      border-radius: 7px;
+      background: #eef3fb;
+      color: #1f4670;
+      font-size: 17px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .num-stepper .step-btn:hover {
+      background: #e3ecfa;
+    }
+
+    .num-stepper .num-input {
+      flex: 1;
+      width: 52px;
+      height: 30px;
+      text-align: center;
+      border-radius: 7px;
+      padding: 3px 5px;
+      -moz-appearance: textfield;
+    }
+
+    .num-stepper .num-input::-webkit-outer-spin-button,
+    .num-stepper .num-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: #465366;
+      font-size: 13px;
+    }
+
+    .rt-toolbar {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 3px;
+    }
+
+    .rt-toolbar button {
+      border: 1px solid #cfd7e6;
+      border-radius: 6px;
+      background: #f8fbff;
+      min-width: 28px;
+      height: 24px;
+      cursor: pointer;
+      color: #244a73;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .rt-toolbar button:hover {
+      background: #edf4ff;
+      border-color: #9ab6d8;
+    }
+
+    .rt-field {
+      border: 1px solid #cfd7e6;
+      border-radius: 7px;
+      min-height: 34px;
+      padding: 6px 7px;
+      font-size: 13px;
+      line-height: 1.35;
+      background: #fff;
+      overflow-wrap: anywhere;
+    }
+
+    .btn {
+      border: 1px solid #c8d3e4;
+      background: #f8fbff;
+      color: #20466e;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: #eef5ff; }
+
+    .btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn.primary:hover { background: var(--primary-strong); }
+
+    .btn.success {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .btn.success:hover { filter: brightness(0.92); }
+
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    @media (max-width: 920px) {
+      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .spell-row, .action-top, .class-row, .combat-core, .attr-editor-grid, .attr-save-row, .speed-variants, .speed-variant-row {
+        grid-template-columns: 1fr;
+      }
+      .identity-name-wrap, .identity-class-wrap, .identity-size-race { max-width: none; }
+      .class-editor { max-width: none; }
+
+      #status {
+        text-align: left;
+        max-width: none;
+        width: 100%;
+      }
+
+      .app-header { flex-direction: column; align-items: flex-start; }
+      .editor-toolbar { position: static; }
+      .editor-main { grid-template-columns: 1fr; }
+      .preview-pane { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="app-header">
+      <div class="brand">
+        <h1>PPQ NPC Stat Cards</h1>
+        <p>Standalone editor that saves to your existing spreadsheet tabs.</p>
+      </div>
+      <div id="status">Loading NPC list...</div>
+    </header>
+
+    <section id="home-view" class="view active">
+      <div class="home-wrap">
+        <div class="home-top">
+          <div>
+            <h2 class="home-title">NPC Library</h2>
+            <p class="home-subtitle">Pick a tab to edit. Existing spreadsheet and print flow remain unchanged.</p>
+          </div>
+          <div class="home-controls">
+            <input id="search-input" type="text" placeholder="Search tab names...">
+            <button id="create-btn" class="btn primary">New NPC</button>
+            <button id="refresh-btn" class="btn">Refresh List</button>
+          </div>
+        </div>
+        <div id="npc-grid" class="npc-grid"></div>
+      </div>
+    </section>
+
+    <section id="editor-view" class="view">
+      <div class="editor-wrap">
+        <div class="editor-toolbar">
+          <button id="back-btn" class="btn">Back To Library</button>
+          <div id="editor-title">Editing:</div>
+          <button id="print-btn" class="btn">Print This NPC</button>
+          <button id="save-btn" class="btn success">Save Changes</button>
+        </div>
+        <div class="editor-main">
+          <div id="editor-form" class="editor-form"></div>
+          <aside class="preview-pane">
+            <h3 class="preview-title">Live Card Preview</h3>
+            <div class="preview-cards">
+              <div class="preview-frame">
+                <div>
+                  <p class="preview-label">Front</p>
+                  <div id="preview-front" class="card-preview"></div>
+                </div>
+              </div>
+              <div class="preview-frame">
+                <div>
+                  <p class="preview-label">Back</p>
+                  <div id="preview-back" class="card-preview"></div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    var state = {
+      npcNames: [],
+      filteredNames: [],
+      currentSheetName: null,
+      rawRows: null,
+      parsedData: null,
+      dirty: false
+    };
+
+    var DAMAGE_FLAG1_OPTIONS = ["", "Resistance", "Vulnerability", "Immunity"];
+    var DAMAGE_FLAG2_OPTIONS = ["", "Advantage", "Disadvantage"];
+    var CONDITION_FLAG_OPTIONS = ["", "Immunity", "Advantage", "Disadvantage"];
+    var DND_SIZE_OPTIONS = ["", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"];
+    var DAMAGE_TYPE_OPTIONS = [
+      "",
+      "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Necrotic",
+      "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder",
+      "Nonmagical Damage", "Magical Damage"
+    ];
+    var SKILL_OPTIONS = [
+      "", "Acrobatics", "Animal Handling", "Arcana", "Athletics", "Deception", "History",
+      "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception",
+      "Performance", "Persuasion", "Religion", "Sleight of Hand", "Stealth", "Survival"
+    ];
+    var SKILL_ABBREV = {
+      "Acrobatics": "Acr",
+      "Animal Handling": "Ani",
+      "Arcana": "Arc",
+      "Athletics": "Ath",
+      "Deception": "Dec",
+      "History": "His",
+      "Insight": "Ins",
+      "Intimidation": "Inti",
+      "Investigation": "Inv",
+      "Medicine": "Med",
+      "Nature": "Nat",
+      "Perception": "Perc",
+      "Performance": "Perf",
+      "Persuasion": "Pers",
+      "Religion": "Rel",
+      "Sleight of Hand": "Sle",
+      "Stealth": "Ste",
+      "Survival": "Sur"
+    };
+    var ADV_OPTIONS = ["", "Advantage", "Disadvantage"];
+    var SIMPLE_KEYS = [
+      "name", "class", "size", "race", "ac", "hp", "speed", "climb speed", "swim speed", "fly speed",
+      "strength", "strength mod", "strength save", "dexterity", "dexterity mod", "dexterity save",
+      "constitution", "constitution mod", "constitution save", "intelligence", "intelligence mod", "intelligence save",
+      "wisdom", "wisdom mod", "wisdom save", "charisma", "charisma mod", "charisma save",
+      "proficiency bonus", "initiative", "passive perception", "vision"
+    ];
+    var STATS = ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"];
+    var RICH_SIMPLE_KEYS = {};
+
+    document.addEventListener("DOMContentLoaded", init);
+
+    function init() {
+      document.getElementById("refresh-btn").addEventListener("click", loadNpcList);
+      document.getElementById("create-btn").addEventListener("click", createNewNpc);
+      document.getElementById("search-input").addEventListener("input", onSearchChanged);
+      document.getElementById("back-btn").addEventListener("click", backToLibrary);
+      document.getElementById("save-btn").addEventListener("click", saveNpc);
+      document.getElementById("print-btn").addEventListener("click", printCurrentNpc);
+      window.addEventListener("beforeunload", function(e) {
+        if (!state.dirty) return;
+        e.preventDefault();
+        e.returnValue = "";
+      });
+      loadNpcList();
+    }
+
+    function setStatus(message, tone) {
+      var el = document.getElementById("status");
+      el.textContent = message;
+      el.className = tone || "";
+    }
+
+    function setDirty(flag) {
+      state.dirty = !!flag;
+      if (!state.currentSheetName) return;
+      if (state.dirty) {
+        setStatus("Unsaved changes: " + state.currentSheetName, "warn");
+      } else {
+        setStatus("Loaded: " + state.currentSheetName, "ok");
+      }
+    }
+
+    function showView(viewId) {
+      document.getElementById("home-view").classList.remove("active");
+      document.getElementById("editor-view").classList.remove("active");
+      document.getElementById(viewId).classList.add("active");
+    }
+
+    function loadNpcList() {
+      setStatus("Loading NPC list...", "");
+      google.script.run
+        .withSuccessHandler(function(names) {
+          state.npcNames = names || [];
+          state.filteredNames = state.npcNames.slice();
+          renderNpcGrid();
+          setStatus("Loaded " + state.npcNames.length + " NPC tabs.", "ok");
+        })
+        .withFailureHandler(function(err) {
+          setStatus("Failed to load list: " + (err && err.message ? err.message : err), "error");
+        })
+        .webApp_getSheetNames();
+    }
+
+    function onSearchChanged() {
+      var q = document.getElementById("search-input").value.toLowerCase().trim();
+      if (!q) {
+        state.filteredNames = state.npcNames.slice();
+      } else {
+        state.filteredNames = state.npcNames.filter(function(name) {
+          return name.toLowerCase().indexOf(q) !== -1;
+        });
+      }
+      renderNpcGrid();
+    }
+
+    function renderNpcGrid() {
+      var grid = document.getElementById("npc-grid");
+      grid.innerHTML = "";
+
+      var createCard = document.createElement("button");
+      createCard.className = "npc-card new-card";
+      createCard.type = "button";
+      createCard.innerHTML = "<h3>+ New NPC</h3><p>Create blank draft tab</p>";
+      createCard.addEventListener("click", createNewNpc);
+      grid.appendChild(createCard);
+
+      if (!state.filteredNames.length) {
+        var empty = document.createElement("div");
+        empty.className = "empty-note";
+        empty.textContent = state.npcNames.length
+          ? "No NPC tabs match your search."
+          : "No printable NPC tabs found in this spreadsheet.";
+        grid.appendChild(empty);
+        return;
+      }
+
+      state.filteredNames.forEach(function(sheetName) {
+        var button = document.createElement("button");
+        button.className = "npc-card";
+        button.type = "button";
+        button.innerHTML = "<h3>" + escHtml(sheetName) + "</h3><p>Open editor</p>";
+        button.addEventListener("click", function() {
+          openNpc(sheetName);
+        });
+        grid.appendChild(button);
+      });
+    }
+
+    function createNewNpc() {
+      if (!confirmDiscardIfDirty()) return;
+
+      var suggested = "New NPC";
+      var requestedName = window.prompt("Name for new NPC tab:", suggested);
+      if (requestedName === null) return;
+
+      setStatus("Creating blank NPC draft...", "");
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (!result || !result.sheetName) {
+            setStatus("Draft creation failed.", "error");
+            return;
+          }
+          setStatus("Created draft: " + result.sheetName, "ok");
+          loadNpcList();
+          openNpc(result.sheetName);
+        })
+        .withFailureHandler(function(err) {
+          setStatus("Create failed: " + (err && err.message ? err.message : err), "error");
+        })
+        .webApp_createBlankNpcSheet(requestedName);
+    }
+
+    function confirmDiscardIfDirty() {
+      if (!state.dirty) return true;
+      return window.confirm("You have unsaved changes. Discard them?");
+    }
+
+    function backToLibrary() {
+      if (!confirmDiscardIfDirty()) return;
+      showView("home-view");
+      state.currentSheetName = null;
+      state.rawRows = null;
+      state.parsedData = null;
+      document.getElementById("preview-front").innerHTML = "";
+      document.getElementById("preview-back").innerHTML = "";
+      setDirty(false);
+      setStatus("Back to NPC library.", "");
+    }
+
+    function openNpc(sheetName) {
+      if (!confirmDiscardIfDirty()) return;
+      setStatus("Loading " + sheetName + "...", "");
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (!result || !result.rows) {
+            setStatus("Sheet not found: " + sheetName, "error");
+            return;
+          }
+
+          state.currentSheetName = sheetName;
+          state.rawRows = result.rows;
+          state.parsedData = parseRawRows(state.rawRows);
+          document.getElementById("editor-title").textContent = "Editing: " + sheetName;
+          buildForm(state.parsedData);
+          updatePreview();
+          setDirty(false);
+          showView("editor-view");
+        })
+        .withFailureHandler(function(err) {
+          setStatus("Load failed: " + (err && err.message ? err.message : err), "error");
+        })
+        .webApp_getRawData(sheetName);
+    }
+
+    function parseRawRows(rows) {
+      var data = {
+        simple: {},
+        damage: [],
+        conditions: [],
+        skills: [],
+        actions: [],
+        bonusActions: [],
+        reactions: [],
+        spells: { cantrips: null, levels: [] },
+        special: []
+      };
+
+      for (var i = 0; i < rows.length; i++) {
+        var label = ((rows[i][0] || "") + "").trim();
+        if (!label) continue;
+
+        var labelLower = label.toLowerCase();
+        var c = rows[i][1] || "";
+        var d = rows[i][2] || "";
+        var e = rows[i][3] || "";
+
+        if (SIMPLE_KEYS.indexOf(labelLower) !== -1) {
+          data.simple[labelLower] = { rowIndex: i, value: c, flag1: d, flag2: e };
+          continue;
+        }
+
+        if (labelLower === "damage") {
+          data.damage.push({ rowIndex: i, value: c, flag1: d, flag2: e });
+          continue;
+        }
+
+        if (labelLower === "conditions") {
+          data.conditions.push({ rowIndex: i, value: c, flag1: d, flag2: e });
+          continue;
+        }
+
+        if (labelLower === "skills") {
+          data.skills.push({ rowIndex: i, name: c, modifier: d, flag: e });
+          continue;
+        }
+
+        if (labelLower === "action") {
+          data.actions.push({ rowIndex: i, cost: c, name: d, description: e });
+          continue;
+        }
+
+        if (labelLower === "bonus action") {
+          data.bonusActions.push({ rowIndex: i, cost: c, name: d, description: e });
+          continue;
+        }
+
+        if (labelLower === "reaction") {
+          data.reactions.push({ rowIndex: i, cost: c, name: d, description: e });
+          continue;
+        }
+
+        if (labelLower === "special") {
+          data.special.push({ rowIndex: i, text: c, newLine: d });
+          continue;
+        }
+
+        if (labelLower === "cantrips") {
+          data.spells.cantrips = { rowIndex: i, value: c };
+          continue;
+        }
+
+        var slotMatch = labelLower.match(/^(\d+)(?:st|nd|rd|th)\s+level\s+spell\s+slots$/);
+        var spellMatch = labelLower.match(/^(\d+)(?:st|nd|rd|th)\s+level\s+spells$/);
+
+        if (slotMatch) {
+          var slotIndex = parseInt(slotMatch[1], 10) - 1;
+          data.spells.levels[slotIndex] = data.spells.levels[slotIndex] || {};
+          data.spells.levels[slotIndex].slotsRowIndex = i;
+          data.spells.levels[slotIndex].slots = c;
+          continue;
+        }
+
+        if (spellMatch) {
+          var spellIndex = parseInt(spellMatch[1], 10) - 1;
+          data.spells.levels[spellIndex] = data.spells.levels[spellIndex] || {};
+          data.spells.levels[spellIndex].spellsRowIndex = i;
+          data.spells.levels[spellIndex].spells = c;
+        }
+      }
+
+      return data;
+    }
+
+    function buildForm(data) {
+      var root = document.getElementById("editor-form");
+      var html = "";
+
+      html += "<div class='section'><h2>1. Identity</h2>";
+      html += "<div class='identity-name-wrap'>" + simpleField("Name", "name", data, false) + "</div>";
+      html += "<div class='identity-class-wrap'>" + classEditorHtml(data) + "</div>";
+      html += "<div class='grid-2 identity-size-race'>";
+      html += simpleField("Size", "size", data, false, { selectOptions: DND_SIZE_OPTIONS });
+      html += simpleField("Race / Type", "race", data, false);
+      html += "</div></div>";
+
+      html += "<div class='section'><h2>2. Combat Stats</h2>";
+      html += "<div class='combat-core'>";
+      html += simpleField("AC", "ac", data, false, { type: "number", min: 0, step: 1, defaultValue: 10, stepper: true });
+      html += simpleField("HP", "hp", data, false, { type: "number", min: 0, step: 1, defaultValue: 10, stepper: true });
+      html += simpleField("Speed", "speed", data, false, { type: "number", min: 0, step: 1, defaultValue: 25, stepper: true });
+      html += "</div>";
+      html += speedVariantsEditorHtml(data);
+      html += "</div>";
+
+      html += "<div class='section'><h2>3. Defenses</h2>";
+      html += "<h3>Damage</h3>";
+      var damageMeta = getExpandableMeta(data.damage, "damage");
+      data.damage.forEach(function(row, i) {
+        var hiddenClass = damageMeta.visible[i] ? "" : " is-hidden";
+        html += "<div class='flag-row expand-row expand-damage" + hiddenClass + "'>";
+        html += "<label>Type" + selectInput("damage-" + i + "-value", DAMAGE_TYPE_OPTIONS, row.value) + "</label>";
+        html += "<label>Effect" + selectInput("damage-" + i + "-flag1", DAMAGE_FLAG1_OPTIONS, row.flag1) + "</label>";
+        html += "<label>Roll Mod" + selectInput("damage-" + i + "-flag2", DAMAGE_FLAG2_OPTIONS, row.flag2) + "</label>";
+        html += "</div>";
+      });
+      html += renderAddRowButton("damage", "Add Damage Row", damageMeta.hiddenCount);
+      html += "<h3>Conditions</h3>";
+      var conditionMeta = getExpandableMeta(data.conditions, "conditions");
+      data.conditions.forEach(function(row, i) {
+        var conditionHiddenClass = conditionMeta.visible[i] ? "" : " is-hidden";
+        var conditionFlagValue = row.flag1 || row.flag2 || "";
+        html += "<div class='condition-row expand-row expand-conditions" + conditionHiddenClass + "'>";
+        html += "<label>Type" + textInput("cond-" + i + "-value", row.value) + "</label>";
+        html += "<label>Effect" + selectInput("cond-" + i + "-flag", CONDITION_FLAG_OPTIONS, conditionFlagValue) + "</label>";
+        html += "</div>";
+      });
+      html += renderAddRowButton("conditions", "Add Condition Row", conditionMeta.hiddenCount);
+      html += "</div>";
+
+      html += "<div class='section'><h2>4. Attributes</h2>";
+      html += "<div class='attr-editor-grid'>";
+      STATS.forEach(function(stat) {
+        html += attributeEditorCard(stat, data);
+      });
+      html += "</div>";
+      html += "</div>";
+
+      html += "<div class='section'><h2>5. Skills &amp; Senses</h2>";
+      html += "<div class='grid-2'>";
+      html += simpleField("Proficiency Bonus", "proficiency bonus", data, false);
+      html += simpleField("Initiative", "initiative", data, false);
+      html += "</div><div class='grid-2'>";
+      html += simpleField("Passive Perception", "passive perception", data, false);
+      html += simpleField("Vision", "vision", data, false);
+      html += "</div>";
+      html += "<h3>Skills</h3>";
+      var skillMeta = getExpandableMeta(data.skills, "skills");
+      data.skills.forEach(function(skill, i) {
+        var skillHiddenClass = skillMeta.visible[i] ? "" : " is-hidden";
+        html += "<div class='skill-row expand-row expand-skills" + skillHiddenClass + "'>";
+        html += "<label>Skill" + selectInput("skill-" + i + "-name", SKILL_OPTIONS, skill.name) + "</label>";
+        html += "<label>Mod" + textInput("skill-" + i + "-mod", skill.modifier) + "</label>";
+        html += "<label>Adv" + selectInput("skill-" + i + "-flag", ADV_OPTIONS, skill.flag) + "</label>";
+        html += "</div>";
+      });
+      html += renderAddRowButton("skills", "Add Skill Row", skillMeta.hiddenCount);
+      html += "</div>";
+
+      html += "<div class='section'><h2>6. Actions</h2>";
+      var actionMeta = getExpandableMeta(data.actions, "actions");
+      data.actions.forEach(function(action, i) {
+        var actionHiddenClass = actionMeta.visible[i] ? "" : " is-hidden";
+        html += actionBlock("act", i, action, "expand-row expand-actions" + actionHiddenClass);
+      });
+      html += renderAddRowButton("actions", "Add Action Row", actionMeta.hiddenCount);
+      html += "</div>";
+
+      html += "<div class='section'><h2>7. Bonus Actions</h2>";
+      var bonusMeta = getExpandableMeta(data.bonusActions, "bonusActions");
+      data.bonusActions.forEach(function(action, i) {
+        var bonusHiddenClass = bonusMeta.visible[i] ? "" : " is-hidden";
+        html += actionBlock("bonus", i, action, "expand-row expand-bonusActions" + bonusHiddenClass);
+      });
+      html += renderAddRowButton("bonusActions", "Add Bonus Action Row", bonusMeta.hiddenCount);
+      html += "</div>";
+
+      html += "<div class='section'><h2>8. Reactions</h2>";
+      var reactionMeta = getExpandableMeta(data.reactions, "reactions");
+      data.reactions.forEach(function(action, i) {
+        var reactionHiddenClass = reactionMeta.visible[i] ? "" : " is-hidden";
+        html += actionBlock("react", i, action, "expand-row expand-reactions" + reactionHiddenClass);
+      });
+      html += renderAddRowButton("reactions", "Add Reaction Row", reactionMeta.hiddenCount);
+      html += "</div>";
+
+      html += "<div class='section'><h2>9. Spells</h2>";
+      if (data.spells.cantrips) {
+        html += "<label>Cantrips" + textInput("spell-cantrips", data.spells.cantrips.value) + "</label>";
+      }
+
+      for (var level = 0; level < data.spells.levels.length; level++) {
+        var spellLevel = data.spells.levels[level];
+        if (!spellLevel) continue;
+        var n = level + 1;
+        html += "<div class='spell-row'>";
+        html += "<label>L" + n + " Slots" + textInput("spell-slots-" + n, spellLevel.slots || "") + "</label>";
+        html += "<label>L" + n + " Spells" + textInput("spell-list-" + n, spellLevel.spells || "") + "</label>";
+        html += "</div>";
+      }
+      html += "</div>";
+
+      html += "<div class='section'><h2>10. Special</h2>";
+      var specialMeta = getExpandableMeta(data.special, "special");
+      data.special.forEach(function(item, i) {
+        var checked = ((item.newLine || "") + "").toUpperCase() === "TRUE" ? " checked" : "";
+        var specialHiddenClass = specialMeta.visible[i] ? "" : " is-hidden";
+        html += "<div class='action-row expand-row expand-special" + specialHiddenClass + "'>";
+        html += "<label class='checkbox-row'><input type='checkbox' id='special-" + i + "-newline'" + checked + "> Start on new line</label>";
+        html += richTextField("special-" + i + "-text", item.text || "");
+        html += "</div>";
+      });
+      html += renderAddRowButton("special", "Add Special Row", specialMeta.hiddenCount);
+      html += "</div>";
+
+      root.innerHTML = html;
+      initRichTextFields();
+      initClassEditor();
+      initNumberSteppers();
+      initSpeedVariantControls();
+      initExpandableSections();
+      refreshDerivedModifiers();
+      wireDirtyTracking(root);
+      updatePreview();
+    }
+
+    function simpleField(label, key, data, useRich, options) {
+      var opts = options || {};
+      var value = data.simple[key] ? data.simple[key].value : "";
+      var id = "field-" + key.replace(/\s+/g, "-");
+      var rich = useRich || !!RICH_SIMPLE_KEYS[key];
+      if (rich) {
+        return "<label>" + escHtml(label) + "</label>" + richTextField(id, value);
+      }
+
+      if (opts.type === "number") {
+        return "<label>" + escHtml(label) + numberInput(id, value, opts) + "</label>";
+      }
+
+      if (opts.selectOptions) {
+        return "<label>" + escHtml(label) + selectInput(id, opts.selectOptions, value) + "</label>";
+      }
+
+      if (opts.signed) {
+        return "<label>" + escHtml(label) + textInput(id, normalizeSignedValue(value, opts.defaultValue || "+0"), !!opts.readonly) + "</label>";
+      }
+
+      return "<label>" + escHtml(label) + textInput(id, value, !!opts.readonly) + "</label>";
+    }
+
+    function attributeEditorCard(stat, data) {
+      var titleMap = {
+        strength: "STR",
+        dexterity: "DEX",
+        constitution: "CON",
+        intelligence: "INT",
+        wisdom: "WIS",
+        charisma: "CHA"
+      };
+
+      var score = data.simple[stat] ? data.simple[stat].value : "";
+      var modValue = data.simple[stat + " mod"] ? data.simple[stat + " mod"].value : "";
+      var saveValue = data.simple[stat + " save"] ? data.simple[stat + " save"].value : "";
+      var saveFlag = "";
+      if (data.simple[stat + " save"]) {
+        saveFlag = data.simple[stat + " save"].flag1 || data.simple[stat + " save"].flag2 || "";
+      }
+
+      return "<div class='attr-editor-card'>"
+        + "<p class='attr-editor-title'>" + escHtml(titleMap[stat] || stat.toUpperCase()) + "</p>"
+        + simpleField("Score", stat, data, false, { type: "number", min: 0, step: 1, defaultValue: 10, stepper: true })
+        + "<label>Modifier<input type='text' id='field-" + stat + "-mod' value='" + escAttr(normalizeSignedValue(modValue, formatSignedNumber(dndModifier(normalizeNonNegativeInt(score, 10))))) + "' readonly></label>"
+        + "<div class='attr-save-row'>"
+        + "  <label>Save<input type='text' id='field-" + stat + "-save' value='" + escAttr(normalizeSignedValue(saveValue, "+0")) + "'></label>"
+        + "  <label>Save Flag" + selectInput("field-" + stat + "-save-flag", ADV_OPTIONS, saveFlag) + "</label>"
+        + "</div>"
+        + "</div>";
+    }
+
+    function speedVariantsEditorHtml(data) {
+      var variants = [];
+      var climb = data.simple["climb speed"] ? (data.simple["climb speed"].value || "") : "";
+      var swim = data.simple["swim speed"] ? (data.simple["swim speed"].value || "") : "";
+      var fly = data.simple["fly speed"] ? (data.simple["fly speed"].value || "") : "";
+
+      if ((climb + "").trim()) variants.push({ type: "Climb", value: climb });
+      if ((swim + "").trim()) variants.push({ type: "Swim", value: swim });
+      if ((fly + "").trim()) variants.push({ type: "Fly", value: fly });
+      while (variants.length < 2) variants.push({ type: "", value: "" });
+      variants = variants.slice(0, 2);
+
+      var typeOptions = ["", "Climb", "Swim", "Fly"];
+      var html = "<div class='speed-variants'>";
+      for (var i = 0; i < 2; i++) {
+        var n = i + 1;
+        html += "<div class='speed-variant-row'>"
+          + "<label>Speed Variant " + n + selectInput("speed-variant-" + n + "-type", typeOptions, variants[i].type || "") + "</label>"
+          + "<label>Value" + numberInput("speed-variant-" + n + "-value", variants[i].value || "", { min: 0, step: 1, allowBlank: true, stepper: true }) + "</label>"
+          + "</div>";
+      }
+      html += "</div>";
+      return html;
+    }
+
+    function classEditorHtml(data) {
+      var rawClass = data.simple["class"] ? data.simple["class"].value : "";
+      var entries = parseClassEntries(rawClass);
+      if (!entries.length) entries = [{ className: "", level: "" }];
+
+      var html = "<div class='class-editor'>"
+        + "<div class='class-header'><span class='class-label'>Class Name</span>"
+        + "</div>"
+        + "<div id='class-rows'>";
+
+      for (var i = 0; i < entries.length; i++) {
+        html += classRowHtml(i, entries[i], entries.length > 1);
+      }
+
+      html += "</div>"
+        + "<div class='class-footer'><button type='button' id='add-class-btn' class='btn class-add-btn'>+ Add Class</button></div>"
+        + "<input type='hidden' id='field-class' value='" + escAttr(rawClass || "") + "'>"
+        + "</div>";
+
+      return html;
+    }
+
+    function classRowHtml(index, entry, allowRemove) {
+      var removeBtn = allowRemove
+        ? "<button type='button' class='btn class-remove-btn' title='Remove class entry' aria-label='Remove class entry'>&minus;</button>"
+        : "<button type='button' class='btn class-remove-btn' style='visibility:hidden' tabindex='-1'>&minus;</button>";
+
+      return "<div class='class-row'>"
+        + "<label>Class Name<input type='text' class='class-name-input' value='" + escAttr((entry && entry.className) || "") + "'></label>"
+        + "<label class='class-level-label'>Level (Optional)" + numberInput("", (entry && entry.level) || "", { min: 1, step: 1, allowBlank: true, stepper: true, defaultValue: 1, extraClass: "class-level-input" }) + "</label>"
+        + removeBtn
+        + "</div>";
+    }
+
+    function parseClassEntries(rawClass) {
+      var value = (rawClass || "").trim();
+      if (!value) return [];
+
+      return value.split("/").map(function(part) {
+        var piece = part.trim();
+        if (!piece) return null;
+        var m = piece.match(/^(.*?)(?:\s+(\d+))?$/);
+        if (!m) return { className: piece, level: "" };
+        return {
+          className: (m[1] || "").trim(),
+          level: (m[2] || "").trim()
+        };
+      }).filter(function(x) { return !!x; });
+    }
+
+    function initClassEditor() {
+      var addBtn = document.getElementById("add-class-btn");
+      var rowsWrap = document.getElementById("class-rows");
+      if (!addBtn || !rowsWrap) return;
+
+      addBtn.addEventListener("click", function() {
+        var nextIndex = rowsWrap.querySelectorAll(".class-row").length;
+        rowsWrap.insertAdjacentHTML("beforeend", classRowHtml(nextIndex, { className: "", level: "" }, true));
+        syncClassEditorRows();
+        setDirty(true);
+        updatePreview();
+      });
+
+      syncClassEditorRows();
+    }
+
+    function syncClassEditorRows() {
+      var rowsWrap = document.getElementById("class-rows");
+      if (!rowsWrap) return;
+      var rows = rowsWrap.querySelectorAll(".class-row");
+
+      for (var i = 0; i < rows.length; i++) {
+        (function(rowEl) {
+          var removeBtn = rowEl.querySelector(".class-remove-btn");
+          var classNameInput = rowEl.querySelector(".class-name-input");
+          var levelInput = rowEl.querySelector(".class-level-input");
+
+          if (removeBtn) {
+            removeBtn.style.visibility = rows.length > 1 ? "visible" : "hidden";
+            removeBtn.onclick = function() {
+              if (rowsWrap.querySelectorAll(".class-row").length <= 1) return;
+              rowEl.remove();
+              syncClassEditorRows();
+              setDirty(true);
+              updatePreview();
+            };
+          }
+
+          if (classNameInput) {
+            classNameInput.oninput = function() {
+              syncClassHiddenField();
+            };
+            classNameInput.onchange = function() {
+              syncClassHiddenField();
+            };
+          }
+
+          if (levelInput) {
+            levelInput.oninput = function() {
+              if (levelInput.value !== "") {
+                levelInput.value = String(normalizeMinInt(levelInput.value, 1, 1));
+              }
+              syncClassHiddenField();
+            };
+            levelInput.onchange = function() {
+              if (levelInput.value !== "") {
+                levelInput.value = String(normalizeMinInt(levelInput.value, 1, 1));
+              }
+              syncClassHiddenField();
+            };
+          }
+        })(rows[i]);
+      }
+
+      syncClassHiddenField();
+    }
+
+    function syncClassHiddenField() {
+      var hidden = document.getElementById("field-class");
+      if (hidden) hidden.value = buildClassValueFromForm();
+      refreshDerivedModifiers();
+      setDirty(true);
+      updatePreview();
+    }
+
+    function buildClassValueFromForm() {
+      var rowsWrap = document.getElementById("class-rows");
+      if (!rowsWrap) return "";
+
+      var parts = [];
+      var rows = rowsWrap.querySelectorAll(".class-row");
+      for (var i = 0; i < rows.length; i++) {
+        var classNameEl = rows[i].querySelector(".class-name-input");
+        var levelEl = rows[i].querySelector(".class-level-input");
+        var className = classNameEl ? classNameEl.value.trim() : "";
+        var level = levelEl ? levelEl.value.trim() : "";
+        if (!className) continue;
+        parts.push(level ? (className + " " + normalizeMinInt(level, 1, 1)) : className);
+      }
+
+      return parts.join(" / ");
+    }
+
+    function textInput(id, value, readOnly) {
+      var ro = readOnly ? " readonly" : "";
+      return "<input type='text' id='" + id + "' value='" + escAttr(value || "") + "'" + ro + ">";
+    }
+
+    function numberInput(id, value, opts) {
+      var options = opts || {};
+      var minAttr = options.min !== undefined ? " min='" + escAttr(String(options.min)) + "'" : "";
+      var stepAttr = options.step !== undefined ? " step='" + escAttr(String(options.step)) + "'" : "";
+      var raw = ((value === undefined || value === null) ? "" : String(value)).trim();
+      var normalized = (options.allowBlank && raw === "")
+        ? ""
+        : String(normalizeMinInt(raw, options.defaultValue || 0, options.min !== undefined ? options.min : 0));
+      var idAttr = id ? " id='" + id + "'" : "";
+      var readonlyAttr = options.readonly ? " readonly" : "";
+      var disabledAttr = options.disabled ? " disabled" : "";
+      var extraClass = options.extraClass ? (" " + options.extraClass) : "";
+      var inputHtml = "<input type='number' class='num-input" + extraClass + "'" + idAttr
+        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + readonlyAttr + disabledAttr + ">";
+
+      if (!options.stepper) return inputHtml;
+
+      return "<div class='num-stepper' data-target='" + escAttr(id) + "'>"
+        + "<button type='button' class='step-btn step-down' aria-label='Decrease'>-</button>"
+        + inputHtml
+        + "<button type='button' class='step-btn step-up' aria-label='Increase'>+</button>"
+        + "</div>";
+    }
+
+    function initNumberSteppers() {
+      var steppers = document.querySelectorAll(".num-stepper");
+      for (var i = 0; i < steppers.length; i++) {
+        (function(stepper) {
+          var input = stepper.querySelector(".num-input");
+          var down = stepper.querySelector(".step-down");
+          var up = stepper.querySelector(".step-up");
+          if (!input || !down || !up) return;
+
+          var holdStartTimer = null;
+          var holdRepeatTimer = null;
+
+          function clearHoldTimers() {
+            if (holdStartTimer) {
+              clearTimeout(holdStartTimer);
+              holdStartTimer = null;
+            }
+            if (holdRepeatTimer) {
+              clearInterval(holdRepeatTimer);
+              holdRepeatTimer = null;
+            }
+          }
+
+          function adjust(delta) {
+            if (input.disabled || input.readOnly) return;
+            var min = normalizeNonNegativeInt(input.getAttribute("min"), 0);
+            var raw = (input.value || "").trim();
+            if (raw === "") {
+              input.value = String(min);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
+            var current = normalizeMinInt(raw, min, min);
+            var next = current + delta;
+            if (next < min) next = min;
+            input.value = String(next);
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+
+          function startHold(delta, ev) {
+            if (ev) ev.preventDefault();
+            clearHoldTimers();
+            adjust(delta);
+            holdStartTimer = setTimeout(function() {
+              holdRepeatTimer = setInterval(function() { adjust(delta); }, 90);
+            }, 320);
+          }
+
+          function stopHold() {
+            clearHoldTimers();
+          }
+
+          down.addEventListener("mousedown", function(e) { startHold(-1, e); });
+          up.addEventListener("mousedown", function(e) { startHold(1, e); });
+          down.addEventListener("touchstart", function(e) { startHold(-1, e); }, { passive: false });
+          up.addEventListener("touchstart", function(e) { startHold(1, e); }, { passive: false });
+
+          down.addEventListener("mouseup", stopHold);
+          up.addEventListener("mouseup", stopHold);
+          down.addEventListener("mouseleave", stopHold);
+          up.addEventListener("mouseleave", stopHold);
+          down.addEventListener("touchend", stopHold);
+          up.addEventListener("touchend", stopHold);
+          down.addEventListener("touchcancel", stopHold);
+          up.addEventListener("touchcancel", stopHold);
+          document.addEventListener("mouseup", stopHold);
+          document.addEventListener("touchend", stopHold);
+        })(steppers[i]);
+      }
+    }
+
+    function initSpeedVariantControls() {
+      for (var i = 1; i <= 2; i++) {
+        (function(idx) {
+          var typeEl = document.getElementById("speed-variant-" + idx + "-type");
+          var valueEl = document.getElementById("speed-variant-" + idx + "-value");
+          if (!typeEl || !valueEl) return;
+
+          function applyState(seedFromSpeed) {
+            var hasType = !!typeEl.value;
+            valueEl.disabled = !hasType;
+            if (!hasType) {
+              valueEl.value = "";
+              return;
+            }
+            if (seedFromSpeed && !valueEl.value.trim()) {
+              valueEl.value = String(getCoreStatValue("speed"));
+            }
+          }
+
+          applyState(false);
+          typeEl.addEventListener("change", function() {
+            applyState(true);
+          });
+        })(i);
+      }
+    }
+
+    function selectInput(id, options, selected) {
+      var actual = options.slice();
+      if (selected && actual.indexOf(selected) === -1) actual.unshift(selected);
+
+      var html = "<select id='" + id + "'>";
+      actual.forEach(function(opt) {
+        var selectedAttr = opt === selected ? " selected" : "";
+        var label = opt || "-";
+        html += "<option value='" + escAttr(opt) + "'" + selectedAttr + ">" + escHtml(label) + "</option>";
+      });
+      html += "</select>";
+      return html;
+    }
+
+    function actionBlock(prefix, index, action, extraClasses) {
+      var id = prefix + "-" + index;
+      var html = "<div class='action-row" + (extraClasses ? " " + extraClasses : "") + "'>";
+      html += "<div class='action-top'>";
+      html += "<label>Cost" + textInput(id + "-cost", action.cost || "") + "</label>";
+      html += "<label>Name" + textInput(id + "-name", action.name || "") + "</label>";
+      html += "</div>";
+      html += "<label>Description</label>";
+      html += richTextField(id + "-desc", action.description || "");
+      html += "</div>";
+      return html;
+    }
+
+    function hasAnyValue(values) {
+      for (var i = 0; i < values.length; i++) {
+        if (((values[i] || "") + "").trim() !== "") return true;
+      }
+      return false;
+    }
+
+    function isExpandableRowFilled(row, rowType) {
+      if (!row) return false;
+      if (rowType === "damage" || rowType === "conditions") {
+        return hasAnyValue([row.value, row.flag1, row.flag2]);
+      }
+      if (rowType === "skills") {
+        return hasAnyValue([row.name, row.modifier, row.flag]);
+      }
+      if (rowType === "actions" || rowType === "bonusActions" || rowType === "reactions") {
+        return hasAnyValue([row.cost, row.name, row.description]);
+      }
+      if (rowType === "special") {
+        return hasAnyValue([row.text, row.newLine]);
+      }
+      return false;
+    }
+
+    function getExpandableMeta(rows, rowType) {
+      var list = rows || [];
+      var visible = {};
+      if (!list.length) return { visible: visible, hiddenCount: 0 };
+
+      var filledIndexes = [];
+      var emptyIndexes = [];
+      for (var i = 0; i < list.length; i++) {
+        if (isExpandableRowFilled(list[i], rowType)) filledIndexes.push(i);
+        else emptyIndexes.push(i);
+      }
+
+      var targetVisible = Math.min(list.length, Math.max(1, filledIndexes.length + 1));
+      var visibleCount = 0;
+      for (var f = 0; f < filledIndexes.length; f++) {
+        visible[filledIndexes[f]] = true;
+        visibleCount++;
+      }
+      for (var e = 0; e < emptyIndexes.length && visibleCount < targetVisible; e++) {
+        visible[emptyIndexes[e]] = true;
+        visibleCount++;
+      }
+
+      return { visible: visible, hiddenCount: list.length - visibleCount };
+    }
+
+    function renderAddRowButton(sectionKey, label, hiddenCount) {
+      if (!hiddenCount) return "";
+      return "<div class='section-add-row'><button type='button' class='btn add-row-btn' data-section='" + escAttr(sectionKey) + "'>+ " + escHtml(label) + "</button></div>";
+    }
+
+    function initExpandableSections() {
+      var addButtons = document.querySelectorAll(".add-row-btn[data-section]");
+      for (var i = 0; i < addButtons.length; i++) {
+        (function(btn) {
+          btn.addEventListener("click", function() {
+            var key = btn.getAttribute("data-section");
+            if (!key) return;
+            var nextHidden = document.querySelector(".expand-row.expand-" + key + ".is-hidden");
+            if (!nextHidden) {
+              btn.disabled = true;
+              return;
+            }
+            nextHidden.classList.remove("is-hidden");
+            if (!document.querySelector(".expand-row.expand-" + key + ".is-hidden")) {
+              btn.disabled = true;
+            }
+          });
+        })(addButtons[i]);
+      }
+    }
+
+    function richTextField(id, value) {
+      return ""
+        + "<div class='rt-toolbar'>"
+        + "  <button type='button' data-cmd='bold' title='Bold'><b>B</b></button>"
+        + "  <button type='button' data-cmd='italic' title='Italic'><i>I</i></button>"
+        + "  <button type='button' data-cmd='underline' title='Underline'><u>U</u></button>"
+        + "  <button type='button' data-cmd='removeFormat' title='Clear'>X</button>"
+        + "</div>"
+        + "<div class='rt-field' contenteditable='true' id='" + id + "'>" + (value || "") + "</div>";
+    }
+
+    function initRichTextFields() {
+      var buttons = document.querySelectorAll(".rt-toolbar button[data-cmd]");
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("mousedown", function(e) {
+          e.preventDefault();
+          var cmd = this.getAttribute("data-cmd");
+          document.execCommand(cmd, false, null);
+          setDirty(true);
+          updatePreview();
+        });
+      }
+    }
+
+    function refreshDerivedModifiers() {
+      STATS.forEach(function(stat) {
+        var score = getScoreValue(stat);
+        var mod = formatSignedNumber(dndModifier(score));
+        var modEl = document.getElementById("field-" + stat + "-mod");
+        if (modEl) modEl.value = mod;
+
+        var saveEl = document.getElementById("field-" + stat + "-save");
+        if (saveEl) saveEl.value = normalizeSignedValue(saveEl.value, "+0");
+      });
+    }
+
+    function wireDirtyTracking(root) {
+      var fields = root.querySelectorAll("input, select, textarea, .rt-field");
+      for (var i = 0; i < fields.length; i++) {
+        fields[i].addEventListener("input", function() { refreshDerivedModifiers(); setDirty(true); updatePreview(); });
+        fields[i].addEventListener("change", function() { refreshDerivedModifiers(); setDirty(true); updatePreview(); });
+      }
+    }
+
+    function updatePreview() {
+      if (!state.parsedData) return;
+      var model = collectPreviewData();
+      renderFrontPreview(model);
+      renderBackPreview(model);
+    }
+
+    function buildDraftRowsFromForm() {
+      var rows = cloneRows(state.rawRows || []);
+      applyFormEditsToRows(rows);
+      return rows;
+    }
+
+    function applyFormEditsToRows(rows) {
+      if (!state.parsedData) return;
+
+      for (var i = 0; i < SIMPLE_KEYS.length; i++) {
+        var key = SIMPLE_KEYS[i];
+        if (!state.parsedData.simple[key]) continue;
+        var row = state.parsedData.simple[key].rowIndex;
+        var inputId = "field-" + key.replace(/\s+/g, "-");
+        if (RICH_SIMPLE_KEYS[key]) {
+          setRichCellOnRows(rows, row, 1, inputId);
+        } else {
+          rows[row][1] = getPersistedSimpleValue(key);
+        }
+      }
+
+      STATS.forEach(function(stat) {
+        var saveKey = stat + " save";
+        if (!state.parsedData.simple[saveKey]) return;
+        var row = state.parsedData.simple[saveKey].rowIndex;
+        rows[row][2] = getInputValue("field-" + stat + "-save-flag");
+        rows[row][3] = "";
+      });
+
+      state.parsedData.damage.forEach(function(item, idx) {
+        setCellOnRows(rows, item.rowIndex, 1, "damage-" + idx + "-value");
+        setCellOnRows(rows, item.rowIndex, 2, "damage-" + idx + "-flag1");
+        setCellOnRows(rows, item.rowIndex, 3, "damage-" + idx + "-flag2");
+      });
+
+      state.parsedData.conditions.forEach(function(item, idx) {
+        setCellOnRows(rows, item.rowIndex, 1, "cond-" + idx + "-value");
+        rows[item.rowIndex][2] = getInputValue("cond-" + idx + "-flag");
+        rows[item.rowIndex][3] = "";
+      });
+
+      state.parsedData.skills.forEach(function(item, idx) {
+        setCellOnRows(rows, item.rowIndex, 1, "skill-" + idx + "-name");
+        setCellOnRows(rows, item.rowIndex, 2, "skill-" + idx + "-mod");
+        setCellOnRows(rows, item.rowIndex, 3, "skill-" + idx + "-flag");
+      });
+
+      state.parsedData.actions.forEach(function(item, idx) {
+        setCellOnRows(rows, item.rowIndex, 1, "act-" + idx + "-cost");
+        setCellOnRows(rows, item.rowIndex, 2, "act-" + idx + "-name");
+        setRichCellOnRows(rows, item.rowIndex, 3, "act-" + idx + "-desc");
+      });
+
+      state.parsedData.bonusActions.forEach(function(item, idx) {
+        setCellOnRows(rows, item.rowIndex, 1, "bonus-" + idx + "-cost");
+        setCellOnRows(rows, item.rowIndex, 2, "bonus-" + idx + "-name");
+        setRichCellOnRows(rows, item.rowIndex, 3, "bonus-" + idx + "-desc");
+      });
+
+      state.parsedData.reactions.forEach(function(item, idx) {
+        setCellOnRows(rows, item.rowIndex, 1, "react-" + idx + "-cost");
+        setCellOnRows(rows, item.rowIndex, 2, "react-" + idx + "-name");
+        setRichCellOnRows(rows, item.rowIndex, 3, "react-" + idx + "-desc");
+      });
+
+      if (state.parsedData.spells.cantrips) {
+        setCellOnRows(rows, state.parsedData.spells.cantrips.rowIndex, 1, "spell-cantrips");
+      }
+
+      for (var level = 0; level < state.parsedData.spells.levels.length; level++) {
+        var s = state.parsedData.spells.levels[level];
+        if (!s) continue;
+        var levelNumber = level + 1;
+        if (s.slotsRowIndex !== undefined) setCellOnRows(rows, s.slotsRowIndex, 1, "spell-slots-" + levelNumber);
+        if (s.spellsRowIndex !== undefined) setCellOnRows(rows, s.spellsRowIndex, 1, "spell-list-" + levelNumber);
+      }
+
+      state.parsedData.special.forEach(function(item, idx) {
+        setRichCellOnRows(rows, item.rowIndex, 1, "special-" + idx + "-text");
+        var checkbox = document.getElementById("special-" + idx + "-newline");
+        rows[item.rowIndex][2] = checkbox && checkbox.checked ? "TRUE" : "FALSE";
+      });
+    }
+
+    function cloneRows(rows) {
+      return (rows || []).map(function(r) {
+        return [r[0] || "", r[1] || "", r[2] || "", r[3] || ""];
+      });
+    }
+
+    function collectPreviewData() {
+      var classValue = buildClassValueFromForm();
+      var nameValue = getSimpleValue("name") || "--";
+      var speedValues = getSpeedValuesFromVariants();
+      var data = {
+        name: nameValue,
+        classHtml: escHtml(classValue),
+        class: classValue,
+        size: getSimpleValue("size"),
+        race: getSimpleValue("race"),
+        ac: String(getCoreStatValue("ac")),
+        hp: String(getCoreStatValue("hp")),
+        speed: String(getCoreStatValue("speed")),
+        climb_speed: speedValues.climbSpeed,
+        swim_speed: speedValues.swimSpeed,
+        fly_speed: speedValues.flySpeed,
+        strength: String(getScoreValue("strength")),
+        strength_mod: formatSignedNumber(dndModifier(getScoreValue("strength"))),
+        strength_save: getSaveDisplayValue("strength"),
+        dexterity: String(getScoreValue("dexterity")),
+        dexterity_mod: formatSignedNumber(dndModifier(getScoreValue("dexterity"))),
+        dexterity_save: getSaveDisplayValue("dexterity"),
+        constitution: String(getScoreValue("constitution")),
+        constitution_mod: formatSignedNumber(dndModifier(getScoreValue("constitution"))),
+        constitution_save: getSaveDisplayValue("constitution"),
+        intelligence: String(getScoreValue("intelligence")),
+        intelligence_mod: formatSignedNumber(dndModifier(getScoreValue("intelligence"))),
+        intelligence_save: getSaveDisplayValue("intelligence"),
+        wisdom: String(getScoreValue("wisdom")),
+        wisdom_mod: formatSignedNumber(dndModifier(getScoreValue("wisdom"))),
+        wisdom_save: getSaveDisplayValue("wisdom"),
+        charisma: String(getScoreValue("charisma")),
+        charisma_mod: formatSignedNumber(dndModifier(getScoreValue("charisma"))),
+        charisma_save: getSaveDisplayValue("charisma"),
+        damage: "",
+        conditions: "",
+        skills: {
+          proficiency: getSimpleValue("proficiency bonus"),
+          initiative: getSimpleValue("initiative"),
+          passive_perception: getSimpleValue("passive perception"),
+          vision: getSimpleValue("vision"),
+          skills: ""
+        },
+        back: {
+          actions: "",
+          bonus_actions: "",
+          reactions: "",
+          special: ""
+        },
+        spells: {
+          spellsTitle: "",
+          spellsString: ""
+        }
+      };
+
+      var damageRows = [];
+      state.parsedData.damage.forEach(function(item, idx) {
+        var value = getInputValue("damage-" + idx + "-value");
+        if (!value) return;
+        damageRows.push(
+          escHtml(value) +
+          mapDefenseFlag(getInputValue("damage-" + idx + "-flag1")) +
+          mapDefenseFlag(getInputValue("damage-" + idx + "-flag2"))
+        );
+      });
+      data.damage = damageRows.length ? damageRows.join(", ") : "n/a";
+
+      var conditionRows = [];
+      state.parsedData.conditions.forEach(function(item, idx) {
+        var value = getInputValue("cond-" + idx + "-value");
+        if (!value) return;
+        var condFlag = getInputValue("cond-" + idx + "-flag");
+        conditionRows.push(
+          escHtml(value) +
+          mapDefenseFlag(condFlag)
+        );
+      });
+      data.conditions = conditionRows.length ? conditionRows.join(", ") : "n/a";
+
+      var skillRows = [];
+      state.parsedData.skills.forEach(function(item, idx) {
+        var skillName = getInputValue("skill-" + idx + "-name");
+        var mod = getInputValue("skill-" + idx + "-mod");
+        if (!skillName) return;
+        skillRows.push(
+          abbreviateSkill(skillName) + (mod ? (" " + escHtml(mod)) : "") + mapSkillFlag(getInputValue("skill-" + idx + "-flag"))
+        );
+      });
+      data.skills.skills = skillRows.join(", ");
+
+      data.back.actions = buildActionBlockForPreview("act", state.parsedData.actions.length);
+      data.back.bonus_actions = buildActionBlockForPreview("bonus", state.parsedData.bonusActions.length);
+      data.back.reactions = buildActionBlockForPreview("react", state.parsedData.reactions.length);
+      data.back.special = buildSpecialBlockForPreview();
+      data.spells = buildSpellsPreview();
+
+      return data;
+    }
+
+    function renderFrontPreview(cardData) {
+      var frontEl = document.getElementById("preview-front");
+      var subtitleBits = [];
+      if (cardData.classHtml) subtitleBits.push(cardData.classHtml);
+      var sizeRace = (cardData.size + " " + cardData.race).trim();
+      if (sizeRace) subtitleBits.push(escHtml(sizeRace));
+      var subtitle = subtitleBits.join(" &bull; ");
+
+      frontEl.innerHTML = ""
+        + "<div class='name'>" + escHtml(cardData.name) + "</div>"
+        + "<div class='subtitle'>" + subtitle + "</div>"
+        + "<div class='row'>"
+        + "  <div class='unified-card'><div class='label'>AC</div><div class='value-row'><div class='primary-value'>" + escHtml(cardData.ac) + "</div></div></div>"
+        + "  <div class='unified-card'><div class='label'>HP</div><div class='value-row'><div class='primary-value'>" + escHtml(cardData.hp) + "</div></div></div>"
+        + "  <div class='unified-card'><div class='label'>SPD</div><div class='value-row'><div class='primary-value'>" + escHtml(cardData.speed) + "</div>" + renderMovementStack(cardData) + "</div></div>"
+        + "</div>"
+        + "<div class='block-title'>Defenses</div>"
+        + "<div class='description-block'>"
+        + "  <div><strong>Damage: </strong>" + (cardData.damage || "") + "</div>"
+        + "  <div><strong>Conditions: </strong>" + (cardData.conditions || "") + "</div>"
+        + "</div>"
+        + "<div class='block-title'>Attributes</div>"
+        + renderAttributesRows(cardData)
+        + "<div class='block-title'>Skills &amp; Senses</div>"
+        + "<div class='text-line'><strong>Proficiency Bonus:</strong> " + escHtml(cardData.skills.proficiency) + " &bull; <strong>Initiative:</strong> " + escHtml(cardData.skills.initiative) + "</div>"
+        + "<div class='text-line'><strong>Passive Perception:</strong> " + escHtml(cardData.skills.passive_perception) + " &bull; <strong>Vision:</strong> " + escHtml(cardData.skills.vision) + "</div>"
+        + "<div class='text-line'><strong>Skills:</strong> " + (cardData.skills.skills || "") + "</div>";
+    }
+
+    function renderBackPreview(cardData) {
+      var backEl = document.getElementById("preview-back");
+      var html = "<div class='subtitle' style='text-align:center;'>Combat Actions</div>";
+
+      if (cardData.back.actions) {
+        html += "<div class='block-title'>Actions</div><div class='text-line'>" + cardData.back.actions + "</div>";
+      }
+      if (cardData.back.bonus_actions) {
+        html += "<div class='block-title'>Bonus Actions</div><div class='text-line'>" + cardData.back.bonus_actions + "</div>";
+      }
+      if (cardData.back.reactions) {
+        html += "<div class='block-title'>Reactions</div><div class='text-line'>" + cardData.back.reactions + "</div>";
+      }
+      if (cardData.spells && cardData.spells.spellsString) {
+        html += "<div class='block-title spells-line'><span class='spells-label'>Spells:</span><span class='spells-brackets'>" + cardData.spells.spellsTitle + "</span></div>";
+        html += "<div class='text-line'>" + cardData.spells.spellsString + "</div>";
+      }
+      if (cardData.back.special) {
+        html += "<div class='block-title'>Special</div><div class='text-line'>" + cardData.back.special + "</div>";
+      }
+
+      backEl.innerHTML = html;
+    }
+
+    function renderAttributesRows(cardData) {
+      return ""
+        + "<div class='row'>"
+        + renderAttributeCell("STR", cardData.strength, cardData.strength_mod, cardData.strength_save)
+        + renderAttributeCell("DEX", cardData.dexterity, cardData.dexterity_mod, cardData.dexterity_save)
+        + renderAttributeCell("CON", cardData.constitution, cardData.constitution_mod, cardData.constitution_save)
+        + "</div>"
+        + "<div class='row'>"
+        + renderAttributeCell("INT", cardData.intelligence, cardData.intelligence_mod, cardData.intelligence_save)
+        + renderAttributeCell("WIS", cardData.wisdom, cardData.wisdom_mod, cardData.wisdom_save)
+        + renderAttributeCell("CHA", cardData.charisma, cardData.charisma_mod, cardData.charisma_save)
+        + "</div>";
+    }
+
+    function renderAttributeCell(label, score, mod, save) {
+      var saveParts = splitSaveFlag(save);
+      return ""
+        + "<div class='unified-card'>"
+        + "  <div class='label'>" + label + " " + escHtml(score) + "</div>"
+        + "  <div class='value-row'>"
+        + "    <div class='primary-value'>" + escHtml(mod) + "</div>"
+        + "    <div class='secondary-stack'><div>" + saveParts.base + "sv" + saveParts.flag + "</div></div>"
+        + "  </div>"
+        + "</div>";
+    }
+
+    function renderMovementStack(cardData) {
+      if (!cardData.swim_speed && !cardData.fly_speed) return "";
+
+      var parts = [];
+      if (cardData.climb_speed) parts.push("<div>" + escHtml(cardData.climb_speed) + "c</div>");
+      if (cardData.swim_speed) parts.push("<div>" + escHtml(cardData.swim_speed) + "s</div>");
+      if (cardData.fly_speed) parts.push("<div>" + escHtml(cardData.fly_speed) + "f</div>");
+      return "<div class='secondary-stack'>" + parts.join("") + "</div>";
+    }
+
+    function splitSaveFlag(saveValue) {
+      var raw = saveValue || "";
+      var match = raw.match(/([\u25B2\u25BC])$/);
+      var base = raw.replace(/([\u25B2\u25BC])$/, "");
+      return { base: escHtml(base), flag: match ? match[1] : "" };
+    }
+
+    function buildActionBlockForPreview(prefix, count) {
+      var rows = [];
+      for (var i = 0; i < count; i++) {
+        var cost = getInputValue(prefix + "-" + i + "-cost");
+        var name = getInputValue(prefix + "-" + i + "-name");
+        var desc = getRichValue(prefix + "-" + i + "-desc");
+        if (!name) continue;
+        var line = (cost ? escHtml(cost) + " " : "") + "<strong>" + escHtml(name) + ":</strong>";
+        if (desc) line += " " + desc;
+        rows.push(line);
+      }
+      return rows.join("<br>");
+    }
+
+    function buildSpecialBlockForPreview() {
+      var rows = [];
+      for (var i = 0; i < state.parsedData.special.length; i++) {
+        var text = getRichValue("special-" + i + "-text");
+        if (!text) continue;
+        var newLine = document.getElementById("special-" + i + "-newline");
+        if (rows.length === 0 || (newLine && newLine.checked)) {
+          rows.push(text);
+        } else {
+          rows[rows.length - 1] += " • " + text;
+        }
+      }
+      return rows.join("<br>");
+    }
+
+    function buildSpellsPreview() {
+      var slots = new Array(9).fill("0");
+      var spells = new Array(9).fill("");
+
+      var cantripRaw = getInputValue("spell-cantrips");
+      for (var level = 1; level <= 9; level++) {
+        var slotEl = document.getElementById("spell-slots-" + level);
+        var spellEl = document.getElementById("spell-list-" + level);
+        if (slotEl) slots[level - 1] = slotEl.value.trim() || "0";
+        if (spellEl) spells[level - 1] = spellEl.value.trim();
+      }
+
+      function italicizeSpellList(raw) {
+        if (!raw) return "";
+        return raw.split(",").map(function(part) {
+          return "<i>" + escHtml(part.trim()) + "</i>";
+        }).join(", ");
+      }
+
+      var cantrips = italicizeSpellList(cantripRaw);
+      var spellLines = spells.map(italicizeSpellList);
+
+      var highestLevel = 0;
+      for (var i = 0; i < 9; i++) {
+        if (spellLines[i]) highestLevel = i + 1;
+      }
+
+      var groupsToShow = Math.ceil(Math.max(highestLevel, 1) / 3);
+      var groups = [slots.slice(0, 3), slots.slice(3, 6), slots.slice(6, 9)];
+      var bracketed = [];
+      for (var g = 0; g < groupsToShow; g++) {
+        bracketed.push("[" + groups[g].join("/") + "]");
+      }
+
+      var lines = [];
+      if (cantrips) lines.push("<strong>[C]</strong> " + cantrips);
+      for (var groupIndex = 0; groupIndex < 3; groupIndex++) {
+        var groupLabels = [];
+        for (var offset = 0; offset < 3; offset++) {
+          var idx = groupIndex * 3 + offset;
+          if (spellLines[idx]) {
+            groupLabels.push("<strong>[" + (idx + 1) + "]</strong> " + spellLines[idx]);
+          }
+        }
+        if (groupLabels.length) lines.push(groupLabels.join(" "));
+      }
+
+      return {
+        spellsTitle: bracketed.join(" "),
+        spellsString: lines.join("<br>")
+      };
+    }
+
+    function getSimpleValue(key) {
+      return getInputValue("field-" + key.replace(/\s+/g, "-"));
+    }
+
+    function getSpeedValuesFromVariants() {
+      var values = { climbSpeed: "", swimSpeed: "", flySpeed: "" };
+      for (var i = 1; i <= 2; i++) {
+        var type = getInputValue("speed-variant-" + i + "-type");
+        var raw = getInputValue("speed-variant-" + i + "-value");
+        if (!type || !raw) continue;
+        var normalized = String(normalizeNonNegativeInt(raw, getCoreStatValue("speed")));
+        if (type === "Climb") values.climbSpeed = normalized;
+        if (type === "Swim") values.swimSpeed = normalized;
+        if (type === "Fly") values.flySpeed = normalized;
+      }
+      return values;
+    }
+
+    function getCoreStatValue(key) {
+      var defaults = { ac: 10, hp: 10, speed: 25 };
+      return normalizeNonNegativeInt(getSimpleValue(key), defaults[key] || 0);
+    }
+
+    function getPersistedSimpleValue(key) {
+      if (key === "name") {
+        var safeName = getSimpleValue("name");
+        return safeName ? safeName : "--";
+      }
+      if (key === "class") {
+        return buildClassValueFromForm();
+      }
+      if (key === "ac" || key === "hp" || key === "speed") {
+        return String(getCoreStatValue(key));
+      }
+      if (key === "climb speed" || key === "swim speed" || key === "fly speed") {
+        var speedValues = getSpeedValuesFromVariants();
+        if (key === "climb speed") return speedValues.climbSpeed;
+        if (key === "swim speed") return speedValues.swimSpeed;
+        if (key === "fly speed") return speedValues.flySpeed;
+      }
+      if (STATS.indexOf(key) !== -1) {
+        return String(getScoreValue(key));
+      }
+      if (/\smod$/.test(key)) {
+        var statForMod = key.replace(/\smod$/, "");
+        return formatSignedNumber(dndModifier(getScoreValue(statForMod)));
+      }
+      if (/\ssave$/.test(key)) {
+        return normalizeSignedValue(getSimpleValue(key), "+0");
+      }
+      return getSimpleValue(key);
+    }
+
+    function getScoreValue(stat) {
+      return normalizeNonNegativeInt(getSimpleValue(stat), 10);
+    }
+
+    function getSaveDisplayValue(stat) {
+      var raw = getSimpleValue(stat + " save");
+      var base = normalizeSignedValue(raw, "+0");
+      var flag = getInputValue("field-" + stat + "-save-flag");
+      return base + mapSkillFlag(flag);
+    }
+
+    function dndModifier(score) {
+      return Math.floor((score - 10) / 2);
+    }
+
+    function formatSignedNumber(num) {
+      var n = parseInt(num, 10);
+      if (isNaN(n)) n = 0;
+      return n >= 0 ? "+" + n : String(n);
+    }
+
+    function normalizeSignedValue(raw, defaultValue) {
+      var fallback = defaultValue !== undefined ? defaultValue : "+0";
+      var parsed = parseInt(String(raw || "").replace(/[^\d+-]/g, ""), 10);
+      if (isNaN(parsed)) return fallback;
+      return formatSignedNumber(parsed);
+    }
+
+    function normalizeNonNegativeInt(raw, fallback) {
+      var n = parseInt(String(raw || "").replace(/[^\d-]/g, ""), 10);
+      if (isNaN(n)) return fallback;
+      if (n < 0) return 0;
+      return n;
+    }
+
+    function normalizeMinInt(raw, fallback, minValue) {
+      var min = minValue !== undefined ? minValue : 0;
+      var n = parseInt(String(raw || "").replace(/[^\d-]/g, ""), 10);
+      if (isNaN(n)) return fallback;
+      if (n < min) return min;
+      return n;
+    }
+
+    function getRichOrSimpleValue(key) {
+      var id = "field-" + key.replace(/\s+/g, "-");
+      return RICH_SIMPLE_KEYS[key] ? getRichValue(id) : getInputValue(id);
+    }
+
+    function getInputValue(id) {
+      var el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function getRichValue(id) {
+      var el = document.getElementById(id);
+      return el ? normalizeRichHtml(el.innerHTML) : "";
+    }
+
+    function mapDefenseFlag(flag) {
+      if (flag === "Resistance") return " <b>\u24C7</b>";
+      if (flag === "Vulnerability") return " <b>\u24CB</b>";
+      if (flag === "Immunity") return " <b>\u24D8</b>";
+      if (flag === "Advantage") return "\u25B2";
+      if (flag === "Disadvantage") return "\u25BC";
+      return "";
+    }
+
+    function mapSkillFlag(flag) {
+      if (flag === "Advantage") return "\u25B2";
+      if (flag === "Disadvantage") return "\u25BC";
+      return "";
+    }
+
+    function abbreviateSkill(skillName) {
+      if (SKILL_ABBREV[skillName]) return SKILL_ABBREV[skillName];
+      var plain = (skillName || "").trim();
+      if (!plain) return "";
+      return escHtml(plain.slice(0, 3));
+    }
+
+    function saveNpc() {
+      if (!state.currentSheetName || !state.rawRows || !state.parsedData) return;
+
+      var saveBtn = document.getElementById("save-btn");
+      saveBtn.disabled = true;
+      setStatus("Saving " + state.currentSheetName + "...", "");
+
+      try {
+        var draftRows = buildDraftRowsFromForm();
+        var cdeRows = draftRows.map(function(r) {
+          return [r[1] || "", r[2] || "", r[3] || ""];
+        });
+
+        google.script.run
+          .withSuccessHandler(function() {
+            state.rawRows = draftRows;
+            saveBtn.disabled = false;
+            setDirty(false);
+            updatePreview();
+          })
+          .withFailureHandler(function(err) {
+            saveBtn.disabled = false;
+            setStatus("Save failed: " + (err && err.message ? err.message : err), "error");
+          })
+          .webApp_saveData(state.currentSheetName, cdeRows);
+      } catch (err) {
+        saveBtn.disabled = false;
+        setStatus("Save failed: " + (err && err.message ? err.message : err), "error");
+      }
+    }
+
+    function printCurrentNpc() {
+      if (!state.currentSheetName || !state.parsedData) return;
+      var cardData = collectPreviewData();
+      var printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        setStatus("Pop-up blocked. Allow pop-ups to print.", "warn");
+        return;
+      }
+      printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;'>Rendering print view...</p>");
+
+      google.script.run
+        .withSuccessHandler(function(html) {
+          printWindow.document.open();
+          printWindow.document.write(html || "");
+          printWindow.document.close();
+        })
+        .withFailureHandler(function(err) {
+          printWindow.document.open();
+          printWindow.document.write("<p style='font-family:Arial,sans-serif;padding:16px;color:#b00020;'>Print render failed: "
+            + escHtml((err && err.message ? err.message : err) + "") + "</p>");
+          printWindow.document.close();
+        })
+        .webApp_renderPrintHtmlFromCardData(cardData);
+    }
+
+    function setCellOnRows(rows, rowIndex, colIndex, inputId) {
+      var el = document.getElementById(inputId);
+      if (!el) return;
+      rows[rowIndex][colIndex] = el.value;
+    }
+
+    function setRichCellOnRows(rows, rowIndex, colIndex, fieldId) {
+      var el = document.getElementById(fieldId);
+      if (!el) return;
+      rows[rowIndex][colIndex] = normalizeRichHtml(el.innerHTML);
+    }
+
+    function normalizeRichHtml(html) {
+      return (html || "")
+        .replace(/<div><br><\/div>/gi, "<br>")
+        .replace(/<\/div><div>/gi, "<br>")
+        .replace(/<div>/gi, "")
+        .replace(/<\/div>/gi, "")
+        .replace(/&nbsp;/g, " ")
+        .trim();
+    }
+
+    function escHtml(str) {
+      return (str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function escAttr(str) {
+      return (str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
+

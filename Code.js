@@ -29,26 +29,41 @@ function onOpen() {
     .createMenu("Combat Tools")
     .addItem("View Stat Card", "openStatCardModal")
     .addItem("Show Print Selector", "showPrintSelector")
+    .addItem("Open NPC Editor", "openNpcEditor")  // WEB APP (parallel build)
     .addToUi();
 }
 
 /**
- * Web app entry point. Renders PrintCards.html for the requested sheets.
+ * Web app entry point. Serves the standalone editor by default and print output
+ * when print params are provided.
  *
- * URL parameter:
- *   ?sheets=SheetName1,SheetName2,...  (comma-separated NPC sheet names)
- *   If omitted, falls back to all printable sheets (any sheet with a non-empty C2).
+ * Routing:
+ *   - Default (no params): serves App.html (standalone NPC editor)
+ *   - Print mode: provide ?sheets=SheetName1,SheetName2,... OR ?mode=print
+ *   - In print mode with no sheets specified, falls back to all printable sheets
+ *     (any sheet with a non-empty C2).
  *
  * @param {GoogleAppsScript.Events.DoGet} e - The request event object.
  * @returns {GoogleAppsScript.HTML.HtmlOutput}
  */
 function doGet(e) {
+  var params = (e && e.parameter) ? e.parameter : {};
+  var isPrintMode = params.mode === 'print' || !!params.sheets;
+
+  // Standalone web app URL launches editor by default.
+  if (!isPrintMode) {
+    return HtmlService.createTemplateFromFile('App')
+      .evaluate()
+      .setTitle('PPQ NPC Editor')
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  }
+
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var template = HtmlService.createTemplateFromFile('PrintCards');
 
   var sheetNames = [];
-  if (e.parameter.sheets) {
-    sheetNames = e.parameter.sheets.split(',');
+  if (params.sheets) {
+    sheetNames = params.sheets.split(',');
   } else {
     sheetNames = getPrintableSheetNames();
   }
@@ -703,6 +718,149 @@ function buildSpellsData(sheet) {
   };
 }
 
+// ============================================================
+// WEB APP — NPC Editor
+// Parallel build: these functions support App.html.
+// They do NOT modify any existing functionality above.
+// Functions prefixed with webApp_ to avoid naming conflicts.
+// FUTURE DEPRECATION: When the web app is complete, the modal-based
+// preview (CombinedView.html) and PrintSelector.html may be retired.
+// ============================================================
 
+/**
+ * Returns editable NPC sheet names for the web app library view.
+ * Uses the NPC template signature: cell B2 contains "Name".
+ */
+function webApp_getSheetNames() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  return ss.getSheets()
+    .filter(function(sheet) {
+      return (sheet.getRange("B2").getDisplayValue() || "").trim().toLowerCase() === "name";
+    })
+    .map(function(sheet) {
+      return sheet.getName();
+    });
+}
+
+/**
+ * Creates a blank NPC draft sheet by copying the NPC template structure
+ * from an existing NPC sheet, then clearing editable data columns C:E.
+ *
+ * @param {string} requestedName Desired sheet name from the web app.
+ * @returns {{ sheetName: string }}
+ */
+function webApp_createBlankNpcSheet(requestedName) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var templateNames = webApp_getSheetNames();
+  if (!templateNames.length) {
+    throw new Error('No NPC template-like sheet found (expected B2 = "Name").');
+  }
+
+  var templateSheet = ss.getSheetByName(templateNames[0]);
+  var baseName = (requestedName || "New NPC").trim();
+  if (!baseName) baseName = "New NPC";
+
+  // Google Sheets forbids these characters in tab names.
+  baseName = baseName.replace(/[\\\/\?\*\[\]\:]/g, " ").replace(/\s+/g, " ").trim();
+  if (!baseName) baseName = "New NPC";
+
+  var sheetName = webApp_makeUniqueSheetName_(ss, baseName);
+  var newSheet = templateSheet.copyTo(ss).setName(sheetName);
+
+  var lastRow = newSheet.getLastRow();
+  if (lastRow >= 2) {
+    // Keep column B labels/structure; clear only editable values.
+    newSheet.getRange(2, 3, lastRow - 1, 3).clearContent();
+  }
+
+  return { sheetName: sheetName };
+}
+
+/**
+ * Returns a unique sheet name by appending a numeric suffix if needed.
+ * @param {GoogleAppsScript.Spreadsheet.Spreadsheet} ss
+ * @param {string} baseName
+ * @returns {string}
+ */
+function webApp_makeUniqueSheetName_(ss, baseName) {
+  var candidate = baseName;
+  var counter = 2;
+  while (ss.getSheetByName(candidate)) {
+    candidate = baseName + " " + counter;
+    counter++;
+  }
+  return candidate;
+}
+
+/**
+ * Loads raw B:E data from a sheet for the web app editor form.
+ * @param {string} sheetName
+ * @returns {{ rows: string[][], sheetName: string }|null}
+ */
+function webApp_getRawData(sheetName) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return null;
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return { rows: [], sheetName: sheetName };
+  return {
+    rows: sheet.getRange(2, 2, lastRow - 1, 4).getDisplayValues(),
+    sheetName: sheetName
+  };
+}
+
+/**
+ * Saves edited data back to columns C:E of the named sheet.
+ * Column B (category labels) is never modified.
+ * @param {string} sheetName
+ * @param {string[][]} cdeRows - 2D array of [C, D, E] per row from row 2.
+ */
+function webApp_saveData(sheetName, cdeRows) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) throw new Error('Sheet not found: ' + sheetName);
+  sheet.getRange(2, 3, cdeRows.length, 3).setValues(cdeRows);
+}
+
+/**
+ * Loads processed card data for live preview in the web app.
+ * @param {string} sheetName
+ * @returns {Object|null}
+ */
+function webApp_getCardData(sheetName) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return null;
+  return getCardDataFromSheet(sheet);
+}
+
+/**
+ * Renders print HTML for a single NPC from web-app card data using the same
+ * PrintCards.html template used by normal print flow.
+ *
+ * @param {Object} cardData
+ * @returns {string}
+ */
+function webApp_renderPrintHtmlFromCardData(cardData) {
+  var template = HtmlService.createTemplateFromFile('PrintCards');
+  template.cardsData = [cardData || {}];
+  return template.evaluate().getContent();
+}
+
+/**
+ * Opens the NPC Editor web app in a new browser tab.
+ * Triggered from Combat Tools > Open NPC Editor.
+ */
+function openNpcEditor() {
+  var url = ScriptApp.getService().getUrl();
+  var html = HtmlService.createHtmlOutput(
+    '<script>window.open("' + url + '", "_blank");google.script.host.close();</script>'
+  );
+  SpreadsheetApp.getUi().showModalDialog(html, 'Opening NPC Editor...');
+}
+
+// ============================================================
+// END WEB APP FUNCTIONS
+// ============================================================
 
 
