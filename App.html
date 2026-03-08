@@ -19,7 +19,18 @@
       --danger: #ba1f33;
       --shadow: 0 10px 30px rgba(20, 31, 56, 0.08);
       --radius: 12px;
+      --radius-sm: 8px;
       --field-ch: 30ch;
+      --space-1: 4px;
+      --space-2: 6px;
+      --space-3: 8px;
+      --space-4: 10px;
+      --space-5: 12px;
+      --space-6: 16px;
+      --field-h: 32px;
+      --field-pad-x: 8px;
+      --surface-soft: #fbfdff;
+      --row-action-w: 68px;
     }
 
     * { box-sizing: border-box; }
@@ -203,15 +214,15 @@
     .editor-main {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 320px;
-      gap: 10px;
+      gap: var(--space-4);
       align-items: start;
-      padding: 10px;
+      padding: var(--space-4);
     }
 
     .editor-form {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: var(--space-4);
       min-width: 0;
     }
 
@@ -221,7 +232,7 @@
       border: 1px solid var(--line);
       border-radius: 10px;
       background: #f8fbff;
-      padding: 8px;
+      padding: var(--space-3);
     }
 
     .preview-title {
@@ -385,18 +396,22 @@
     .section {
       border: 1px solid var(--line);
       border-radius: 10px;
-      padding: 10px;
+      padding: var(--space-4);
       background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
     }
 
     .section h2 {
-      margin: 0 0 8px;
+      margin: 0;
       font-size: 14px;
       color: #163b63;
+      letter-spacing: 0.15px;
     }
 
     .section h3 {
-      margin: 8px 0 4px;
+      margin: var(--space-2) 0 var(--space-1);
       font-size: 11px;
       font-weight: 600;
       color: #546173;
@@ -406,17 +421,33 @@
       padding-bottom: 3px;
     }
 
-    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-    .grid-stat { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; }
-    .identity-name-wrap { max-width: 34ch; }
-    .identity-class-wrap { max-width: 64ch; }
-    .identity-class-wrap { margin-top: 8px; }
-    .identity-size-race { max-width: 64ch; grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+    .grid-stat { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: var(--space-3); }
+    .identity-name-wrap { max-width: 30ch; }
+    .identity-name-wrap > label {
+      font-size: 10px;
+      color: #304b6b;
+      letter-spacing: 0.45px;
+    }
+    .identity-name-wrap > label > input[type="text"] {
+      width: min(100%, 27ch);
+      min-height: 36px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #173657;
+      letter-spacing: 0.2px;
+    }
+    .identity-class-wrap { max-width: 100%; margin-top: var(--space-1); }
+    .identity-size-race {
+      max-width: 38ch;
+      grid-template-columns: 132px minmax(0, 1fr);
+      align-items: end;
+    }
     .combat-core {
       display: grid;
-      grid-template-columns: repeat(3, minmax(112px, 128px));
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(108px, 120px));
+      gap: var(--space-2);
       align-items: start;
       justify-content: start;
     }
@@ -424,87 +455,286 @@
       align-items: center;
     }
     .speed-variants {
-      margin-top: 6px;
-      display: grid;
-      grid-template-columns: minmax(260px, 430px);
-      gap: 8px;
-      align-items: start;
+      margin-top: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 100%;
+      width: max-content;
+      padding-left: 0;
+      border-left: 0;
     }
-    .speed-variant-row {
+    .movement-kicker {
+      margin: 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #627287;
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+    .movement-list-head,
+    .movement-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 6px;
+      grid-template-columns: 132px 90px 56px;
+      gap: var(--space-2);
+      align-items: center;
+      width: max-content;
+    }
+    .movement-list-head {
+      padding: 4px 6px;
+      background: #f2f6fd;
+      border: 1px solid #dbe5f4;
+      border-bottom: 1px solid #dbe5f4;
+      border-radius: 7px 7px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .movement-list-head > div:nth-child(2),
+    .movement-list-head > div:nth-child(3) {
+      text-align: center;
+    }
+    .movement-row {
+      border: 0;
+      border-bottom: 1px solid #edf2fa;
+      border-radius: 0;
+      padding: 3px 6px;
+    }
+    .movement-row select,
+    .movement-row .num-stepper {
+      width: 100%;
+      max-width: 100%;
+    }
+    .movement-row .num-stepper {
+      max-width: 90px;
+    }
+    .movement-row .row-remove-btn {
+      justify-self: center;
+    }
+    .movement-list + .section-add-row {
+      margin-top: var(--space-2);
+    }
+
+    .repeat-row {
+      border: 1px solid #e5ebf5;
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      padding: var(--space-2);
+    }
+
+    .repeat-inline {
+      display: grid;
       align-items: end;
+      justify-content: stretch;
+      width: 100%;
+      margin-bottom: var(--space-2);
     }
 
     .flag-row {
-      display: grid;
-      grid-template-columns: minmax(22ch, 30ch) minmax(16ch, 20ch) minmax(14ch, 18ch);
-      gap: 10px;
-      margin-bottom: 4px;
-      justify-content: start;
+      grid-template-columns: minmax(20ch, 1.7fr) minmax(14ch, 1fr) minmax(13ch, 1fr) var(--row-action-w);
+      gap: var(--space-3);
     }
     .condition-row {
-      display: grid;
-      grid-template-columns: minmax(22ch, 30ch) minmax(16ch, 20ch);
-      gap: 10px;
-      margin-bottom: 4px;
-      justify-content: start;
+      grid-template-columns: minmax(20ch, 1.8fr) minmax(14ch, 1fr) var(--row-action-w);
+      gap: var(--space-3);
     }
-    .skill-row { display: grid; grid-template-columns: 2fr 100px 1fr; gap: 5px; margin-bottom: 4px; }
-    .spell-row { display: grid; grid-template-columns: 90px 1fr; gap: 6px; margin-bottom: 4px; }
-    .attr-editor-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
+    .skill-row {
+      grid-template-columns: minmax(18ch, 1.5fr) minmax(9ch, 0.75fr) minmax(12ch, 1fr) var(--row-action-w);
+      gap: var(--space-3);
     }
-    .attr-editor-card {
-      border: 1px solid #e8edf6;
-      border-radius: 8px;
-      background: #fbfdff;
-      padding: 6px;
+    .spell-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+    .defense-subsection {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 0;
     }
-    .attr-editor-title {
-      margin: 0;
-      font-size: 11px;
-      color: #1e3f63;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
+    .defense-subsection > .section-add-row {
+      margin-top: var(--space-2);
     }
-    .attr-save-row {
+    .defense-list-head,
+    .damage-row,
+    .condition-rule-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 110px;
-      gap: 5px;
+      gap: var(--space-2);
+      align-items: center;
+      width: max-content;
+    }
+    .damage-list-head,
+    .damage-row {
+      grid-template-columns: 154px 128px 112px 56px;
+    }
+    .condition-list-head,
+    .condition-rule-row {
+      grid-template-columns: 154px 128px 56px;
+    }
+    .defense-list-head {
+      padding: 4px 6px;
+      background: #f2f6fd;
+      border: 1px solid #dbe5f4;
+      border-bottom: 1px solid #dbe5f4;
+      border-radius: 7px 7px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .damage-list-head > div:last-child,
+    .condition-list-head > div:last-child {
+      text-align: center;
+    }
+    .damage-row,
+    .condition-rule-row {
+      border: 0;
+      border-bottom: 1px solid #edf2fa;
+      border-radius: 0;
+      padding: 3px 6px;
+    }
+    .damage-row select,
+    .condition-rule-row select {
+      width: 100%;
+      max-width: 100%;
+    }
+    .damage-row .row-remove-btn,
+    .condition-rule-row .row-remove-btn {
+      justify-self: center;
+    }
+
+    .attr-matrix {
+      border: 1px solid #dbe5f4;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #fff;
+      width: max-content;
+      max-width: 100%;
+    }
+    .attr-matrix-head,
+    .attr-matrix-row {
+      display: grid;
+      grid-template-columns: 52px 90px 62px 90px 170px;
+      gap: var(--space-2);
+      align-items: center;
+      padding: 5px 8px;
+    }
+    .attr-matrix-head {
+      background: #f2f6fd;
+      border-bottom: 1px solid #dbe5f4;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .attr-matrix-row {
+      border-bottom: 1px solid #edf2fa;
+    }
+    .attr-matrix-row:nth-child(even) {
+      background: #fbfdff;
+    }
+    .attr-matrix-row:last-child {
+      border-bottom: 0;
+    }
+    .attr-matrix-head > div:nth-child(2),
+    .attr-matrix-head > div:nth-child(3),
+    .attr-matrix-head > div:nth-child(4),
+    .attr-matrix-head > div:nth-child(5) {
+      text-align: center;
+    }
+    .attr-stat-cell {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #1f3f63;
+    }
+    .attr-matrix-row .num-input,
+    .attr-matrix-row input[type="text"],
+    .attr-matrix-row select {
+      width: auto;
+    }
+    .attr-matrix-row .num-input,
+    .attr-matrix-row .attr-save-input { text-align: center; }
+    .attr-matrix-row > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .attr-matrix-row > div:first-child {
+      justify-content: flex-start;
+    }
+    .attr-matrix-row > div:nth-child(5) select {
+      width: 16.8ch;
+      max-width: 100%;
+    }
+    .attr-score-input,
+    .attr-save-input {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.15px;
+    }
+    .attr-matrix-row .num-stepper {
+      width: 100%;
+      max-width: 90px;
+      min-width: 0;
+    }
+    .attr-derived-text {
+      color: #5a6778;
+      font-weight: 600;
+      width: 62px;
+      min-width: 62px;
+      max-width: 62px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.1px;
+      line-height: 1.2;
     }
     .expand-row.is-hidden { display: none; }
     .section-add-row {
-      margin-top: 2px;
+      margin-top: var(--space-1);
       display: flex;
       justify-content: flex-start;
     }
 
     .add-row-btn {
-      padding: 4px 8px;
+      min-height: 26px;
+      padding: 0 9px;
       border-radius: 7px;
       font-size: 11px;
     }
     .action-row {
-      border: 1px solid #e8edf6;
-      border-radius: 8px;
-      background: #fafcff;
-      padding: 6px;
-      margin-bottom: 6px;
+      margin-bottom: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
     }
-    .action-top { display: grid; grid-template-columns: 120px 1fr; gap: 5px; margin-bottom: 4px; }
+    .action-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--row-action-w);
+      gap: var(--space-3);
+      align-items: end;
+    }
+    .action-top {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: var(--space-3);
+      align-items: end;
+      margin: 0;
+    }
 
     label {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: var(--space-1);
       font-size: 11px;
       color: #4d596b;
       text-transform: uppercase;
@@ -518,8 +748,9 @@
     select,
     textarea {
       border: 1px solid #cfd7e6;
-      border-radius: 7px;
-      padding: 5px 7px;
+      border-radius: var(--radius-sm);
+      min-height: var(--field-h);
+      padding: 5px var(--field-pad-x);
       font-size: 14px;
       color: var(--ink);
       background: #fff;
@@ -527,8 +758,13 @@
     }
 
     label > input[type="text"],
-    label > select {
+    label > select,
+    label > textarea {
       width: min(100%, var(--field-ch));
+    }
+
+    input[type="number"] {
+      width: min(100%, 11ch);
     }
 
     input[type="text"]:focus,
@@ -542,89 +778,192 @@
     }
 
     .class-editor {
+      --class-col-name-w: 188px;
+      --class-col-level-w: 90px;
+      --class-col-remove-w: 56px;
       border: none;
       background: transparent;
       padding: 0;
-      margin-top: 4px;
-      max-width: 64ch;
+      margin-top: var(--space-1);
+      max-width: 100%;
+    }
+
+    .row-editor-list {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      width: max-content;
+      max-width: 100%;
+      border: 1px solid #dbe5f4;
+      border-top: 0;
+      border-radius: 0 0 7px 7px;
+      overflow: hidden;
     }
 
     .class-header {
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 8px;
-      margin-bottom: 4px;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
     }
 
     .class-label {
       font-size: 11px;
-      color: #4d596b;
+      color: #4a5e78;
       text-transform: uppercase;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.45px;
       font-weight: 700;
     }
 
     .class-add-btn,
     .class-remove-btn {
-      padding: 5px 9px;
+      padding: 0 8px;
+      min-height: 24px;
       border-radius: 7px;
-      font-size: 12px;
+      font-size: 11px;
     }
 
-    .class-remove-btn {
-      width: 30px;
-      height: 30px;
+    .class-remove-btn,
+    .row-remove-btn {
+      width: 24px;
+      min-width: 24px;
+      max-width: 24px;
+      height: 24px;
+      max-height: 24px;
+      min-height: 24px;
       padding: 0;
-      font-size: 18px;
+      font-size: 16px;
+      font-weight: 700;
       line-height: 1;
-      margin-left: 6px;
+      border-color: #dde5f1;
+      background: #fff;
+      color: #667487;
       text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .class-remove-btn:hover,
+    .row-remove-btn:hover {
+      background: #f5f8fc;
+      color: #445973;
     }
 
     .class-footer {
-      margin-top: 6px;
-      margin-bottom: 10px;
+      margin-top: var(--space-1);
+      margin-bottom: var(--space-2);
       display: flex;
       justify-content: flex-start;
+    }
+    .class-footer .class-add-btn {
+      min-height: 24px;
     }
 
     .class-row {
       display: grid;
-      grid-template-columns: minmax(26ch, 32ch) 120px 36px;
-      gap: 10px;
-      align-items: end;
-      margin-bottom: 4px;
+      grid-template-columns: var(--class-col-name-w) var(--class-col-level-w) var(--class-col-remove-w);
+      gap: var(--space-2);
+      align-items: center;
+      width: max-content;
+      border: 0;
+      border-bottom: 1px solid #edf2fa;
+      border-radius: 0;
+      padding: 3px 6px;
     }
 
-    .class-level-label {
+    .row-editor-list .row-editor-row:nth-child(odd) {
+      background: #fbfdff;
+    }
+    .row-editor-list .row-editor-row:nth-child(even) {
+      background: #ffffff;
+    }
+    .row-editor-list .row-editor-row:last-child {
+      border-bottom: 0;
+    }
+
+    .class-list-head {
+      display: grid;
+      grid-template-columns: var(--class-col-name-w) var(--class-col-level-w) var(--class-col-remove-w);
+      gap: var(--space-2);
       align-items: center;
+      width: max-content;
+      max-width: 100%;
+      padding: 4px 6px;
+      background: #f2f6fd;
+      border: 1px solid #dbe5f4;
+      border-bottom: 1px solid #dbe5f4;
+      border-radius: 7px 7px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .class-list-head > div:nth-child(2),
+    .class-list-head > div:nth-child(3) {
       text-align: center;
     }
 
-    .class-row:last-child {
-      margin-bottom: 0;
+    .class-row .class-name-input,
+    .class-row .class-level-input {
+      width: 100%;
+    }
+    .class-row .class-name-input {
+      max-width: 100%;
+    }
+    .class-row .class-level-input {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .num-input {
+      -moz-appearance: textfield;
+    }
+
+    .num-input::-webkit-outer-spin-button,
+    .num-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
 
     .num-stepper {
-      display: inline-flex;
+      display: inline-grid;
+      grid-template-columns: 28px minmax(0, 1fr) 28px;
       align-items: center;
-      gap: 3px;
       width: 116px;
+      height: var(--field-h);
+      border: 1px solid #b9c7dc;
+      border-radius: var(--radius-sm);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .num-stepper:focus-within {
+      border-color: #3f7ec0;
+      box-shadow: 0 0 0 3px rgba(63, 126, 192, 0.12);
     }
 
     .num-stepper .step-btn {
-      width: 30px;
-      height: 30px;
+      width: 100%;
+      height: 100%;
       padding: 0;
-      border: 1px solid #b9c7dc;
-      border-radius: 7px;
+      border: 0;
       background: #eef3fb;
       color: #1f4670;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1;
       cursor: pointer;
       user-select: none;
+    }
+
+    .num-stepper .step-down {
+      border-right: 1px solid #cdd8ea;
+    }
+
+    .num-stepper .step-up {
+      border-left: 1px solid #cdd8ea;
     }
 
     .num-stepper .step-btn:hover {
@@ -632,13 +971,19 @@
     }
 
     .num-stepper .num-input {
-      flex: 1;
-      width: 52px;
-      height: 30px;
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      border: 0;
+      border-radius: 0;
       text-align: center;
-      border-radius: 7px;
-      padding: 3px 5px;
+      padding: 0 6px;
       -moz-appearance: textfield;
+    }
+
+    .num-stepper .num-input:focus {
+      box-shadow: none;
+      outline: none;
     }
 
     .num-stepper .num-input::-webkit-outer-spin-button,
@@ -647,13 +992,75 @@
       margin: 0;
     }
 
+    .row-action-btn {
+      width: 100%;
+      min-height: 28px;
+      padding: 0 8px;
+      border-radius: 7px;
+      font-size: 11px;
+      align-self: end;
+    }
+    .row-head-inline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .row-head-inline .checkbox-row {
+      margin: 0;
+    }
+
+    .row-head-inline .row-action-btn {
+      width: auto;
+      min-width: var(--row-action-w);
+    }
+
+    .class-row .class-remove-btn {
+      justify-self: center;
+      align-self: center;
+    }
+
+    .grid-2 > label,
+    .grid-3 > label,
+    .speed-variant-row > label,
+    .spell-row > label,
+    .repeat-inline > label,
+    .action-top > label {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .grid-2 > label > input[type="text"],
+    .grid-2 > label > select,
+    .grid-3 > label > input[type="text"],
+    .grid-3 > label > select,
+    .identity-size-race > label > input[type="text"],
+    .identity-size-race > label > select,
+    .speed-variant-row > label > select,
+    .spell-row > label > input[type="text"],
+    .repeat-inline > label > input[type="text"],
+    .repeat-inline > label > select,
+    .repeat-inline > label > textarea,
+    .action-top > label > input[type="text"],
+    .action-top > label > select {
+      width: 100%;
+    }
+
+    .class-row .num-stepper {
+      width: 100%;
+      max-width: 90px;
+    }
+
     .checkbox-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: var(--space-3);
       color: #465366;
-      font-size: 13px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0;
     }
 
     .rt-toolbar {
@@ -681,9 +1088,9 @@
 
     .rt-field {
       border: 1px solid #cfd7e6;
-      border-radius: 7px;
-      min-height: 34px;
-      padding: 6px 7px;
+      border-radius: var(--radius-sm);
+      min-height: calc(var(--field-h) + var(--space-1));
+      padding: 6px var(--field-pad-x);
       font-size: 13px;
       line-height: 1.35;
       background: #fff;
@@ -722,9 +1129,11 @@
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     @media (max-width: 920px) {
-      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .spell-row, .action-top, .class-row, .combat-core, .attr-editor-grid, .attr-save-row, .speed-variants, .speed-variant-row {
+      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .spell-row, .action-top, .action-head, .class-row, .combat-core, .movement-list-head, .movement-row, .damage-list-head, .damage-row, .condition-list-head, .condition-rule-row, .attr-matrix-head, .attr-matrix-row {
         grid-template-columns: 1fr;
       }
+      .row-head-inline { flex-direction: column; align-items: flex-start; }
+      .row-head-inline .row-action-btn { width: 100%; }
       .identity-name-wrap, .identity-class-wrap, .identity-size-race { max-width: none; }
       .class-editor { max-width: none; }
 
@@ -814,6 +1223,12 @@
     var DAMAGE_FLAG2_OPTIONS = ["", "Advantage", "Disadvantage"];
     var CONDITION_FLAG_OPTIONS = ["", "Immunity", "Advantage", "Disadvantage"];
     var DND_SIZE_OPTIONS = ["", "Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"];
+    var DND_CONDITION_OPTIONS = [
+      "",
+      "Blinded", "Charmed", "Deafened", "Exhaustion", "Frightened", "Grappled",
+      "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned",
+      "Prone", "Restrained", "Stunned", "Unconscious"
+    ];
     var DAMAGE_TYPE_OPTIONS = [
       "",
       "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Necrotic",
@@ -1135,34 +1550,51 @@
       html += "<div class='section'><h2>3. Defenses</h2>";
       html += "<h3>Damage</h3>";
       var damageMeta = getExpandableMeta(data.damage, "damage");
+      html += "<div class='defense-subsection'>";
+      html += "<div class='defense-list-head damage-list-head'>"
+        + "  <div>Type</div>"
+        + "  <div>Effect</div>"
+        + "  <div>Roll Mod</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+      html += "<div class='row-editor-list damage-list'>";
       data.damage.forEach(function(row, i) {
         var hiddenClass = damageMeta.visible[i] ? "" : " is-hidden";
-        html += "<div class='flag-row expand-row expand-damage" + hiddenClass + "'>";
-        html += "<label>Type" + selectInput("damage-" + i + "-value", DAMAGE_TYPE_OPTIONS, row.value) + "</label>";
-        html += "<label>Effect" + selectInput("damage-" + i + "-flag1", DAMAGE_FLAG1_OPTIONS, row.flag1) + "</label>";
-        html += "<label>Roll Mod" + selectInput("damage-" + i + "-flag2", DAMAGE_FLAG2_OPTIONS, row.flag2) + "</label>";
+        html += "<div class='damage-row row-editor-row expand-row expand-damage" + hiddenClass + "' data-row-index='" + i + "'>";
+        html += selectInput("damage-" + i + "-value", DAMAGE_TYPE_OPTIONS, row.value);
+        html += selectInput("damage-" + i + "-flag1", DAMAGE_FLAG1_OPTIONS, row.flag1);
+        html += selectInput("damage-" + i + "-flag2", DAMAGE_FLAG2_OPTIONS, row.flag2);
+        html += repeatRowRemoveButton("damage", i, "damage rule");
         html += "</div>";
       });
-      html += renderAddRowButton("damage", "Add Damage Row", damageMeta.hiddenCount);
+      html += "</div>";
+      html += renderAddRowButton("damage", "Add Damage Row", damageMeta.hiddenCount, true);
+      html += "</div>";
       html += "<h3>Conditions</h3>";
       var conditionMeta = getExpandableMeta(data.conditions, "conditions");
+      html += "<div class='defense-subsection'>";
+      html += "<div class='defense-list-head condition-list-head'>"
+        + "  <div>Condition</div>"
+        + "  <div>Effect</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+      html += "<div class='row-editor-list condition-list'>";
       data.conditions.forEach(function(row, i) {
         var conditionHiddenClass = conditionMeta.visible[i] ? "" : " is-hidden";
         var conditionFlagValue = row.flag1 || row.flag2 || "";
-        html += "<div class='condition-row expand-row expand-conditions" + conditionHiddenClass + "'>";
-        html += "<label>Type" + textInput("cond-" + i + "-value", row.value) + "</label>";
-        html += "<label>Effect" + selectInput("cond-" + i + "-flag", CONDITION_FLAG_OPTIONS, conditionFlagValue) + "</label>";
+        html += "<div class='condition-rule-row row-editor-row expand-row expand-conditions" + conditionHiddenClass + "' data-row-index='" + i + "'>";
+        html += selectInput("cond-" + i + "-value", DND_CONDITION_OPTIONS, row.value);
+        html += selectInput("cond-" + i + "-flag", CONDITION_FLAG_OPTIONS, conditionFlagValue);
+        html += repeatRowRemoveButton("conditions", i, "condition rule");
         html += "</div>";
       });
-      html += renderAddRowButton("conditions", "Add Condition Row", conditionMeta.hiddenCount);
+      html += "</div>";
+      html += renderAddRowButton("conditions", "Add Condition Row", conditionMeta.hiddenCount, true);
+      html += "</div>";
       html += "</div>";
 
       html += "<div class='section'><h2>4. Attributes</h2>";
-      html += "<div class='attr-editor-grid'>";
-      STATS.forEach(function(stat) {
-        html += attributeEditorCard(stat, data);
-      });
-      html += "</div>";
+      html += attributeMatrixHtml(data);
       html += "</div>";
 
       html += "<div class='section'><h2>5. Skills &amp; Senses</h2>";
@@ -1177,10 +1609,11 @@
       var skillMeta = getExpandableMeta(data.skills, "skills");
       data.skills.forEach(function(skill, i) {
         var skillHiddenClass = skillMeta.visible[i] ? "" : " is-hidden";
-        html += "<div class='skill-row expand-row expand-skills" + skillHiddenClass + "'>";
+        html += "<div class='skill-row repeat-row repeat-inline expand-row expand-skills" + skillHiddenClass + "' data-row-index='" + i + "'>";
         html += "<label>Skill" + selectInput("skill-" + i + "-name", SKILL_OPTIONS, skill.name) + "</label>";
         html += "<label>Mod" + textInput("skill-" + i + "-mod", skill.modifier) + "</label>";
         html += "<label>Adv" + selectInput("skill-" + i + "-flag", ADV_OPTIONS, skill.flag) + "</label>";
+        html += repeatRowClearButton("skills", i);
         html += "</div>";
       });
       html += renderAddRowButton("skills", "Add Skill Row", skillMeta.hiddenCount);
@@ -1190,7 +1623,7 @@
       var actionMeta = getExpandableMeta(data.actions, "actions");
       data.actions.forEach(function(action, i) {
         var actionHiddenClass = actionMeta.visible[i] ? "" : " is-hidden";
-        html += actionBlock("act", i, action, "expand-row expand-actions" + actionHiddenClass);
+        html += actionBlock("act", i, action, "expand-row expand-actions" + actionHiddenClass, "actions");
       });
       html += renderAddRowButton("actions", "Add Action Row", actionMeta.hiddenCount);
       html += "</div>";
@@ -1199,7 +1632,7 @@
       var bonusMeta = getExpandableMeta(data.bonusActions, "bonusActions");
       data.bonusActions.forEach(function(action, i) {
         var bonusHiddenClass = bonusMeta.visible[i] ? "" : " is-hidden";
-        html += actionBlock("bonus", i, action, "expand-row expand-bonusActions" + bonusHiddenClass);
+        html += actionBlock("bonus", i, action, "expand-row expand-bonusActions" + bonusHiddenClass, "bonusActions");
       });
       html += renderAddRowButton("bonusActions", "Add Bonus Action Row", bonusMeta.hiddenCount);
       html += "</div>";
@@ -1208,7 +1641,7 @@
       var reactionMeta = getExpandableMeta(data.reactions, "reactions");
       data.reactions.forEach(function(action, i) {
         var reactionHiddenClass = reactionMeta.visible[i] ? "" : " is-hidden";
-        html += actionBlock("react", i, action, "expand-row expand-reactions" + reactionHiddenClass);
+        html += actionBlock("react", i, action, "expand-row expand-reactions" + reactionHiddenClass, "reactions");
       });
       html += renderAddRowButton("reactions", "Add Reaction Row", reactionMeta.hiddenCount);
       html += "</div>";
@@ -1234,8 +1667,11 @@
       data.special.forEach(function(item, i) {
         var checked = ((item.newLine || "") + "").toUpperCase() === "TRUE" ? " checked" : "";
         var specialHiddenClass = specialMeta.visible[i] ? "" : " is-hidden";
-        html += "<div class='action-row expand-row expand-special" + specialHiddenClass + "'>";
+        html += "<div class='action-row repeat-row expand-row expand-special" + specialHiddenClass + "' data-row-index='" + i + "'>";
+        html += "<div class='row-head-inline'>";
         html += "<label class='checkbox-row'><input type='checkbox' id='special-" + i + "-newline'" + checked + "> Start on new line</label>";
+        html += repeatRowClearButton("special", i);
+        html += "</div>";
         html += richTextField("special-" + i + "-text", item.text || "");
         html += "</div>";
       });
@@ -1248,6 +1684,7 @@
       initNumberSteppers();
       initSpeedVariantControls();
       initExpandableSections();
+      initRepeatableRowActions();
       refreshDerivedModifiers();
       wireDirtyTracking(root);
       updatePreview();
@@ -1277,14 +1714,40 @@
       return "<label>" + escHtml(label) + textInput(id, value, !!opts.readonly) + "</label>";
     }
 
-    function attributeEditorCard(stat, data) {
-      var titleMap = {
+    function attributeMatrixHtml(data) {
+      var html = "<div class='attr-matrix'>";
+      html += "<div class='attr-matrix-head'>"
+        + "<div>Stat</div>"
+        + "<div>Score</div>"
+        + "<div>Modifier</div>"
+        + "<div>Save</div>"
+        + "<div>Save Flag</div>"
+        + "</div>";
+
+      STATS.forEach(function(stat) {
+        html += attributeMatrixRowHtml(stat, data);
+      });
+
+      html += "</div>";
+      return html;
+    }
+
+    function attributeMatrixRowHtml(stat, data) {
+      var abbrMap = {
         strength: "STR",
         dexterity: "DEX",
         constitution: "CON",
         intelligence: "INT",
         wisdom: "WIS",
         charisma: "CHA"
+      };
+      var titleMap = {
+        strength: "Strength",
+        dexterity: "Dexterity",
+        constitution: "Constitution",
+        intelligence: "Intelligence",
+        wisdom: "Wisdom",
+        charisma: "Charisma"
       };
 
       var score = data.simple[stat] ? data.simple[stat].value : "";
@@ -1295,14 +1758,17 @@
         saveFlag = data.simple[stat + " save"].flag1 || data.simple[stat + " save"].flag2 || "";
       }
 
-      return "<div class='attr-editor-card'>"
-        + "<p class='attr-editor-title'>" + escHtml(titleMap[stat] || stat.toUpperCase()) + "</p>"
-        + simpleField("Score", stat, data, false, { type: "number", min: 0, step: 1, defaultValue: 10, stepper: true })
-        + "<label>Modifier<input type='text' id='field-" + stat + "-mod' value='" + escAttr(normalizeSignedValue(modValue, formatSignedNumber(dndModifier(normalizeNonNegativeInt(score, 10))))) + "' readonly></label>"
-        + "<div class='attr-save-row'>"
-        + "  <label>Save<input type='text' id='field-" + stat + "-save' value='" + escAttr(normalizeSignedValue(saveValue, "+0")) + "'></label>"
-        + "  <label>Save Flag" + selectInput("field-" + stat + "-save-flag", ADV_OPTIONS, saveFlag) + "</label>"
-        + "</div>"
+      var derivedMod = normalizeSignedValue(
+        modValue,
+        formatSignedNumber(dndModifier(normalizeNonNegativeInt(score, 10)))
+      );
+
+      return "<div class='attr-matrix-row'>"
+        + "<div class='attr-stat-cell' title='" + escAttr(titleMap[stat] || stat) + "'>" + escHtml(abbrMap[stat] || stat.toUpperCase()) + "</div>"
+        + "<div>" + numberInput("field-" + stat, score, { type: "number", min: 0, step: 1, defaultValue: 10, stepper: true, extraClass: "attr-score-input" }) + "</div>"
+        + "<div><span class='attr-derived-text' id='field-" + stat + "-mod'>" + escHtml(derivedMod) + "</span></div>"
+        + "<div>" + numberInput("field-" + stat + "-save", saveValue, { type: "number", step: 1, defaultValue: 0, stepper: true, extraClass: "attr-save-input" }) + "</div>"
+        + "<div>" + selectInput("field-" + stat + "-save-flag", ADV_OPTIONS, saveFlag) + "</div>"
         + "</div>";
     }
 
@@ -1319,14 +1785,25 @@
       variants = variants.slice(0, 2);
 
       var typeOptions = ["", "Climb", "Swim", "Fly"];
+      var movementMeta = getExpandableMeta(variants, "movement");
       var html = "<div class='speed-variants'>";
-      for (var i = 0; i < 2; i++) {
-        var n = i + 1;
-        html += "<div class='speed-variant-row'>"
-          + "<label>Speed Variant " + n + selectInput("speed-variant-" + n + "-type", typeOptions, variants[i].type || "") + "</label>"
-          + "<label>Value" + numberInput("speed-variant-" + n + "-value", variants[i].value || "", { min: 0, step: 1, allowBlank: true, stepper: true }) + "</label>"
+      html += "<p class='movement-kicker'>Additional Movement Modes</p>";
+      html += "<div class='movement-list-head'>"
+        + "  <div>Movement</div>"
+        + "  <div>Speed</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+      html += "<div class='row-editor-list movement-list'>";
+      for (var i = 0; i < variants.length; i++) {
+        var hiddenClass = movementMeta.visible[i] ? "" : " is-hidden";
+        html += "<div class='movement-row row-editor-row expand-row expand-movement" + hiddenClass + "' data-row-index='" + i + "'>"
+          + selectInput("speed-variant-" + (i + 1) + "-type", typeOptions, variants[i].type || "")
+          + numberInput("speed-variant-" + (i + 1) + "-value", variants[i].value || "", { min: 0, step: 1, allowBlank: true, stepper: true })
+          + repeatRowRemoveButton("movement", i, "movement mode")
           + "</div>";
       }
+      html += "</div>";
+      html += renderAddRowButton("movement", "Add Movement Mode", movementMeta.hiddenCount, true);
       html += "</div>";
       return html;
     }
@@ -1337,9 +1814,14 @@
       if (!entries.length) entries = [{ className: "", level: "" }];
 
       var html = "<div class='class-editor'>"
-        + "<div class='class-header'><span class='class-label'>Class Name</span>"
+        + "<div class='class-header'><span class='class-label'>Class</span>"
         + "</div>"
-        + "<div id='class-rows'>";
+        + "<div class='class-list-head'>"
+        + "  <div>Class Name</div>"
+        + "  <div>Level</div>"
+        + "  <div>Remove</div>"
+        + "</div>"
+        + "<div id='class-rows' class='row-editor-list'>";
 
       for (var i = 0; i < entries.length; i++) {
         html += classRowHtml(i, entries[i], entries.length > 1);
@@ -1358,9 +1840,9 @@
         ? "<button type='button' class='btn class-remove-btn' title='Remove class entry' aria-label='Remove class entry'>&minus;</button>"
         : "<button type='button' class='btn class-remove-btn' style='visibility:hidden' tabindex='-1'>&minus;</button>";
 
-      return "<div class='class-row'>"
-        + "<label>Class Name<input type='text' class='class-name-input' value='" + escAttr((entry && entry.className) || "") + "'></label>"
-        + "<label class='class-level-label'>Level (Optional)" + numberInput("", (entry && entry.level) || "", { min: 1, step: 1, allowBlank: true, stepper: true, defaultValue: 1, extraClass: "class-level-input" }) + "</label>"
+      return "<div class='class-row row-editor-row'>"
+        + "<input type='text' class='class-name-input' aria-label='Class name' placeholder='Class Name' value='" + escAttr((entry && entry.className) || "") + "'>"
+        + numberInput("", (entry && entry.level) || "", { min: 1, step: 1, allowBlank: true, stepper: true, defaultValue: 1, clearAtMinOnDecrement: true, extraClass: "class-level-input" })
         + removeBtn
         + "</div>";
     }
@@ -1389,6 +1871,8 @@
       addBtn.addEventListener("click", function() {
         var nextIndex = rowsWrap.querySelectorAll(".class-row").length;
         rowsWrap.insertAdjacentHTML("beforeend", classRowHtml(nextIndex, { className: "", level: "" }, true));
+        var newRow = rowsWrap.lastElementChild;
+        if (newRow) initNumberSteppers(newRow);
         syncClassEditorRows();
         setDirty(true);
         updatePreview();
@@ -1481,18 +1965,29 @@
 
     function numberInput(id, value, opts) {
       var options = opts || {};
-      var minAttr = options.min !== undefined ? " min='" + escAttr(String(options.min)) + "'" : "";
+      var hasMin = options.min !== undefined;
+      var minAttr = hasMin ? " min='" + escAttr(String(options.min)) + "'" : "";
       var stepAttr = options.step !== undefined ? " step='" + escAttr(String(options.step)) + "'" : "";
       var raw = ((value === undefined || value === null) ? "" : String(value)).trim();
-      var normalized = (options.allowBlank && raw === "")
-        ? ""
-        : String(normalizeMinInt(raw, options.defaultValue || 0, options.min !== undefined ? options.min : 0));
+      var fallback = options.defaultValue !== undefined ? options.defaultValue : (hasMin ? options.min : 0);
+      var normalized = "";
+      if (options.allowBlank && raw === "") {
+        normalized = "";
+      } else if (hasMin) {
+        normalized = String(normalizeMinInt(raw, fallback, options.min));
+      } else {
+        var parsed = parseInt(String(raw || "").replace(/[^\d-]/g, ""), 10);
+        if (isNaN(parsed)) parsed = fallback;
+        normalized = String(parsed);
+      }
       var idAttr = id ? " id='" + id + "'" : "";
       var readonlyAttr = options.readonly ? " readonly" : "";
       var disabledAttr = options.disabled ? " disabled" : "";
+      var placeholderAttr = options.placeholder ? " placeholder='" + escAttr(String(options.placeholder)) + "'" : "";
+      var clearAtMinAttr = options.clearAtMinOnDecrement ? " data-clear-at-min='true'" : "";
       var extraClass = options.extraClass ? (" " + options.extraClass) : "";
       var inputHtml = "<input type='number' class='num-input" + extraClass + "'" + idAttr
-        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + readonlyAttr + disabledAttr + ">";
+        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + placeholderAttr + clearAtMinAttr + " inputmode='numeric'" + readonlyAttr + disabledAttr + ">";
 
       if (!options.stepper) return inputHtml;
 
@@ -1503,10 +1998,13 @@
         + "</div>";
     }
 
-    function initNumberSteppers() {
-      var steppers = document.querySelectorAll(".num-stepper");
+    function initNumberSteppers(scopeEl) {
+      var scope = scopeEl && scopeEl.querySelectorAll ? scopeEl : document;
+      var steppers = scope.querySelectorAll(".num-stepper");
       for (var i = 0; i < steppers.length; i++) {
         (function(stepper) {
+          if (stepper.getAttribute("data-stepper-bound") === "true") return;
+          stepper.setAttribute("data-stepper-bound", "true");
           var input = stepper.querySelector(".num-input");
           var down = stepper.querySelector(".step-down");
           var up = stepper.querySelector(".step-up");
@@ -1528,17 +2026,29 @@
 
           function adjust(delta) {
             if (input.disabled || input.readOnly) return;
-            var min = normalizeNonNegativeInt(input.getAttribute("min"), 0);
+            var minAttr = input.getAttribute("min");
+            var hasMin = minAttr !== null && minAttr !== "";
+            var min = hasMin ? parseInt(minAttr, 10) : 0;
+            if (isNaN(min)) min = 0;
+            var clearAtMin = input.getAttribute("data-clear-at-min") === "true";
             var raw = (input.value || "").trim();
             if (raw === "") {
-              input.value = String(min);
+              if (delta < 0 && clearAtMin) return;
+              input.value = String(hasMin ? min : 0);
               input.dispatchEvent(new Event("input", { bubbles: true }));
               input.dispatchEvent(new Event("change", { bubbles: true }));
               return;
             }
-            var current = normalizeMinInt(raw, min, min);
+            var current = parseInt(String(raw).replace(/[^\d-]/g, ""), 10);
+            if (isNaN(current)) current = hasMin ? min : 0;
+            if (delta < 0 && clearAtMin && hasMin && current === min) {
+              input.value = "";
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
             var next = current + delta;
-            if (next < min) next = min;
+            if (hasMin && next < min) next = min;
             input.value = String(next);
             input.dispatchEvent(new Event("input", { bubbles: true }));
             input.dispatchEvent(new Event("change", { bubbles: true }));
@@ -1577,11 +2087,16 @@
     }
 
     function initSpeedVariantControls() {
-      for (var i = 1; i <= 2; i++) {
-        (function(idx) {
-          var typeEl = document.getElementById("speed-variant-" + idx + "-type");
+      var typeEls = document.querySelectorAll("select[id^='speed-variant-'][id$='-type']");
+      for (var i = 0; i < typeEls.length; i++) {
+        (function(typeEl) {
+          var match = typeEl.id.match(/^speed-variant-(\d+)-type$/);
+          if (!match) return;
+          var idx = parseInt(match[1], 10);
+          if (isNaN(idx)) return;
+
           var valueEl = document.getElementById("speed-variant-" + idx + "-value");
-          if (!typeEl || !valueEl) return;
+          if (!valueEl) return;
 
           function applyState(seedFromSpeed) {
             var hasType = !!typeEl.value;
@@ -1599,7 +2114,7 @@
           typeEl.addEventListener("change", function() {
             applyState(true);
           });
-        })(i);
+        })(typeEls[i]);
       }
     }
 
@@ -1617,12 +2132,15 @@
       return html;
     }
 
-    function actionBlock(prefix, index, action, extraClasses) {
+    function actionBlock(prefix, index, action, extraClasses, sectionKey) {
       var id = prefix + "-" + index;
-      var html = "<div class='action-row" + (extraClasses ? " " + extraClasses : "") + "'>";
+      var html = "<div class='action-row repeat-row" + (extraClasses ? " " + extraClasses : "") + "' data-row-index='" + index + "'>";
+      html += "<div class='action-head'>";
       html += "<div class='action-top'>";
       html += "<label>Cost" + textInput(id + "-cost", action.cost || "") + "</label>";
       html += "<label>Name" + textInput(id + "-name", action.name || "") + "</label>";
+      html += "</div>";
+      html += repeatRowClearButton(sectionKey, index);
       html += "</div>";
       html += "<label>Description</label>";
       html += richTextField(id + "-desc", action.description || "");
@@ -1639,6 +2157,9 @@
 
     function isExpandableRowFilled(row, rowType) {
       if (!row) return false;
+      if (rowType === "movement") {
+        return hasAnyValue([row.type, row.value]);
+      }
       if (rowType === "damage" || rowType === "conditions") {
         return hasAnyValue([row.value, row.flag1, row.flag2]);
       }
@@ -1680,9 +2201,19 @@
       return { visible: visible, hiddenCount: list.length - visibleCount };
     }
 
-    function renderAddRowButton(sectionKey, label, hiddenCount) {
-      if (!hiddenCount) return "";
-      return "<div class='section-add-row'><button type='button' class='btn add-row-btn' data-section='" + escAttr(sectionKey) + "'>+ " + escHtml(label) + "</button></div>";
+    function renderAddRowButton(sectionKey, label, hiddenCount, alwaysShow) {
+      if (!hiddenCount && !alwaysShow) return "";
+      var disabledAttr = hiddenCount ? "" : " disabled";
+      return "<div class='section-add-row'><button type='button' class='btn add-row-btn' data-section='" + escAttr(sectionKey) + "'" + disabledAttr + ">+ " + escHtml(label) + "</button></div>";
+    }
+
+    function repeatRowClearButton(sectionKey, index) {
+      return "<button type='button' class='btn row-action-btn row-clear-btn' data-row-clear='" + escAttr(sectionKey) + "' data-row-index='" + escAttr(String(index)) + "' title='Clear row'>Clear</button>";
+    }
+
+    function repeatRowRemoveButton(sectionKey, index, label) {
+      var target = label || "row";
+      return "<button type='button' class='btn class-remove-btn row-remove-btn' data-row-remove='" + escAttr(sectionKey) + "' data-row-index='" + escAttr(String(index)) + "' title='Remove " + escAttr(target) + "' aria-label='Remove " + escAttr(target) + "'>&minus;</button>";
     }
 
     function initExpandableSections() {
@@ -1701,9 +2232,131 @@
             if (!document.querySelector(".expand-row.expand-" + key + ".is-hidden")) {
               btn.disabled = true;
             }
+            syncRepeatRowRemoveButtons(key);
           });
         })(addButtons[i]);
       }
+    }
+
+    function clearInputValue(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === "checkbox") {
+        el.checked = false;
+      } else {
+        el.value = "";
+      }
+    }
+
+    function clearRichFieldValue(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = "";
+    }
+
+    function clearRepeatableRowValues(rowType, index) {
+      if (rowType === "movement") {
+        var movementIdx = index + 1;
+        var typeEl = document.getElementById("speed-variant-" + movementIdx + "-type");
+        var valueEl = document.getElementById("speed-variant-" + movementIdx + "-value");
+        if (typeEl) typeEl.value = "";
+        if (valueEl) {
+          valueEl.value = "";
+          valueEl.disabled = true;
+        }
+        return;
+      }
+
+      if (rowType === "damage") {
+        clearInputValue("damage-" + index + "-value");
+        clearInputValue("damage-" + index + "-flag1");
+        clearInputValue("damage-" + index + "-flag2");
+        return;
+      }
+
+      if (rowType === "conditions") {
+        clearInputValue("cond-" + index + "-value");
+        clearInputValue("cond-" + index + "-flag");
+        return;
+      }
+
+      if (rowType === "skills") {
+        clearInputValue("skill-" + index + "-name");
+        clearInputValue("skill-" + index + "-mod");
+        clearInputValue("skill-" + index + "-flag");
+        return;
+      }
+
+      if (rowType === "special") {
+        clearInputValue("special-" + index + "-newline");
+        clearRichFieldValue("special-" + index + "-text");
+        return;
+      }
+
+      var prefix = "";
+      if (rowType === "actions") prefix = "act";
+      if (rowType === "bonusActions") prefix = "bonus";
+      if (rowType === "reactions") prefix = "react";
+      if (!prefix) return;
+      clearInputValue(prefix + "-" + index + "-cost");
+      clearInputValue(prefix + "-" + index + "-name");
+      clearRichFieldValue(prefix + "-" + index + "-desc");
+    }
+
+    function tryHideClearedRow(rowType, index) {
+      var row = document.querySelector(".expand-row.expand-" + rowType + "[data-row-index='" + index + "']");
+      if (!row || row.classList.contains("is-hidden")) return;
+
+      var visibleRows = document.querySelectorAll(".expand-row.expand-" + rowType + ":not(.is-hidden)");
+      if (visibleRows.length <= 1) return;
+
+      var addBtn = document.querySelector(".add-row-btn[data-section='" + rowType + "']");
+      if (!addBtn) return;
+
+      row.classList.add("is-hidden");
+      addBtn.disabled = false;
+    }
+
+    function syncRepeatRowRemoveButtons(rowType) {
+      var buttons = document.querySelectorAll(".row-remove-btn[data-row-remove='" + rowType + "']");
+      if (!buttons.length) return;
+
+      var visibleRows = document.querySelectorAll(".expand-row.expand-" + rowType + ":not(.is-hidden)");
+      var show = visibleRows.length > 1;
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].style.visibility = show ? "visible" : "hidden";
+        if (show) buttons[i].removeAttribute("tabindex");
+        else buttons[i].setAttribute("tabindex", "-1");
+      }
+    }
+
+    function initRepeatableRowActions() {
+      function bindRowActionButtons(selector, attrName) {
+        var buttons = document.querySelectorAll(selector);
+        for (var j = 0; j < buttons.length; j++) {
+          (function(btn) {
+            btn.addEventListener("click", function() {
+              var rowType = btn.getAttribute(attrName);
+              var index = parseInt(btn.getAttribute("data-row-index"), 10);
+              if (!rowType || isNaN(index)) return;
+
+              clearRepeatableRowValues(rowType, index);
+              tryHideClearedRow(rowType, index);
+              syncRepeatRowRemoveButtons(rowType);
+              refreshDerivedModifiers();
+              setDirty(true);
+              updatePreview();
+            });
+          })(buttons[j]);
+        }
+      }
+
+      var clearButtons = document.querySelectorAll(".row-clear-btn[data-row-clear][data-row-index]");
+      if (clearButtons.length) bindRowActionButtons(".row-clear-btn[data-row-clear][data-row-index]", "data-row-clear");
+      bindRowActionButtons(".row-remove-btn[data-row-remove][data-row-index]", "data-row-remove");
+      syncRepeatRowRemoveButtons("movement");
+      syncRepeatRowRemoveButtons("damage");
+      syncRepeatRowRemoveButtons("conditions");
     }
 
     function richTextField(id, value) {
@@ -1735,10 +2388,21 @@
         var score = getScoreValue(stat);
         var mod = formatSignedNumber(dndModifier(score));
         var modEl = document.getElementById("field-" + stat + "-mod");
-        if (modEl) modEl.value = mod;
+        if (modEl) {
+          if (typeof modEl.value === "string") modEl.value = mod;
+          else modEl.textContent = mod;
+        }
 
         var saveEl = document.getElementById("field-" + stat + "-save");
-        if (saveEl) saveEl.value = normalizeSignedValue(saveEl.value, "+0");
+        if (saveEl) {
+          if (saveEl.type === "number") {
+            var parsed = parseInt(String(saveEl.value || "").replace(/[^\d-]/g, ""), 10);
+            if (isNaN(parsed)) parsed = 0;
+            saveEl.value = String(parsed);
+          } else {
+            saveEl.value = normalizeSignedValue(saveEl.value, "+0");
+          }
+        }
       });
     }
 
@@ -2026,7 +2690,7 @@
     }
 
     function renderMovementStack(cardData) {
-      if (!cardData.swim_speed && !cardData.fly_speed) return "";
+      if (!cardData.climb_speed && !cardData.swim_speed && !cardData.fly_speed) return "";
 
       var parts = [];
       if (cardData.climb_speed) parts.push("<div>" + escHtml(cardData.climb_speed) + "c</div>");

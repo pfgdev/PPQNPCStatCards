@@ -186,6 +186,8 @@ Even if implemented inside a single file for now, the UI should still follow a r
 
 ### Numeric Input Guidance
 Numeric fields should favor fast desktop entry and clear alignment.
+- For small numeric values, integrated - value + controls are acceptable when they genuinely improve speed.
+- Avoid browser-native spinner arrows when they create visual inconsistency or poor centering.
 
 Guidelines:
 - Do not use oversized text boxes for small numeric values.
@@ -227,6 +229,16 @@ Guidelines:
 
 ---
 
+### Shared row-editor pattern
+Where repeated structured data is simple and highly scannable, prefer a compact row-editor or matrix-style layout over nested boxed mini-forms.
+
+Guidelines:
+- use intentional column widths based on expected content
+- place row remove actions in a dedicated far-right action slot
+- avoid nested containers around each row unless necessary
+- optional subtle odd/even row striping is acceptable when it improves scanability
+- repeated rows should feel like part of one list or matrix, not isolated mini-cards
+
 ## Section-Specific Guidance
 
 ### Identity
@@ -236,6 +248,7 @@ Guidelines:
 - Class rows should feel like clean repeatable entries, not loosely grouped controls.
 - Remove action should clearly apply to the full class row.
 - Keep `+ Add Class` visually tied to the class list, with enough gap before the next field group.
+- Class level entries may use the same compact row-editor pattern as other repeated structured sections.
 
 ### Combat Stats
 - `AC`, `HP`, and `Speed` should remain visually centered and treated as parallel fields.
@@ -257,6 +270,7 @@ Guidelines:
 - All six attributes should feel like instances of the same component.
 - Align score, modifier, save, and save flag consistently across each attribute card/block.
 - Reduce unnecessary bulk while keeping readability.
+- If attributes are displayed in a row-based matrix, prioritize fast editing of Score and Save, while treating Modifier as a derived secondary value.
 
 ### Skills & Senses
 - Keep utility fields compact and aligned.
@@ -304,3 +318,11 @@ A successful pass will produce:
 - better scanability during data entry
 
 If choosing between cosmetic flourish and structural consistency, choose structural consistency.
+
+### Control sizing
+Inputs should be sized to their expected content rather than stretched by default.
+Short and medium-length fields should use intentional compact widths unless broader width is clearly useful.
+
+### Derived values
+Computed or derived values must be visually distinct from editable inputs and should not appear as standard form fields.
+Derived values may remain visible for feedback, but should be visually secondary to authored inputs.
