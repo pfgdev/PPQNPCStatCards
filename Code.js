@@ -211,6 +211,63 @@ function mapFlag(flag) {
   };
   return map[flag] || '';
 }
+function normalizeSignedNumber_(raw, fallback) {
+  var safeFallback = (fallback === undefined || fallback === null || fallback === '') ? '+0' : String(fallback);
+  var parsed = parseInt(String(raw || '').replace(/[^\d-]/g, ''), 10);
+  if (isNaN(parsed)) return safeFallback;
+  return parsed >= 0 ? ('+' + parsed) : String(parsed);
+}
+
+function signedModFromScore_(scoreRaw) {
+  var score = parseInt(String(scoreRaw || '').replace(/[^\d-]/g, ''), 10);
+  if (isNaN(score)) score = 10;
+  var mod = Math.floor((score - 10) / 2);
+  return mod >= 0 ? ('+' + mod) : String(mod);
+}
+
+function mapSaveTriangleFlag_(flag) {
+  var text = String(flag || '').trim();
+  if (text === 'Advantage') return '▲';
+  if (text === 'Disadvantage') return '▼';
+  return '';
+}
+
+function applyDerivedSaveFallbackFromRows_(data, values) {
+  if (!data || !values) return;
+
+  var stats = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+  var saveRows = {};
+
+  values.forEach(function(row) {
+    var label = String((row && row[0]) || '').trim().toLowerCase();
+    if (!label || !/\ssave$/.test(label)) return;
+    saveRows[label] = {
+      value: String((row && row[1]) || '').trim(),
+      flag1: String((row && row[2]) || '').trim(),
+      flag2: String((row && row[3]) || '').trim()
+    };
+  });
+
+  stats.forEach(function(stat) {
+    var saveKey = stat + '_save';
+    var saveLabel = stat + ' save';
+    var derivedBase = signedModFromScore_(data[stat]);
+    var saveRow = saveRows[saveLabel];
+    var rawSave = saveRow ? saveRow.value : String(data[saveKey] || '').trim();
+    var base = normalizeSignedNumber_(rawSave, derivedBase);
+
+    var flag = '';
+    if (saveRow) {
+      flag = mapSaveTriangleFlag_(saveRow.flag1) || mapSaveTriangleFlag_(saveRow.flag2);
+    } else {
+      var existing = String(data[saveKey] || '');
+      if (existing.indexOf('▲') !== -1) flag = '▲';
+      else if (existing.indexOf('▼') !== -1) flag = '▼';
+    }
+
+    data[saveKey] = base + flag;
+  });
+}
 
 /**
  * Reads card data from the currently active sheet.
@@ -271,6 +328,7 @@ function getCardData() {
 
   data.back = buildBackCardData(sheet);
   data.spells = buildSpellsData(sheet);
+  applyDerivedSaveFallbackFromRows_(data, values);
 
   return data;
 }
@@ -360,6 +418,7 @@ function getCardDataFromSheet(sheet) {
   data.skills = buildSkillsData(sheet);
   data.back = buildBackCardData(sheet);
   data.spells = buildSpellsData(sheet);
+  applyDerivedSaveFallbackFromRows_(data, values);
 
   return data;
 }

@@ -393,6 +393,7 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
+      white-space: nowrap;
     }
 
     .section {
@@ -653,11 +654,100 @@
     .skills-subsection > .section-add-row {
       margin-top: var(--space-2);
     }
-    .spell-row {
+    .spell-mode-row {
+      width: 210px;
+      max-width: 100%;
+      margin-bottom: var(--space-1);
+    }
+    .spell-mode-row > label {
+      min-width: 0;
+      width: 100%;
+    }
+    .spell-slot-subsection {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .spell-slot-subsection.is-hidden {
+      display: none;
+    }
+    .spell-slot-head,
+    .spell-slot-row,
+    .spell-uses-head,
+    .spell-uses-row {
       display: grid;
-      grid-template-columns: 90px 1fr;
-      gap: var(--space-3);
-      margin-bottom: var(--space-2);
+      gap: var(--space-2);
+      align-items: center;
+      width: max-content;
+      max-width: 100%;
+    }
+    .spell-slot-head,
+    .spell-slot-row {
+      grid-template-columns: 90px 90px 548px 56px;
+    }
+    .spell-uses-head,
+    .spell-uses-row {
+      grid-template-columns: 90px 644px 56px;
+    }
+    .spell-slot-head,
+    .spell-uses-head {
+      padding: 4px 6px;
+      background: #f2f6fd;
+      border: 1px solid #dbe5f4;
+      border-bottom: 1px solid #dbe5f4;
+      border-radius: 7px 7px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .spell-slot-head > div:nth-child(1),
+    .spell-slot-head > div:nth-child(2),
+    .spell-slot-head > div:nth-child(4) {
+      text-align: center;
+    }
+    .spell-uses-head > div:nth-child(1),
+    .spell-uses-head > div:nth-child(3) {
+      text-align: center;
+    }
+    .spell-slot-row,
+    .spell-uses-row {
+      border: 0;
+      border-bottom: 1px solid #edf2fa;
+      border-radius: 0;
+      padding: 3px 6px;
+    }
+    .spell-slot-row .num-stepper,
+    .spell-slot-row .spell-names-input {
+      width: 100%;
+      max-width: 100%;
+    }
+    .spell-slot-row .spell-level-input,
+    .spell-slot-row .spell-slots-input {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .spell-uses-row .num-stepper,
+    .spell-uses-row .spell-uses-names-input {
+      width: 100%;
+      max-width: 100%;
+    }
+    .spell-uses-row .spell-uses-input {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .spell-slot-row .row-remove-btn {
+      justify-self: center;
+      align-self: center;
+    }
+    .spell-uses-row .row-remove-btn {
+      justify-self: center;
+      align-self: center;
+    }
+    .spell-slot-list + .section-add-row,
+    .spell-uses-list + .section-add-row {
+      margin-top: var(--space-2);
     }
     .defense-subsection {
       display: flex;
@@ -727,7 +817,7 @@
     .attr-matrix-head,
     .attr-matrix-row {
       display: grid;
-      grid-template-columns: 52px 90px 62px 90px 170px;
+      grid-template-columns: 52px 90px 62px 112px 170px;
       gap: var(--space-2);
       align-items: center;
       padding: 5px 8px;
@@ -755,6 +845,7 @@
     .attr-matrix-head > div:nth-child(4),
     .attr-matrix-head > div:nth-child(5) {
       text-align: center;
+      white-space: nowrap;
     }
     .attr-stat-cell {
       font-size: 11px;
@@ -873,8 +964,11 @@
     .special-simple-head {
       padding: 4px 6px;
       background: #f2f6fd;
-      border: 1px solid #dbe5f4;
+      border-top: 1px solid #dbe5f4;
       border-bottom: 1px solid #dbe5f4;
+      border-left: 0;
+      border-right: 0;
+      box-shadow: inset 1px 0 0 #dbe5f4, inset -1px 0 0 #dbe5f4;
       border-radius: 7px 7px 0 0;
       font-size: 10px;
       text-transform: uppercase;
@@ -1038,8 +1132,14 @@
       border-radius: 0;
       min-height: 0;
       height: 100%;
-      max-height: 110px;
-      overflow-y: auto;
+      max-height: var(--field-h);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      white-space: nowrap;
+      overflow-wrap: normal;
+      word-break: normal;
       padding: var(--field-pad-y) var(--field-pad-x);
       font-size: 14px;
       line-height: var(--field-line-h);
@@ -1050,9 +1150,15 @@
       font-family: inherit;
       font-weight: 400;
     }
+    .action-desc-editor .rt-field::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
     .action-desc-editor .rt-field > * {
       margin: 0;
       line-height: inherit;
+      white-space: inherit;
     }
     .action-desc-editor .rt-field:focus {
       outline: none;
@@ -1065,6 +1171,13 @@
       display: block;
       line-height: var(--field-line-h);
       pointer-events: none;
+    }
+    .action-desc-editor .rt-field .rt-placeholder-html {
+      color: #8a97a9;
+      display: block;
+      line-height: var(--field-line-h);
+      pointer-events: none;
+      user-select: none;
     }
     .action-simple-row .row-remove-btn {
       justify-self: center;
@@ -1358,6 +1471,18 @@
       background: #e3ecfa;
     }
 
+    .num-stepper.is-disabled {
+      background: #f5f7fb;
+    }
+    .num-stepper.is-disabled .step-btn {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .num-stepper.is-disabled .num-input {
+      background: #f5f7fb !important;
+      color: #7b8798 !important;
+    }
+
     .num-stepper .num-input {
       width: 100%;
       min-width: 0;
@@ -1412,7 +1537,6 @@
     .grid-2 > label,
     .grid-3 > label,
     .speed-variant-row > label,
-    .spell-row > label,
     .repeat-inline > label,
     .action-top > label {
       min-width: 0;
@@ -1426,7 +1550,6 @@
     .identity-size-race > label > input[type="text"],
     .identity-size-race > label > select,
     .speed-variant-row > label > select,
-    .spell-row > label > input[type="text"],
     .repeat-inline > label > input[type="text"],
     .repeat-inline > label > select,
     .repeat-inline > label > textarea,
@@ -1517,7 +1640,7 @@
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     @media (max-width: 920px) {
-      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .skills-summary-core, .skills-list-head, .skills-rule-row, .spell-row, .action-top, .action-head, .class-row, .combat-core, .movement-list-head, .movement-row, .damage-list-head, .damage-row, .condition-list-head, .condition-rule-row, .attr-matrix-head, .attr-matrix-row {
+      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .skills-summary-core, .skills-list-head, .skills-rule-row, .spell-slot-head, .spell-slot-row, .spell-uses-head, .spell-uses-row, .action-top, .action-head, .class-row, .combat-core, .movement-list-head, .movement-row, .damage-list-head, .damage-row, .condition-list-head, .condition-rule-row, .attr-matrix-head, .attr-matrix-row {
         grid-template-columns: 1fr;
       }
       .row-head-inline { flex-direction: column; align-items: flex-start; }
@@ -1619,15 +1742,35 @@
     ];
     var DAMAGE_TYPE_OPTIONS = [
       "",
-      "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Necrotic",
-      "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder",
-      "Nonmagical Damage", "Magical Damage"
+      "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Magical",
+      "Necrotic", "Physical", "Piercing", "Poison", "Psychic", "Radiant",
+      "Slashing", "Thunder"
     ];
     var SKILL_OPTIONS = [
       "", "Acrobatics", "Animal Handling", "Arcana", "Athletics", "Deception", "History",
       "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception",
       "Performance", "Persuasion", "Religion", "Sleight of Hand", "Stealth", "Survival"
     ];
+    var SKILL_ABILITY_MAP = {
+      "Acrobatics": "dexterity",
+      "Animal Handling": "wisdom",
+      "Arcana": "intelligence",
+      "Athletics": "strength",
+      "Deception": "charisma",
+      "History": "intelligence",
+      "Insight": "wisdom",
+      "Intimidation": "charisma",
+      "Investigation": "intelligence",
+      "Medicine": "wisdom",
+      "Nature": "intelligence",
+      "Perception": "wisdom",
+      "Performance": "charisma",
+      "Persuasion": "charisma",
+      "Religion": "intelligence",
+      "Sleight of Hand": "dexterity",
+      "Stealth": "dexterity",
+      "Survival": "wisdom"
+    };
     var SKILL_ABBREV = {
       "Acrobatics": "Acr",
       "Animal Handling": "Ani",
@@ -1841,9 +1984,13 @@
         actions: [],
         bonusActions: [],
         reactions: [],
-        spells: { cantrips: null, levels: [] },
+        spells: { mode: "slot", modeRowIndex: null, rows: [], usesRows: [], rowMap: { mode: null, cantrips: null, slots: {}, spells: {}, uses: [] } },
         special: []
       };
+      var cantripSpellText = "";
+      var spellSlotsByLevel = {};
+      var spellListsByLevel = {};
+      var parsedUsesRowCount = 0;
 
       for (var i = 0; i < rows.length; i++) {
         var label = ((rows[i][0] || "") + "").trim();
@@ -1894,8 +2041,23 @@
           continue;
         }
 
+        if (labelLower === "spell casting mode") {
+          data.spells.modeRowIndex = i;
+          data.spells.rowMap.mode = i;
+          data.spells.mode = normalizeSpellCastingMode(c);
+          continue;
+        }
+
+        if (labelLower === "per-spell uses") {
+          parsedUsesRowCount++;
+          data.spells.rowMap.uses.push(i);
+          data.spells.usesRows.push({ uses: c, spells: d });
+          continue;
+        }
+
         if (labelLower === "cantrips") {
-          data.spells.cantrips = { rowIndex: i, value: c };
+          data.spells.rowMap.cantrips = i;
+          cantripSpellText = c;
           continue;
         }
 
@@ -1903,18 +2065,44 @@
         var spellMatch = labelLower.match(/^(\d+)(?:st|nd|rd|th)\s+level\s+spells$/);
 
         if (slotMatch) {
-          var slotIndex = parseInt(slotMatch[1], 10) - 1;
-          data.spells.levels[slotIndex] = data.spells.levels[slotIndex] || {};
-          data.spells.levels[slotIndex].slotsRowIndex = i;
-          data.spells.levels[slotIndex].slots = c;
+          var slotLevel = parseInt(slotMatch[1], 10);
+          if (slotLevel >= 1 && slotLevel <= 9) {
+            data.spells.rowMap.slots[slotLevel] = i;
+            spellSlotsByLevel[slotLevel] = c;
+          }
           continue;
         }
 
         if (spellMatch) {
-          var spellIndex = parseInt(spellMatch[1], 10) - 1;
-          data.spells.levels[spellIndex] = data.spells.levels[spellIndex] || {};
-          data.spells.levels[spellIndex].spellsRowIndex = i;
-          data.spells.levels[spellIndex].spells = c;
+          var spellLevel = parseInt(spellMatch[1], 10);
+          if (spellLevel >= 1 && spellLevel <= 9) {
+            data.spells.rowMap.spells[spellLevel] = i;
+            spellListsByLevel[spellLevel] = c;
+          }
+        }
+      }
+
+      if (((cantripSpellText || "") + "").trim()) {
+        data.spells.rows.push({ level: 0, slots: "", spells: cantripSpellText });
+      }
+      for (var spellLevelNum = 1; spellLevelNum <= 9; spellLevelNum++) {
+        var rowSlots = (spellSlotsByLevel[spellLevelNum] || "");
+        var rowSpells = (spellListsByLevel[spellLevelNum] || "");
+        var hasSpellText = !!String(rowSpells).trim();
+        var slotTrimmed = String(rowSlots).trim();
+        var hasMeaningfulSlots = slotTrimmed !== "" && normalizeNonNegativeInt(slotTrimmed, 0) > 0;
+        if (!hasSpellText && !hasMeaningfulSlots) continue;
+        data.spells.rows.push({ level: spellLevelNum, slots: rowSlots, spells: rowSpells });
+      }
+      if (!data.spells.rows.length) {
+        data.spells.rows.push({ level: 1, slots: "", spells: "" });
+      }
+      if (!data.spells.usesRows.length) {
+        data.spells.usesRows.push({ uses: "", spells: "" });
+      }
+      if (data.spells.modeRowIndex === null || data.spells.modeRowIndex === undefined) {
+        if (parsedUsesRowCount > 0) {
+          data.spells.mode = "uses";
         }
       }
 
@@ -1991,8 +2179,8 @@
       var visionValue = data.simple["vision"] ? data.simple["vision"].value : "";
       html += "<div class='skills-summary-core'>"
         + "<label>Proficiency" + numberInput("field-proficiency-bonus", proficiencyValue, { min: 1, step: 1, allowBlank: true, stepper: true, defaultValue: 1, clearAtMinOnDecrement: true, extraClass: "skills-signed-input" }) + "</label>"
-        + "<label>Initiative" + numberInput("field-initiative", initiativeValue, { step: 1, allowBlank: true, stepper: true, defaultValue: 0, extraClass: "skills-signed-input" }) + "</label>"
-        + "<label>Pass Perception" + numberInput("field-passive-perception", passiveValue, { min: 0, step: 1, allowBlank: true, stepper: true, defaultValue: 10, blankSeed: 10, extraClass: "skills-passive-input" }) + "</label>"
+        + "<label>Initiative" + numberInput("field-initiative", initiativeValue, { step: 1, allowBlank: true, stepper: true, defaultValue: 0, sequence: "initiative", extraClass: "skills-signed-input" }) + "</label>"
+        + "<label>Pass Perception" + numberInput("field-passive-perception", passiveValue, { min: 0, step: 1, allowBlank: true, stepper: true, defaultValue: 10, sequence: "passive-perception", extraClass: "skills-passive-input" }) + "</label>"
         + "</div>";
       html += "<div class='skills-vision-row'>"
         + "<label>Vision<input type='text' id='field-vision' class='skills-vision-input' value='" + escAttr(visionValue || "") + "' placeholder='e.g. 60dv, 10bs'></label>"
@@ -2067,19 +2255,46 @@
       html += "</div>";
 
       html += "<div class='section'><h2>9. Spells</h2>";
-      if (data.spells.cantrips) {
-        html += "<label>Cantrips" + textInput("spell-cantrips", data.spells.cantrips.value) + "</label>";
-      }
+      var spellMode = normalizeSpellCastingMode(data.spells.mode);
+      var slotHiddenClass = spellMode === "slot" ? "" : " is-hidden";
+      var usesHiddenClass = spellMode === "uses" ? "" : " is-hidden";
+      html += "<div class='spell-mode-row'>"
+        + "<label>Casting Mode"
+        + "<select id='spell-casting-mode'>"
+        + "<option value='slot'" + (spellMode === "slot" ? " selected" : "") + ">Slot Casting</option>"
+        + "<option value='uses'" + (spellMode === "uses" ? " selected" : "") + ">Per-Spell Uses</option>"
+        + "</select>"
+        + "</label>"
+        + "</div>";
 
-      for (var level = 0; level < data.spells.levels.length; level++) {
-        var spellLevel = data.spells.levels[level];
-        if (!spellLevel) continue;
-        var n = level + 1;
-        html += "<div class='spell-row'>";
-        html += "<label>L" + n + " Slots" + textInput("spell-slots-" + n, spellLevel.slots || "") + "</label>";
-        html += "<label>L" + n + " Spells" + textInput("spell-list-" + n, spellLevel.spells || "") + "</label>";
-        html += "</div>";
-      }
+      html += "<div id='spell-slot-subsection' class='spell-slot-subsection" + slotHiddenClass + "'>";
+      html += "<div class='spell-slot-head spell-editor-head'>"
+        + "  <div>Level</div>"
+        + "  <div>Slots</div>"
+        + "  <div>Spells</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+      html += "<div id='spell-slot-rows' class='row-editor-list spell-slot-list'>";
+      data.spells.rows.forEach(function(spellRow, i) {
+        html += spellSlotRowHtml(i, spellRow || {});
+      });
+      html += "</div>";
+      html += "<div class='section-add-row'><button type='button' id='add-spell-slot-row-btn' class='btn'>+ Add Spell Row</button></div>";
+      html += "</div>";
+
+      html += "<div id='spell-uses-subsection' class='spell-slot-subsection" + usesHiddenClass + "'>";
+      html += "<div class='spell-uses-head spell-editor-head'>"
+        + "  <div>Uses</div>"
+        + "  <div>Spells</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+      html += "<div id='spell-uses-rows' class='row-editor-list spell-uses-list'>";
+      data.spells.usesRows.forEach(function(useRow, i) {
+        html += spellUsesRowHtml(i, useRow || {});
+      });
+      html += "</div>";
+      html += "<div class='section-add-row'><button type='button' id='add-spell-uses-row-btn' class='btn'>+ Add Spell Row</button></div>";
+      html += "</div>";
       html += "</div>";
 
       html += "<div class='section'><h2>10. Special</h2>";
@@ -2100,9 +2315,11 @@
       initRichTextFields();
       initClassEditor();
       initNumberSteppers();
+      initSpellRowEditor();
       initSpeedVariantControls();
       initExpandableSections();
       initRepeatableRowActions();
+      initSkillModifierSeeding();
       refreshDerivedModifiers();
       wireDirtyTracking(root);
       updatePreview();
@@ -2147,8 +2364,8 @@
       html += "<div class='attr-matrix-head'>"
         + "<div>Stat</div>"
         + "<div>Score</div>"
-        + "<div>Modifier</div>"
-        + "<div>Save</div>"
+        + "<div>Mod</div>"
+        + "<div>Save Override</div>"
         + "<div>Save Flag</div>"
         + "</div>";
 
@@ -2190,12 +2407,18 @@
         modValue,
         formatSignedNumber(dndModifier(normalizeNonNegativeInt(score, 10)))
       );
+      var saveOverrideValue = "";
+      var parsedSaveOverride = parseInt(String(saveValue || "").replace(/[^\d-]/g, ""), 10);
+      if (!isNaN(parsedSaveOverride)) {
+        var normalizedOverride = formatSignedNumber(parsedSaveOverride);
+        if (normalizedOverride !== derivedMod) saveOverrideValue = String(parsedSaveOverride);
+      }
 
       return "<div class='attr-matrix-row'>"
         + "<div class='attr-stat-cell' title='" + escAttr(titleMap[stat] || stat) + "'>" + escHtml(abbrMap[stat] || stat.toUpperCase()) + "</div>"
         + "<div>" + numberInput("field-" + stat, score, { type: "number", min: 0, step: 1, defaultValue: 10, stepper: true, extraClass: "attr-score-input" }) + "</div>"
         + "<div><span class='attr-derived-text' id='field-" + stat + "-mod'>" + escHtml(derivedMod) + "</span></div>"
-        + "<div>" + numberInput("field-" + stat + "-save", saveValue, { type: "number", step: 1, defaultValue: 0, stepper: true, extraClass: "attr-save-input" }) + "</div>"
+        + "<div>" + numberInput("field-" + stat + "-save", saveOverrideValue, { type: "number", step: 1, allowBlank: true, stepper: true, sequence: "save-override", saveOverrideStat: stat, extraClass: "attr-save-input" }) + "</div>"
         + "<div>" + selectInput("field-" + stat + "-save-flag", ADV_OPTIONS, saveFlag) + "</div>"
         + "</div>";
     }
@@ -2415,7 +2638,11 @@
 
     function numberInput(id, value, opts) {
       var options = opts || {};
-      var isCrSequence = options.sequence === "cr";
+      var sequenceType = options.sequence || "";
+      var isCrSequence = sequenceType === "cr";
+      var isSpellLevelSequence = sequenceType === "spell-level";
+      var isSpellUsesSequence = sequenceType === "spell-uses";
+      var isSaveOverrideSequence = sequenceType === "save-override";
       var hasMin = options.min !== undefined;
       var minAttr = hasMin ? " min='" + escAttr(String(options.min)) + "'" : "";
       var stepAttr = options.step !== undefined ? " step='" + escAttr(String(options.step)) + "'" : "";
@@ -2424,6 +2651,10 @@
       var normalized = "";
       if (isCrSequence) {
         normalized = normalizeCrValue(raw);
+      } else if (isSpellLevelSequence) {
+        normalized = formatSpellLevelDisplay(parseSpellLevelValue(raw));
+      } else if (isSpellUsesSequence) {
+        normalized = formatSpellUsesDisplay(parseSpellUsesValue(raw));
       } else if (options.allowBlank && raw === "") {
         normalized = "";
       } else if (hasMin) {
@@ -2438,17 +2669,19 @@
       var disabledAttr = options.disabled ? " disabled" : "";
       var placeholderAttr = options.placeholder ? " placeholder='" + escAttr(String(options.placeholder)) + "'" : "";
       var clearAtMinAttr = options.clearAtMinOnDecrement ? " data-clear-at-min='true'" : "";
-      var sequenceAttr = isCrSequence ? " data-sequence='cr'" : "";
+      var sequenceAttr = sequenceType ? " data-sequence='" + escAttr(sequenceType) + "'" : "";
+      var saveStatAttr = isSaveOverrideSequence && options.saveOverrideStat ? " data-save-stat='" + escAttr(String(options.saveOverrideStat)) + "'" : "";
       var blankSeedAttr = options.blankSeed !== undefined ? " data-blank-seed='" + escAttr(String(options.blankSeed)) + "'" : "";
       var extraClass = options.extraClass ? (" " + options.extraClass) : "";
-      var inputType = isCrSequence ? "text" : "number";
-      var inputMode = isCrSequence ? "text" : "numeric";
-      if (isCrSequence) {
+      var sequenceAsText = isCrSequence || isSpellLevelSequence || isSpellUsesSequence;
+      var inputType = sequenceAsText ? "text" : "number";
+      var inputMode = sequenceAsText ? "text" : "numeric";
+      if (sequenceAsText) {
         minAttr = "";
         stepAttr = "";
       }
       var inputHtml = "<input type='" + inputType + "' class='num-input" + extraClass + "'" + idAttr
-        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + placeholderAttr + clearAtMinAttr + sequenceAttr + blankSeedAttr + " inputmode='" + inputMode + "'" + readonlyAttr + disabledAttr + ">";
+        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + placeholderAttr + clearAtMinAttr + sequenceAttr + saveStatAttr + blankSeedAttr + " inputmode='" + inputMode + "'" + readonlyAttr + disabledAttr + ">";
 
       if (!options.stepper) return inputHtml;
 
@@ -2498,6 +2731,89 @@
               input.dispatchEvent(new Event("change", { bubbles: true }));
               return;
             }
+            if (sequenceType === "spell-level") {
+              var currentSpellLevel = parseSpellLevelValue(input.value);
+              var nextSpellLevel = currentSpellLevel + delta;
+              if (nextSpellLevel < 0) nextSpellLevel = 0;
+              if (nextSpellLevel > 9) nextSpellLevel = 9;
+              input.value = formatSpellLevelDisplay(nextSpellLevel);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
+            if (sequenceType === "spell-uses") {
+              var currentUses = parseSpellUsesValue(input.value);
+              var nextUses = currentUses;
+              if (delta > 0) {
+                if (currentUses === -1 || currentUses === "") nextUses = 1;
+                else nextUses = parseInt(currentUses, 10) + 1;
+              } else if (delta < 0) {
+                if (currentUses === "" || currentUses === -1) nextUses = -1;
+                else if (currentUses <= 1) nextUses = -1;
+                else nextUses = parseInt(currentUses, 10) - 1;
+              }
+              input.value = formatSpellUsesDisplay(nextUses);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
+            if (sequenceType === "save-override") {
+              var saveStat = input.getAttribute("data-save-stat") || "";
+              var baseMod = 0;
+              if (STATS.indexOf(saveStat) !== -1) {
+                baseMod = dndModifier(getScoreValue(saveStat));
+              }
+              var rawSaveOverride = (input.value || "").trim();
+              if (rawSaveOverride === "") {
+                input.value = String(baseMod + (delta > 0 ? 1 : -1));
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                return;
+              }
+              var currentSaveOverride = parseInt(String(rawSaveOverride).replace(/[^\d-]/g, ""), 10);
+              if (isNaN(currentSaveOverride)) currentSaveOverride = baseMod;
+              input.value = String(currentSaveOverride + delta);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
+            if (sequenceType === "initiative") {
+              var rawInitiative = (input.value || "").trim();
+              if (rawInitiative === "") {
+                input.value = String(dndModifier(getScoreValue("dexterity")));
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                return;
+              }
+              var currentInitiative = parseInt(String(rawInitiative).replace(/[^\d-]/g, ""), 10);
+              if (isNaN(currentInitiative)) currentInitiative = dndModifier(getScoreValue("dexterity"));
+              input.value = String(currentInitiative + delta);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
+            if (sequenceType === "passive-perception") {
+              var rawPassive = (input.value || "").trim();
+              if (rawPassive === "") {
+                var seededPassive = 10 + dndModifier(getScoreValue("wisdom"));
+                if (seededPassive < 0) seededPassive = 0;
+                input.value = String(seededPassive);
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                return;
+              }
+              var currentPassive = parseInt(String(rawPassive).replace(/[^\d-]/g, ""), 10);
+              if (isNaN(currentPassive)) {
+                currentPassive = 10 + dndModifier(getScoreValue("wisdom"));
+                if (currentPassive < 0) currentPassive = 0;
+              }
+              var nextPassive = currentPassive + delta;
+              if (nextPassive < 0) nextPassive = 0;
+              input.value = String(nextPassive);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
             var minAttr = input.getAttribute("min");
             var hasMin = minAttr !== null && minAttr !== "";
             var min = hasMin ? parseInt(minAttr, 10) : 0;
@@ -2543,6 +2859,23 @@
             };
             input.addEventListener("blur", normalizeCrInput);
             input.addEventListener("change", normalizeCrInput);
+          }
+
+          if (input.getAttribute("data-sequence") === "spell-level") {
+            var normalizeSpellLevelInput = function() {
+              var normalizedSpellLevel = formatSpellLevelDisplay(parseSpellLevelValue(input.value));
+              if (input.value !== normalizedSpellLevel) input.value = normalizedSpellLevel;
+            };
+            input.addEventListener("blur", normalizeSpellLevelInput);
+            input.addEventListener("change", normalizeSpellLevelInput);
+          }
+          if (input.getAttribute("data-sequence") === "spell-uses") {
+            var normalizeSpellUsesInput = function() {
+              var normalizedSpellUses = formatSpellUsesDisplay(parseSpellUsesValue(input.value));
+              if (input.value !== normalizedSpellUses) input.value = normalizedSpellUses;
+            };
+            input.addEventListener("blur", normalizeSpellUsesInput);
+            input.addEventListener("change", normalizeSpellUsesInput);
           }
 
           function startHold(delta, ev) {
@@ -2609,6 +2942,54 @@
       }
     }
 
+    function getSkillSeedModifier(skillName) {
+      var stat = SKILL_ABILITY_MAP[(skillName || "").trim()];
+      if (!stat) return null;
+      var profRaw = getInputValue("field-proficiency-bonus");
+      var prof = parseInt(String(profRaw || "").replace(/[^\d-]/g, ""), 10);
+      if (isNaN(prof) || prof < 0) prof = 0;
+      return dndModifier(getScoreValue(stat)) + prof;
+    }
+
+    function initSkillModifierSeeding() {
+      var skillNameEls = document.querySelectorAll("select[id^='skill-'][id$='-name']");
+      for (var i = 0; i < skillNameEls.length; i++) {
+        (function(nameEl) {
+          if (nameEl.getAttribute("data-skill-seed-bound") === "true") return;
+          nameEl.setAttribute("data-skill-seed-bound", "true");
+          var row = nameEl.closest(".skills-rule-row");
+          if (!row) return;
+          var modInput = row.querySelector(".skills-mod-input");
+          if (!modInput) return;
+
+          modInput.addEventListener("input", function() {
+            modInput.removeAttribute("data-skill-autoseeded");
+          });
+          modInput.addEventListener("change", function() {
+            modInput.removeAttribute("data-skill-autoseeded");
+          });
+
+          nameEl.addEventListener("change", function() {
+            var skillName = (nameEl.value || "").trim();
+            var isAutoSeeded = modInput.getAttribute("data-skill-autoseeded") === "true";
+            var currentMod = (modInput.value || "").trim();
+
+            if (!skillName) {
+              if (isAutoSeeded) modInput.value = "";
+              modInput.removeAttribute("data-skill-autoseeded");
+              return;
+            }
+
+            if (currentMod !== "" && !isAutoSeeded) return;
+            var seed = getSkillSeedModifier(skillName);
+            if (seed === null) return;
+            modInput.value = String(seed);
+            modInput.setAttribute("data-skill-autoseeded", "true");
+          });
+        })(skillNameEls[i]);
+      }
+    }
+
     function selectInput(id, options, selected) {
       var actual = options.slice();
       if (selected && actual.indexOf(selected) === -1) actual.unshift(selected);
@@ -2655,7 +3036,7 @@
       return "<div class='" + classes + "' data-row-index='" + index + "'>"
         + "<input type='text' id='" + id + "-name' class='action-name-input' value='" + escAttr(row.name || "") + "' placeholder='Flurry of Blows'>"
         + "<input type='text' id='" + id + "-prefixes' class='action-prefixes-input' value='" + escAttr(prefixCsv) + "' placeholder='1 Ki, 2/day'>"
-        + "<div class='action-desc-editor'>" + richTextField(id + "-desc", descParts.descriptionHtml || "", "+9 (1d8+5) Topple: (DC14 CON)", "action-menu") + "</div>"
+        + "<div class='action-desc-editor'>" + richTextField(id + "-desc", descParts.descriptionHtml || "", "+9 (1d8+5) Topple: (DC14 CON)", "action-menu", "+9 <i>(1d8+5)</i> Topple: (DC14 CON)") + "</div>"
         + "<input type='text' id='" + id + "-suffixes' class='action-suffixes-input' value='" + escAttr(suffixCsv) + "' placeholder='4 free/day'>"
         + repeatRowRemoveButton(sectionKey, index, "action row")
         + "</div>";
@@ -2699,6 +3080,246 @@
         + "<input type='text' id='" + id + "-suffixes' class='action-suffixes-input' value='" + escAttr(parsed.suffixCsv) + "' placeholder='[5-6 Recharge]'>"
         + repeatRowRemoveButton("special", index, "special row")
         + "</div>";
+    }
+
+    function spellSlotRowHtml(index, row) {
+      var item = row || {};
+      var levelValue = formatSpellLevelDisplay(parseSpellLevelValue(item.level));
+      var slotsValue = ((item.slots === undefined || item.slots === null) ? "" : String(item.slots));
+      var spellsValue = ((item.spells === undefined || item.spells === null) ? "" : String(item.spells));
+
+      return "<div class='spell-slot-row row-editor-row' data-row-index='" + escAttr(String(index)) + "'>"
+        + numberInput("", levelValue, { step: 1, stepper: true, sequence: "spell-level", extraClass: "spell-level-input" })
+        + numberInput("", slotsValue, { min: 0, step: 1, allowBlank: true, stepper: true, blankSeed: 1, clearAtMinOnDecrement: true, extraClass: "spell-slots-input" })
+        + "<input type='text' class='spell-names-input' value='" + escAttr(spellsValue) + "' placeholder='Shield, Magic Missile'>"
+        + "<button type='button' class='btn class-remove-btn row-remove-btn spell-row-remove-btn' title='Remove spell row' aria-label='Remove spell row'>&minus;</button>"
+        + "</div>";
+    }
+
+    function spellUsesRowHtml(index, row) {
+      var item = row || {};
+      var usesValue = formatSpellUsesDisplay(parseSpellUsesValue(item.uses));
+      var spellsValue = ((item.spells === undefined || item.spells === null) ? "" : String(item.spells));
+
+      return "<div class='spell-uses-row row-editor-row' data-row-index='" + escAttr(String(index)) + "'>"
+        + numberInput("", usesValue, { step: 1, stepper: true, sequence: "spell-uses", extraClass: "spell-uses-input" })
+        + "<input type='text' class='spell-uses-names-input' value='" + escAttr(spellsValue) + "' placeholder='Misty Step, Shield'>"
+        + "<button type='button' class='btn class-remove-btn row-remove-btn spell-uses-row-remove-btn' title='Remove spell use row' aria-label='Remove spell use row'>&minus;</button>"
+        + "</div>";
+    }
+
+    function initSpellRowEditor() {
+      var modeSelect = document.getElementById("spell-casting-mode");
+      var slotSubsection = document.getElementById("spell-slot-subsection");
+      var usesSubsection = document.getElementById("spell-uses-subsection");
+      var slotRowsWrap = document.getElementById("spell-slot-rows");
+      var usesRowsWrap = document.getElementById("spell-uses-rows");
+      var addSlotBtn = document.getElementById("add-spell-slot-row-btn");
+      var addUsesBtn = document.getElementById("add-spell-uses-row-btn");
+      if (!modeSelect || !slotSubsection || !usesSubsection || !slotRowsWrap || !usesRowsWrap || !addSlotBtn || !addUsesBtn) return;
+
+      function ensureAtLeastOneRow(rowsWrap, rowSelector, htmlFactory) {
+        if (!rowsWrap) return;
+        if (rowsWrap.querySelectorAll(rowSelector).length) return;
+        rowsWrap.insertAdjacentHTML("beforeend", htmlFactory(0));
+      }
+
+      function syncSpellSlotRowState(rowEl) {
+        if (!rowEl) return;
+        var levelInput = rowEl.querySelector(".spell-level-input");
+        var slotsInput = rowEl.querySelector(".spell-slots-input");
+        if (!levelInput || !slotsInput) return;
+
+        var levelNumber = parseSpellLevelValue(levelInput.value);
+        var normalizedLevel = formatSpellLevelDisplay(levelNumber);
+        if (levelInput.value !== normalizedLevel) levelInput.value = normalizedLevel;
+
+        var isCantrip = levelNumber === 0;
+        if (isCantrip) slotsInput.value = "";
+        slotsInput.disabled = isCantrip;
+        var slotsStepper = slotsInput.closest(".num-stepper");
+        if (slotsStepper) slotsStepper.classList.toggle("is-disabled", isCantrip);
+      }
+
+      function bindSpellSlotRow(rowEl) {
+        if (!rowEl) return;
+        if (rowEl.getAttribute("data-spell-slot-row-bound") === "true") return;
+        rowEl.setAttribute("data-spell-slot-row-bound", "true");
+
+        initNumberSteppers(rowEl);
+
+        var removeBtn = rowEl.querySelector(".spell-row-remove-btn");
+        if (removeBtn) {
+          removeBtn.addEventListener("click", function() {
+            if (slotRowsWrap.querySelectorAll(".spell-slot-row").length <= 1) return;
+            rowEl.remove();
+            syncSpellSlotRows();
+            setDirty(true);
+            updatePreview();
+          });
+        }
+
+        var levelInput = rowEl.querySelector(".spell-level-input");
+        if (levelInput) {
+          levelInput.addEventListener("input", function() { syncSpellSlotRowState(rowEl); });
+          levelInput.addEventListener("change", function() { syncSpellSlotRowState(rowEl); });
+        }
+
+        syncSpellSlotRowState(rowEl);
+      }
+
+      function bindSpellUsesRow(rowEl) {
+        if (!rowEl) return;
+        if (rowEl.getAttribute("data-spell-uses-row-bound") === "true") return;
+        rowEl.setAttribute("data-spell-uses-row-bound", "true");
+
+        initNumberSteppers(rowEl);
+
+        var removeBtn = rowEl.querySelector(".spell-uses-row-remove-btn");
+        if (removeBtn) {
+          removeBtn.addEventListener("click", function() {
+            if (usesRowsWrap.querySelectorAll(".spell-uses-row").length <= 1) return;
+            rowEl.remove();
+            syncSpellUsesRows();
+            setDirty(true);
+            updatePreview();
+          });
+        }
+
+        var usesInput = rowEl.querySelector(".spell-uses-input");
+        if (usesInput) {
+          var normalizeUsesInput = function() {
+            var normalizedUses = formatSpellUsesDisplay(parseSpellUsesValue(usesInput.value));
+            if (usesInput.value !== normalizedUses) usesInput.value = normalizedUses;
+          };
+          usesInput.addEventListener("input", normalizeUsesInput);
+          usesInput.addEventListener("change", normalizeUsesInput);
+          normalizeUsesInput();
+        }
+      }
+
+      function syncSpellSlotRows() {
+        var rows = slotRowsWrap.querySelectorAll(".spell-slot-row");
+        var showRemove = rows.length > 1;
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].setAttribute("data-row-index", String(i));
+          bindSpellSlotRow(rows[i]);
+          syncSpellSlotRowState(rows[i]);
+          var removeBtn = rows[i].querySelector(".spell-row-remove-btn");
+          if (removeBtn) {
+            removeBtn.style.visibility = showRemove ? "visible" : "hidden";
+            if (showRemove) removeBtn.removeAttribute("tabindex");
+            else removeBtn.setAttribute("tabindex", "-1");
+          }
+        }
+      }
+
+      function syncSpellUsesRows() {
+        var rows = usesRowsWrap.querySelectorAll(".spell-uses-row");
+        var showRemove = rows.length > 1;
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].setAttribute("data-row-index", String(i));
+          bindSpellUsesRow(rows[i]);
+          var removeBtn = rows[i].querySelector(".spell-uses-row-remove-btn");
+          if (removeBtn) {
+            removeBtn.style.visibility = showRemove ? "visible" : "hidden";
+            if (showRemove) removeBtn.removeAttribute("tabindex");
+            else removeBtn.setAttribute("tabindex", "-1");
+          }
+        }
+      }
+
+      function applyModeVisibility() {
+        var mode = normalizeSpellCastingMode(modeSelect.value);
+        slotSubsection.classList.toggle("is-hidden", mode !== "slot");
+        usesSubsection.classList.toggle("is-hidden", mode !== "uses");
+      }
+
+      addSlotBtn.addEventListener("click", function() {
+        var nextIndex = slotRowsWrap.querySelectorAll(".spell-slot-row").length;
+        slotRowsWrap.insertAdjacentHTML("beforeend", spellSlotRowHtml(nextIndex, { level: 1, slots: "", spells: "" }));
+        var newRow = slotRowsWrap.lastElementChild;
+        if (newRow) {
+          bindSpellSlotRow(newRow);
+          wireDirtyTracking(newRow);
+          syncSpellSlotRowState(newRow);
+        }
+        syncSpellSlotRows();
+        setDirty(true);
+        updatePreview();
+      });
+
+      addUsesBtn.addEventListener("click", function() {
+        var nextIndex = usesRowsWrap.querySelectorAll(".spell-uses-row").length;
+        usesRowsWrap.insertAdjacentHTML("beforeend", spellUsesRowHtml(nextIndex, { uses: "", spells: "" }));
+        var newRow = usesRowsWrap.lastElementChild;
+        if (newRow) {
+          bindSpellUsesRow(newRow);
+          wireDirtyTracking(newRow);
+        }
+        syncSpellUsesRows();
+        setDirty(true);
+        updatePreview();
+      });
+
+      modeSelect.addEventListener("change", function() {
+        modeSelect.value = normalizeSpellCastingMode(modeSelect.value);
+        ensureAtLeastOneRow(slotRowsWrap, ".spell-slot-row", function(idx) { return spellSlotRowHtml(idx, { level: 1, slots: "", spells: "" }); });
+        ensureAtLeastOneRow(usesRowsWrap, ".spell-uses-row", function(idx) { return spellUsesRowHtml(idx, { uses: "", spells: "" }); });
+        syncSpellSlotRows();
+        syncSpellUsesRows();
+        applyModeVisibility();
+        setDirty(true);
+        updatePreview();
+      });
+
+      ensureAtLeastOneRow(slotRowsWrap, ".spell-slot-row", function(idx) { return spellSlotRowHtml(idx, { level: 1, slots: "", spells: "" }); });
+      ensureAtLeastOneRow(usesRowsWrap, ".spell-uses-row", function(idx) { return spellUsesRowHtml(idx, { uses: "", spells: "" }); });
+      syncSpellSlotRows();
+      syncSpellUsesRows();
+      modeSelect.value = normalizeSpellCastingMode(modeSelect.value);
+      applyModeVisibility();
+    }
+
+    function getSpellCastingModeFromEditor() {
+      var modeEl = document.getElementById("spell-casting-mode");
+      return normalizeSpellCastingMode(modeEl ? modeEl.value : "slot");
+    }
+
+    function getSpellRowsFromEditor() {
+      var rowEls = document.querySelectorAll(".spell-slot-row");
+      var rows = [];
+      for (var i = 0; i < rowEls.length; i++) {
+        var levelInput = rowEls[i].querySelector(".spell-level-input");
+        var slotsInput = rowEls[i].querySelector(".spell-slots-input");
+        var namesInput = rowEls[i].querySelector(".spell-names-input");
+        if (!levelInput || !slotsInput || !namesInput) continue;
+
+        var levelValue = parseSpellLevelValue(levelInput.value);
+        var slotsRaw = (slotsInput.value || "").trim();
+        var spellsRaw = (namesInput.value || "").trim();
+        rows.push({
+          level: levelValue,
+          slots: slotsRaw,
+          spells: spellsRaw
+        });
+      }
+      return rows;
+    }
+
+    function getSpellUsesRowsFromEditor() {
+      var rowEls = document.querySelectorAll(".spell-uses-row");
+      var rows = [];
+      for (var i = 0; i < rowEls.length; i++) {
+        var usesInput = rowEls[i].querySelector(".spell-uses-input");
+        var namesInput = rowEls[i].querySelector(".spell-uses-names-input");
+        if (!usesInput || !namesInput) continue;
+        rows.push({
+          uses: formatSpellUsesDisplay(parseSpellUsesValue(usesInput.value)),
+          spells: (namesInput.value || "").trim()
+        });
+      }
+      return rows;
     }
 
     function parseActionBracketRows(raw) {
@@ -2826,7 +3447,11 @@
         else emptyIndexes.push(i);
       }
 
-      var targetVisible = Math.min(list.length, Math.max(1, filledIndexes.length + 1));
+      // Keep saved empties hidden by default when the section already has authored rows.
+      // Otherwise, removed/cleared rows reappear after every reload as "new" blank rows.
+      var targetVisible = filledIndexes.length > 0
+        ? filledIndexes.length
+        : Math.min(list.length, 1);
       var visibleCount = 0;
       for (var f = 0; f < filledIndexes.length; f++) {
         visible[filledIndexes[f]] = true;
@@ -2982,7 +3607,9 @@
     function clearRichFieldValue(id) {
       var el = document.getElementById(id);
       if (!el) return;
+      el.classList.remove("is-rich-placeholder");
       el.innerHTML = "";
+      normalizeRichFieldPlaceholderState(el);
     }
 
     function clearRepeatableRowValues(rowType, index) {
@@ -3129,8 +3756,9 @@
       syncRepeatRowRemoveButtons("special");
     }
 
-    function richTextField(id, value, placeholder, mode) {
+    function richTextField(id, value, placeholder, mode, placeholderHtml) {
       var placeholderAttr = placeholder ? " data-placeholder='" + escAttr(String(placeholder)) + "'" : "";
+      var placeholderHtmlAttr = placeholderHtml ? " data-placeholder-html='" + escAttr(String(placeholderHtml)) + "'" : "";
       var toolbar = "";
       if (mode === "action-menu") {
         toolbar = ""
@@ -3167,7 +3795,7 @@
       }
       return ""
         + toolbar
-        + "<div class='rt-field' contenteditable='true' id='" + id + "'" + placeholderAttr + ">" + (value || "") + "</div>";
+        + "<div class='rt-field' contenteditable='true' id='" + id + "'" + placeholderAttr + placeholderHtmlAttr + ">" + (value || "") + "</div>";
     }
 
     var richSelectionRanges = {};
@@ -3179,6 +3807,7 @@
 
     function captureRichFieldSelection(field) {
       if (!field || !field.id) return;
+      if (field.classList.contains("is-rich-placeholder")) return;
       var sel = window.getSelection();
       if (!sel || !sel.rangeCount) return;
       var range = sel.getRangeAt(0);
@@ -3216,11 +3845,69 @@
       }
     }
 
+    function clearRichFieldHtmlPlaceholder(field) {
+      if (!field) return;
+      if (field.classList.contains("is-rich-placeholder")) {
+        field.classList.remove("is-rich-placeholder");
+        field.innerHTML = "";
+      }
+    }
+
+    function applyRichFieldHtmlPlaceholder(field) {
+      if (!field) return false;
+      var placeholderHtml = field.getAttribute("data-placeholder-html");
+      if (!placeholderHtml) return false;
+      field.classList.add("is-rich-placeholder");
+      field.innerHTML = "<span class='rt-placeholder-html' contenteditable='false'>" + placeholderHtml + "</span>";
+      return true;
+    }
+
     function normalizeRichFieldPlaceholderState(field) {
       if (!field) return;
+      if (field.classList.contains("is-rich-placeholder")) {
+        var activePlain = (field.textContent || "").replace(/\u00a0/g, " ").trim();
+        if (activePlain === "" || activePlain === (field.getAttribute("data-placeholder") || "").trim()) {
+          if (applyRichFieldHtmlPlaceholder(field)) return;
+          field.classList.remove("is-rich-placeholder");
+          field.innerHTML = "";
+          return;
+        }
+        field.classList.remove("is-rich-placeholder");
+      }
       var plain = (field.textContent || "").replace(/\u00a0/g, " ").trim();
       if (plain !== "") return;
+      if (applyRichFieldHtmlPlaceholder(field)) return;
       field.innerHTML = "";
+    }
+
+    function normalizeActionDescSingleLine(field) {
+      if (!field || !field.closest(".action-desc-editor")) return;
+      if (field.classList.contains("is-rich-placeholder")) return;
+      var normalized = normalizeRichHtml(field.innerHTML || "");
+      normalized = normalized.replace(/<br\s*\/?>/gi, " ").replace(/\s{2,}/g, " ").trim();
+      if (normalized === "") {
+        field.innerHTML = "";
+        return;
+      }
+      if (field.innerHTML !== normalized) field.innerHTML = normalized;
+    }
+
+    function placeCaretAtEnd(field) {
+      if (!field) return;
+      var range = document.createRange();
+      range.selectNodeContents(field);
+      range.collapse(false);
+      var sel = window.getSelection();
+      if (!sel) return;
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function ensureRichFieldReadyForTyping(field) {
+      if (!field) return;
+      if (!field.classList.contains("is-rich-placeholder")) return;
+      clearRichFieldHtmlPlaceholder(field);
+      placeCaretAtEnd(field);
     }
 
     function alignPopoverToToolbarStart(wrap) {
@@ -3235,6 +3922,7 @@
     function applyActionSelectionCommand(fieldId, cmd) {
       var field = document.getElementById(fieldId);
       if (!field) return;
+      clearRichFieldHtmlPlaceholder(field);
       field.focus();
       var range = restoreRichFieldSelection(field, false);
       if (!range || range.collapsed) return;
@@ -3248,6 +3936,7 @@
     function insertActionSymbol(fieldId, symbol) {
       var field = document.getElementById(fieldId);
       if (!field) return;
+      clearRichFieldHtmlPlaceholder(field);
       field.focus();
       var range = restoreRichFieldSelection(field, true);
       if (!range) return;
@@ -3273,15 +3962,39 @@
         (function(field) {
           if (field.getAttribute("data-rich-selection-bound") === "true") return;
           field.setAttribute("data-rich-selection-bound", "true");
+          if (!field.classList.contains("is-rich-placeholder")) {
+            var sanitizedInitial = normalizeRichHtml(field.innerHTML || "");
+            if (field.innerHTML !== sanitizedInitial) field.innerHTML = sanitizedInitial;
+          }
           normalizeRichFieldPlaceholderState(field);
           field.addEventListener("keyup", function() { captureRichFieldSelection(field); });
           field.addEventListener("mouseup", function() { captureRichFieldSelection(field); });
-          field.addEventListener("focus", function() { captureRichFieldSelection(field); });
+          field.addEventListener("focus", function() {
+            clearRichFieldHtmlPlaceholder(field);
+            captureRichFieldSelection(field);
+          });
+          field.addEventListener("beforeinput", function() {
+            ensureRichFieldReadyForTyping(field);
+          });
           field.addEventListener("input", function() {
             normalizeRichFieldPlaceholderState(field);
             captureRichFieldSelection(field);
           });
+          field.addEventListener("keydown", function(e) {
+            ensureRichFieldReadyForTyping(field);
+            if (!field.closest(".action-desc-editor")) return;
+            if (e.key === "Enter") e.preventDefault();
+          });
+          field.addEventListener("paste", function() {
+            ensureRichFieldReadyForTyping(field);
+            if (!field.closest(".action-desc-editor")) return;
+            setTimeout(function() {
+              normalizeActionDescSingleLine(field);
+              captureRichFieldSelection(field);
+            }, 0);
+          });
           field.addEventListener("blur", function() {
+            normalizeActionDescSingleLine(field);
             normalizeRichFieldPlaceholderState(field);
           });
         })(fields[f]);
@@ -3385,7 +4098,16 @@
 
         var saveEl = document.getElementById("field-" + stat + "-save");
         if (saveEl) {
-          if (saveEl.type === "number") {
+          var saveSequence = saveEl.getAttribute("data-sequence") || "";
+          if (saveSequence === "save-override") {
+            var saveRaw = (saveEl.value || "").trim();
+            if (saveRaw === "") {
+              saveEl.value = "";
+            } else {
+              var parsedOverride = parseInt(String(saveRaw).replace(/[^\d-]/g, ""), 10);
+              saveEl.value = isNaN(parsedOverride) ? "" : String(parsedOverride);
+            }
+          } else if (saveEl.type === "number") {
             var parsed = parseInt(String(saveEl.value || "").replace(/[^\d-]/g, ""), 10);
             if (isNaN(parsed)) parsed = 0;
             saveEl.value = String(parsed);
@@ -3431,6 +4153,171 @@
       var rows = cloneRows(state.rawRows || []);
       applyFormEditsToRows(rows);
       return rows;
+    }
+
+    function toOrdinalSuffix(level) {
+      if (level % 100 >= 11 && level % 100 <= 13) return level + "th";
+      if (level % 10 === 1) return level + "st";
+      if (level % 10 === 2) return level + "nd";
+      if (level % 10 === 3) return level + "rd";
+      return level + "th";
+    }
+
+    function spellSheetLabel(level, type) {
+      if (type === "cantrips") return "Cantrips";
+      if (type === "uses") return "Per-Spell Uses";
+      var ordinal = toOrdinalSuffix(level);
+      if (type === "slots") return ordinal + " Level Spell Slots";
+      return ordinal + " Level Spells";
+    }
+
+    function ensureSpellModeRow(rows, rowMap) {
+      if (!rowMap) return null;
+      if (rowMap.mode !== null && rowMap.mode !== undefined) {
+        if (rows[rowMap.mode]) return rowMap.mode;
+        rowMap.mode = null;
+      }
+      rows.push(["Spell Casting Mode", "", "", ""]);
+      rowMap.mode = rows.length - 1;
+      return rowMap.mode;
+    }
+
+    function ensureSpellSheetRow(rows, rowMap, type, level, shouldCreate) {
+      if (type === "cantrips") {
+        if (rowMap.cantrips !== null && rowMap.cantrips !== undefined) {
+          if (rows[rowMap.cantrips]) return rowMap.cantrips;
+          rowMap.cantrips = null;
+        }
+        if (!shouldCreate) return null;
+        rows.push([spellSheetLabel(0, "cantrips"), "", "", ""]);
+        rowMap.cantrips = rows.length - 1;
+        return rowMap.cantrips;
+      }
+      if (type === "uses") {
+        if (!rowMap.uses) rowMap.uses = [];
+        var useIndex = parseInt(level, 10);
+        if (isNaN(useIndex) || useIndex < 0) useIndex = 0;
+        if (rowMap.uses[useIndex] !== undefined && rowMap.uses[useIndex] !== null) {
+          if (rows[rowMap.uses[useIndex]]) return rowMap.uses[useIndex];
+          rowMap.uses[useIndex] = null;
+        }
+        if (!shouldCreate) return null;
+        rows.push([spellSheetLabel(0, "uses"), "", "", ""]);
+        rowMap.uses[useIndex] = rows.length - 1;
+        return rowMap.uses[useIndex];
+      }
+
+      var bucket = type === "slots" ? rowMap.slots : rowMap.spells;
+      if (!bucket) {
+        bucket = {};
+        if (type === "slots") rowMap.slots = bucket;
+        else rowMap.spells = bucket;
+      }
+      if (bucket[level] !== undefined && bucket[level] !== null) {
+        if (rows[bucket[level]]) return bucket[level];
+        delete bucket[level];
+      }
+      if (!shouldCreate) return null;
+      rows.push([spellSheetLabel(level, type), "", "", ""]);
+      bucket[level] = rows.length - 1;
+      return bucket[level];
+    }
+
+    function splitSpellNames(raw) {
+      if (!raw) return [];
+      var parts = String(raw).split(",");
+      var names = [];
+      for (var i = 0; i < parts.length; i++) {
+        var token = parts[i].trim();
+        if (token) names.push(token);
+      }
+      return names;
+    }
+
+    function applySpellRowsToSheetRows(rows) {
+      if (!state.parsedData || !state.parsedData.spells) return;
+      var spellMeta = state.parsedData.spells;
+      if (!spellMeta.rowMap) spellMeta.rowMap = { mode: null, cantrips: null, slots: {}, spells: {}, uses: [] };
+      if (spellMeta.rowMap.mode === undefined) spellMeta.rowMap.mode = spellMeta.modeRowIndex;
+      if (!spellMeta.rowMap.slots) spellMeta.rowMap.slots = {};
+      if (!spellMeta.rowMap.spells) spellMeta.rowMap.spells = {};
+      if (!spellMeta.rowMap.uses) spellMeta.rowMap.uses = [];
+
+      var modeValue = getSpellCastingModeFromEditor();
+      spellMeta.mode = modeValue;
+      var modeRowIndex = ensureSpellModeRow(rows, spellMeta.rowMap);
+      if (modeRowIndex !== null && modeRowIndex !== undefined) {
+        rows[modeRowIndex][1] = modeValue === "uses" ? "Per-Spell Uses" : "Slot Casting";
+        rows[modeRowIndex][2] = "";
+        rows[modeRowIndex][3] = "";
+      }
+
+      var editorRows = getSpellRowsFromEditor();
+      var usesRows = getSpellUsesRowsFromEditor();
+      var cantripNames = [];
+      var levels = {};
+      for (var level = 1; level <= 9; level++) {
+        levels[level] = { slot: "", spellNames: [] };
+      }
+
+      for (var i = 0; i < editorRows.length; i++) {
+        var row = editorRows[i];
+        var levelValue = parseSpellLevelValue(row.level);
+        var spellNames = splitSpellNames(row.spells);
+
+        if (levelValue === 0) {
+          if (spellNames.length) cantripNames = cantripNames.concat(spellNames);
+          continue;
+        }
+
+        if (levelValue < 1 || levelValue > 9) continue;
+        if (spellNames.length) levels[levelValue].spellNames = levels[levelValue].spellNames.concat(spellNames);
+        if (((row.slots || "") + "").trim() !== "") {
+          levels[levelValue].slot = String(normalizeNonNegativeInt(row.slots, 0));
+        }
+      }
+
+      var cantripValue = cantripNames.join(", ");
+      var cantripRowIndex = ensureSpellSheetRow(rows, spellMeta.rowMap, "cantrips", 0, !!cantripValue);
+      if (cantripRowIndex !== null && cantripRowIndex !== undefined) {
+        rows[cantripRowIndex][1] = cantripValue;
+        rows[cantripRowIndex][2] = "";
+        rows[cantripRowIndex][3] = "";
+      }
+
+      for (var spellLevel = 1; spellLevel <= 9; spellLevel++) {
+        var spellValue = levels[spellLevel].spellNames.join(", ");
+        var slotValue = levels[spellLevel].slot;
+
+        var spellRowIndex = ensureSpellSheetRow(rows, spellMeta.rowMap, "spells", spellLevel, !!spellValue);
+        if (spellRowIndex !== null && spellRowIndex !== undefined) {
+          rows[spellRowIndex][1] = spellValue;
+          rows[spellRowIndex][2] = "";
+          rows[spellRowIndex][3] = "";
+        }
+
+        var slotRowIndex = ensureSpellSheetRow(rows, spellMeta.rowMap, "slots", spellLevel, !!slotValue);
+        if (slotRowIndex !== null && slotRowIndex !== undefined) {
+          rows[slotRowIndex][1] = slotValue;
+          rows[slotRowIndex][2] = "";
+          rows[slotRowIndex][3] = "";
+        }
+      }
+
+      var existingUsesCount = spellMeta.rowMap.uses.length;
+      var usesWriteCount = Math.max(existingUsesCount, usesRows.length);
+      for (var useRowIdx = 0; useRowIdx < usesWriteCount; useRowIdx++) {
+        var useRow = usesRows[useRowIdx] || { uses: "", spells: "" };
+        var usesParsed = parseSpellUsesValue(useRow.uses);
+        var usesStored = usesParsed === "" ? "" : String(usesParsed);
+        var usesSpells = (useRow.spells || "").trim();
+        var shouldCreate = !!usesStored || !!usesSpells;
+        var useSheetRow = ensureSpellSheetRow(rows, spellMeta.rowMap, "uses", useRowIdx, shouldCreate);
+        if (useSheetRow === null || useSheetRow === undefined) continue;
+        rows[useSheetRow][1] = usesStored;
+        rows[useSheetRow][2] = usesSpells;
+        rows[useSheetRow][3] = "";
+      }
     }
 
     function applyFormEditsToRows(rows) {
@@ -3505,17 +4392,7 @@
         rows[item.rowIndex][3] = reactionValues.description;
       });
 
-      if (state.parsedData.spells.cantrips) {
-        setCellOnRows(rows, state.parsedData.spells.cantrips.rowIndex, 1, "spell-cantrips");
-      }
-
-      for (var level = 0; level < state.parsedData.spells.levels.length; level++) {
-        var s = state.parsedData.spells.levels[level];
-        if (!s) continue;
-        var levelNumber = level + 1;
-        if (s.slotsRowIndex !== undefined) setCellOnRows(rows, s.slotsRowIndex, 1, "spell-slots-" + levelNumber);
-        if (s.spellsRowIndex !== undefined) setCellOnRows(rows, s.spellsRowIndex, 1, "spell-list-" + levelNumber);
-      }
+      applySpellRowsToSheetRows(rows);
 
       state.parsedData.special.forEach(function(item, idx) {
         rows[item.rowIndex][1] = buildSpecialRowText(idx);
@@ -3681,7 +4558,12 @@
         html += "<div class='block-title'>Reactions</div><div class='text-line'>" + cardData.back.reactions + "</div>";
       }
       if (cardData.spells && cardData.spells.spellsString) {
-        html += "<div class='block-title spells-line'><span class='spells-label'>Spells:</span><span class='spells-brackets'>" + cardData.spells.spellsTitle + "</span></div>";
+        var spellsTitle = ((cardData.spells.spellsTitle || "") + "").trim();
+        if (spellsTitle) {
+          html += "<div class='block-title spells-line'><span class='spells-label'>Spells:</span><span class='spells-brackets'>" + spellsTitle + "</span></div>";
+        } else {
+          html += "<div class='block-title'>Spells:</div>";
+        }
         html += "<div class='text-line'>" + cardData.spells.spellsString + "</div>";
       }
       if (cardData.back.special) {
@@ -3763,54 +4645,100 @@
     }
 
     function buildSpellsPreview() {
-      var slots = new Array(9).fill("0");
-      var spells = new Array(9).fill("");
+      var mode = getSpellCastingModeFromEditor();
+      if (mode === "uses") {
+        var usesRows = getSpellUsesRowsFromEditor();
+        var useLines = [];
 
-      var cantripRaw = getInputValue("spell-cantrips");
-      for (var level = 1; level <= 9; level++) {
-        var slotEl = document.getElementById("spell-slots-" + level);
-        var spellEl = document.getElementById("spell-list-" + level);
-        if (slotEl) slots[level - 1] = slotEl.value.trim() || "0";
-        if (spellEl) spells[level - 1] = spellEl.value.trim();
+        for (var u = 0; u < usesRows.length; u++) {
+          var useNames = splitSpellNames(usesRows[u].spells);
+          if (!useNames.length) continue;
+          var usesValue = parseSpellUsesValue(usesRows[u].uses);
+          var useBracket = (usesValue === -1) ? "[\u221e]" : ("[" + String((usesValue === "" ? 1 : usesValue)) + " each]");
+          var renderedNames = useNames.map(function(name) { return "<i>" + escHtml(name) + "</i>"; }).join(", ");
+          useLines.push("<strong>" + useBracket + "</strong> " + renderedNames);
+        }
+
+        return {
+          spellsTitle: "",
+          spellsString: useLines.join("<br>")
+        };
       }
 
-      function italicizeSpellList(raw) {
-        if (!raw) return "";
-        return raw.split(",").map(function(part) {
-          return "<i>" + escHtml(part.trim()) + "</i>";
+      var editorRows = getSpellRowsFromEditor();
+      var cantripNames = [];
+      var levelData = {};
+      for (var level = 1; level <= 9; level++) {
+        levelData[level] = { slotCount: 0, spellNames: [] };
+      }
+
+      for (var i = 0; i < editorRows.length; i++) {
+        var row = editorRows[i];
+        var levelValue = parseSpellLevelValue(row.level);
+        var names = splitSpellNames(row.spells);
+
+        if (levelValue === 0) {
+          if (names.length) cantripNames = cantripNames.concat(names);
+          continue;
+        }
+        if (levelValue < 1 || levelValue > 9) continue;
+
+        if (names.length) levelData[levelValue].spellNames = levelData[levelValue].spellNames.concat(names);
+        if (((row.slots || "") + "").trim() !== "") {
+          levelData[levelValue].slotCount = normalizeNonNegativeInt(row.slots, 0);
+        }
+      }
+
+      function italicizeSpellNames(names) {
+        if (!names || !names.length) return "";
+        return names.map(function(name) {
+          return "<i>" + escHtml(name) + "</i>";
         }).join(", ");
       }
 
-      var cantrips = italicizeSpellList(cantripRaw);
-      var spellLines = spells.map(italicizeSpellList);
-
-      var highestLevel = 0;
-      for (var i = 0; i < 9; i++) {
-        if (spellLines[i]) highestLevel = i + 1;
-      }
-
-      var groupsToShow = Math.ceil(Math.max(highestLevel, 1) / 3);
-      var groups = [slots.slice(0, 3), slots.slice(3, 6), slots.slice(6, 9)];
-      var bracketed = [];
-      for (var g = 0; g < groupsToShow; g++) {
-        bracketed.push("[" + groups[g].join("/") + "]");
-      }
-
       var lines = [];
-      if (cantrips) lines.push("<strong>[C]</strong> " + cantrips);
-      for (var groupIndex = 0; groupIndex < 3; groupIndex++) {
-        var groupLabels = [];
-        for (var offset = 0; offset < 3; offset++) {
-          var idx = groupIndex * 3 + offset;
-          if (spellLines[idx]) {
-            groupLabels.push("<strong>[" + (idx + 1) + "]</strong> " + spellLines[idx]);
-          }
+      if (cantripNames.length) {
+        lines.push("<strong>[C]</strong> " + italicizeSpellNames(cantripNames));
+      }
+      var groups = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ];
+      for (var groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+        var groupLevels = groups[groupIndex];
+        var groupSegments = [];
+        for (var li = 0; li < groupLevels.length; li++) {
+          var spellLevel = groupLevels[li];
+          if (levelData[spellLevel].slotCount < 1) continue;
+          var segment = "<strong>[" + spellLevel + "]</strong>";
+          var levelSpells = italicizeSpellNames(levelData[spellLevel].spellNames);
+          if (levelSpells) segment += " " + levelSpells;
+          groupSegments.push(segment);
         }
-        if (groupLabels.length) lines.push(groupLabels.join(" "));
+        if (groupSegments.length) lines.push(groupSegments.join(" "));
+      }
+
+      var highestLevelWithSlots = 0;
+      for (var scanLevel = 1; scanLevel <= 9; scanLevel++) {
+        if (levelData[scanLevel].slotCount > 0) highestLevelWithSlots = scanLevel;
+      }
+
+      var bracketedGroups = [];
+      if (highestLevelWithSlots > 0) {
+        var highestGroupIndex = Math.ceil(highestLevelWithSlots / 3);
+        for (var g = 0; g < highestGroupIndex; g++) {
+          var slotParts = [];
+          for (var sl = 0; sl < 3; sl++) {
+            var levelNumber = (g * 3) + sl + 1;
+            slotParts.push(String(levelData[levelNumber].slotCount || 0));
+          }
+          bracketedGroups.push("[" + slotParts.join("/") + "]");
+        }
       }
 
       return {
-        spellsTitle: bracketed.join(" "),
+        spellsTitle: bracketedGroups.join(" "),
         spellsString: lines.join("<br>")
       };
     }
@@ -3836,6 +4764,49 @@
     function getCoreStatValue(key) {
       var defaults = { ac: 10, hp: 10, speed: 25 };
       return normalizeNonNegativeInt(getSimpleValue(key), defaults[key] || 0);
+    }
+
+    function parseSpellLevelValue(raw) {
+      var text = String(raw || "").trim().toUpperCase();
+      if (!text || text === "C") return 0;
+      var parsed = parseInt(text.replace(/[^\d-]/g, ""), 10);
+      if (isNaN(parsed)) return 0;
+      if (parsed < 0) return 0;
+      if (parsed > 9) return 9;
+      return parsed;
+    }
+
+    function formatSpellLevelDisplay(level) {
+      var parsed = parseInt(level, 10);
+      if (isNaN(parsed) || parsed <= 0) return "C";
+      if (parsed > 9) parsed = 9;
+      return String(parsed);
+    }
+
+    function normalizeSpellCastingMode(raw) {
+      var text = String(raw || "").trim().toLowerCase();
+      if (text === "uses" || text === "per-spell uses" || text === "per spell uses") return "uses";
+      return "slot";
+    }
+
+    function parseSpellUsesValue(raw) {
+      var text = String(raw || "").trim();
+      if (!text) return "";
+      if (text === "\u221e") return -1;
+      var normalized = text.toLowerCase();
+      if (normalized === "inf" || normalized === "infinite" || normalized === "infinity" || normalized === "\u221e") return -1;
+      var parsed = parseInt(text.replace(/[^\d-]/g, ""), 10);
+      if (isNaN(parsed)) return "";
+      if (parsed <= 0) return -1;
+      return parsed;
+    }
+
+    function formatSpellUsesDisplay(value) {
+      if (value === "" || value === null || value === undefined) return "";
+      var parsed = parseInt(value, 10);
+      if (isNaN(parsed)) return "";
+      if (parsed <= 0) return "\u221e";
+      return String(parsed);
     }
 
     function normalizeCrValue(raw) {
@@ -3918,7 +4889,13 @@
         return formatSignedNumber(dndModifier(getScoreValue(statForMod)));
       }
       if (/\ssave$/.test(key)) {
-        return normalizeSignedValue(getSimpleValue(key), "+0");
+        var statForSave = key.replace(/\ssave$/, "");
+        var fallbackSave = formatSignedNumber(dndModifier(getScoreValue(statForSave)));
+        var rawSaveOverride = getSimpleValue(key);
+        if (rawSaveOverride === "") return "";
+        var normalizedSaveOverride = normalizeSignedValue(rawSaveOverride, fallbackSave);
+        if (normalizedSaveOverride === fallbackSave) return "";
+        return normalizedSaveOverride;
       }
       return getSimpleValue(key);
     }
@@ -3929,7 +4906,8 @@
 
     function getSaveDisplayValue(stat) {
       var raw = getSimpleValue(stat + " save");
-      var base = normalizeSignedValue(raw, "+0");
+      var derivedBase = formatSignedNumber(dndModifier(getScoreValue(stat)));
+      var base = raw === "" ? derivedBase : normalizeSignedValue(raw, derivedBase);
       var flag = getInputValue("field-" + stat + "-save-flag");
       return base + mapSkillFlag(flag);
     }
@@ -3984,6 +4962,7 @@
 
     function getRichValue(id) {
       var el = document.getElementById(id);
+      if (el && el.classList.contains("is-rich-placeholder")) return "";
       return el ? normalizeRichHtml(el.innerHTML) : "";
     }
 
@@ -4071,15 +5050,65 @@
     function setRichCellOnRows(rows, rowIndex, colIndex, fieldId) {
       var el = document.getElementById(fieldId);
       if (!el) return;
+      if (el.classList.contains("is-rich-placeholder")) {
+        rows[rowIndex][colIndex] = "";
+        return;
+      }
       rows[rowIndex][colIndex] = normalizeRichHtml(el.innerHTML);
     }
 
+    function sanitizeRichHtmlMarkup(html) {
+      if (typeof document === "undefined") return (html || "");
+      var root = document.createElement("div");
+      root.innerHTML = html || "";
+
+      function walk(node) {
+        var children = Array.prototype.slice.call(node.childNodes || []);
+        for (var i = 0; i < children.length; i++) {
+          var child = children[i];
+          if (child.nodeType === 3) {
+            child.nodeValue = (child.nodeValue || "").replace(/\u00a0/g, " ");
+            continue;
+          }
+          if (child.nodeType !== 1) {
+            node.removeChild(child);
+            continue;
+          }
+
+          var tag = (child.tagName || "").toUpperCase();
+          if (tag === "SCRIPT" || tag === "STYLE") {
+            node.removeChild(child);
+            continue;
+          }
+
+          var isAllowedInline = tag === "B" || tag === "STRONG" || tag === "I" || tag === "EM" || tag === "U" || tag === "BR";
+          if (isAllowedInline) {
+            while (child.attributes && child.attributes.length) {
+              child.removeAttribute(child.attributes[0].name);
+            }
+            if (tag !== "BR") walk(child);
+            continue;
+          }
+
+          walk(child);
+          var frag = document.createDocumentFragment();
+          while (child.firstChild) frag.appendChild(child.firstChild);
+          node.replaceChild(frag, child);
+        }
+      }
+
+      walk(root);
+      return root.innerHTML;
+    }
+
     function normalizeRichHtml(html) {
-      return (html || "")
+      return sanitizeRichHtmlMarkup((html || "")
         .replace(/<div><br><\/div>/gi, "<br>")
         .replace(/<\/div><div>/gi, "<br>")
         .replace(/<div>/gi, "")
         .replace(/<\/div>/gi, "")
+        .replace(/&nbsp;/g, " ")
+        .trim())
         .replace(/&nbsp;/g, " ")
         .trim();
     }
