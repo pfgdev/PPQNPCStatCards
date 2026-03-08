@@ -299,6 +299,11 @@ Guidelines:
 - Preserve printed output behavior and layout.
 - Do not silently rename or reinterpret data fields that are already wired to the sheet.
 
+### TODO: Spreadsheet Dependency
+- The app currently relies on sheet-structured row labels/mappings for persistence and output integrity.
+- Plan to deprecate spreadsheet-coupled persistence only after the app proves stable/flawless in real authoring use.
+- Until then, prioritize compatibility and correctness with current sheet mappings over data-model migration.
+
 ### Phase 1 expectation
 Phase 1 should prioritize shared field styling, alignment, spacing, numeric input consistency, and repeated-row consistency before any deeper structural redesign.
 

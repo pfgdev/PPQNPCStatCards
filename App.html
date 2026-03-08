@@ -28,6 +28,8 @@
       --space-5: 12px;
       --space-6: 16px;
       --field-h: 32px;
+      --field-line-h: 20.667px;
+      --field-pad-y: 5px;
       --field-pad-x: 8px;
       --surface-soft: #fbfdff;
       --row-action-w: 68px;
@@ -411,14 +413,18 @@
     }
 
     .section h3 {
-      margin: var(--space-2) 0 var(--space-1);
+      margin: 0;
       font-size: 11px;
-      font-weight: 600;
-      color: #546173;
+      font-weight: 700;
+      color: #4a5e78;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      border-bottom: 1px solid #e9edf5;
-      padding-bottom: 3px;
+      letter-spacing: 0.45px;
+      border: 0;
+      padding: 0;
+    }
+    .section h3 + .defense-subsection,
+    .section h3 + .skills-subsection {
+      margin-top: -2px;
     }
 
     .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
@@ -440,9 +446,12 @@
     }
     .identity-class-wrap { max-width: 100%; margin-top: var(--space-1); }
     .identity-size-race {
-      max-width: 38ch;
-      grid-template-columns: 132px minmax(0, 1fr);
+      max-width: 52ch;
+      grid-template-columns: 132px minmax(0, 1fr) 92px;
       align-items: end;
+    }
+    .identity-size-race > label.identity-cr-field > .num-stepper {
+      max-width: 92px;
     }
     .combat-core {
       display: grid;
@@ -545,6 +554,105 @@
       grid-template-columns: minmax(18ch, 1.5fr) minmax(9ch, 0.75fr) minmax(12ch, 1fr) var(--row-action-w);
       gap: var(--space-3);
     }
+    .skills-summary-core {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(108px, 120px));
+      gap: var(--space-2);
+      align-items: start;
+      justify-content: start;
+      width: max-content;
+      max-width: 100%;
+    }
+    .skills-summary-core > label {
+      min-width: 0;
+      width: 100%;
+      align-items: center;
+      text-align: center;
+    }
+    .skills-summary-core .num-stepper {
+      width: 100%;
+      max-width: 120px;
+    }
+    .skills-summary-core .skills-signed-input {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .skills-summary-core .skills-passive-input {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .skills-vision-row {
+      margin-top: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: min(100%, 22ch);
+    }
+    .skills-vision-row > label {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+    .skills-vision-row .skills-vision-input {
+      width: 100%;
+      max-width: 100%;
+    }
+    .skills-list-head,
+    .skills-rule-row {
+      display: grid;
+      grid-template-columns: 170px 92px 114px 56px;
+      gap: var(--space-2);
+      align-items: center;
+      width: max-content;
+    }
+    .skills-list-head {
+      padding: 4px 6px;
+      background: #f2f6fd;
+      border: 1px solid #dbe5f4;
+      border-bottom: 1px solid #dbe5f4;
+      border-radius: 7px 7px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .skills-list-head > div:nth-child(2),
+    .skills-list-head > div:nth-child(4) {
+      text-align: center;
+    }
+    .skills-rule-row {
+      border: 0;
+      border-bottom: 1px solid #edf2fa;
+      border-radius: 0;
+      padding: 3px 6px;
+    }
+    .skills-rule-row select,
+    .skills-rule-row .num-stepper {
+      width: 100%;
+      max-width: 100%;
+    }
+    .skills-rule-row .num-stepper {
+      max-width: 92px;
+    }
+    .skills-rule-row .skills-mod-input {
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .skills-rule-row .row-remove-btn {
+      justify-self: center;
+    }
+    .skills-list + .section-add-row {
+      margin-top: var(--space-2);
+    }
+    .skills-subsection {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .skills-subsection > .section-add-row {
+      margin-top: var(--space-2);
+    }
     .spell-row {
       display: grid;
       grid-template-columns: 90px 1fr;
@@ -569,7 +677,7 @@
     }
     .damage-list-head,
     .damage-row {
-      grid-template-columns: 154px 128px 112px 56px;
+      grid-template-columns: 154px 128px 128px 56px;
     }
     .condition-list-head,
     .condition-rule-row {
@@ -730,6 +838,259 @@
       align-items: end;
       margin: 0;
     }
+    .action-simple-helper {
+      margin: 0;
+      font-size: 10px;
+      line-height: 1.35;
+      color: #627287;
+    }
+    .action-simple-head,
+    .action-simple-row,
+    .special-simple-head,
+    .special-simple-row {
+      display: grid;
+      gap: var(--space-2);
+      align-items: center;
+      width: max-content;
+      max-width: 100%;
+    }
+    .action-simple-head,
+    .action-simple-row {
+      grid-template-columns: 148px 122px 450px 122px 56px;
+    }
+    .special-simple-head,
+    .special-simple-row {
+      grid-template-columns: 64px 148px 122px 450px 122px 56px;
+    }
+    .action-simple-table {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
+      max-width: 100%;
+    }
+    .action-simple-head,
+    .special-simple-head {
+      padding: 4px 6px;
+      background: #f2f6fd;
+      border: 1px solid #dbe5f4;
+      border-bottom: 1px solid #dbe5f4;
+      border-radius: 7px 7px 0 0;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      color: #5d6e84;
+      font-weight: 700;
+    }
+    .action-simple-head > div:last-child {
+      text-align: center;
+    }
+    .special-simple-head > div:first-child,
+    .special-simple-head > div:last-child {
+      text-align: center;
+    }
+    .row-editor-list.action-simple-list {
+      margin-top: 0;
+      overflow: visible;
+      border: 0;
+      position: relative;
+      border-radius: 0 0 7px 7px;
+      background: transparent;
+    }
+    .row-editor-list.action-simple-list::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid #dbe5f4;
+      border-top: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .action-simple-row,
+    .special-simple-row {
+      border: 0;
+      border-bottom: 1px solid #edf2fa;
+      border-radius: 0;
+      padding: 3px 6px;
+      position: relative;
+    }
+    .action-simple-row:last-child,
+    .special-simple-row:last-child {
+      border-bottom: 0;
+    }
+    .row-editor-list.action-simple-list .action-simple-row.is-last-visible {
+      border-bottom: 0;
+      border-radius: 0 0 7px 7px;
+    }
+    .action-simple-row > input[type="text"] {
+      width: 100%;
+      max-width: 100%;
+    }
+    .action-prefixes-input,
+    .action-suffixes-input {
+      text-overflow: clip;
+    }
+    .action-desc-editor {
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      align-items: stretch;
+      border: 1px solid #cfd7e6;
+      border-radius: var(--radius-sm);
+      background: #fff;
+      overflow: visible;
+      min-height: var(--field-h);
+      height: var(--field-h);
+      position: relative;
+    }
+    .action-desc-editor:focus-within {
+      border-color: #3f7ec0;
+      box-shadow: 0 0 0 3px rgba(63, 126, 192, 0.12);
+    }
+    .action-desc-editor .rt-toolbar {
+      margin: 0;
+      padding: 0 3px;
+      border-right: 1px solid #d7dfea;
+      background: #f8fbff;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+      position: relative;
+      height: 100%;
+      z-index: 2;
+      border-radius: calc(var(--radius-sm) - 1px) 0 0 calc(var(--radius-sm) - 1px);
+      overflow: visible;
+    }
+    .action-desc-editor .rt-toolbar button {
+      min-height: 20px;
+      min-width: 20px;
+      padding: 0 5px;
+      font-size: 10px;
+    }
+    .action-desc-editor .rt-toolbar.rt-toolbar-menu {
+      gap: 3px;
+      padding: 0 3px;
+    }
+    .action-desc-editor .rt-menu-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      z-index: 1;
+    }
+    .action-desc-editor .rt-menu-wrap.is-open {
+      z-index: 60;
+    }
+    .action-desc-editor .rt-menu-trigger {
+      min-height: 18px;
+      min-width: 24px;
+      padding: 0 5px;
+      font-size: 11px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .action-desc-editor .rt-menu-wrap.is-open .rt-menu-trigger {
+      background: #edf4ff;
+      border-color: #9ab6d8;
+    }
+    .action-desc-editor .rt-popover {
+      display: none;
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 6px);
+      min-width: 148px;
+      border: 1px solid #cfd7e6;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(18, 44, 74, 0.18);
+      padding: 4px;
+      z-index: 50;
+    }
+    .action-desc-editor .rt-menu-wrap.is-open .rt-popover {
+      display: block;
+    }
+    .action-desc-editor .rt-popover button {
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      height: auto;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #284a72;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+    }
+    .action-desc-editor .rt-popover button:hover {
+      background: #edf4ff;
+    }
+    .action-desc-editor .rt-popover .rt-popover-symbol {
+      font-weight: 700;
+      margin-left: 8px;
+    }
+    .action-desc-editor .rt-field {
+      border: 0;
+      border-radius: 0;
+      min-height: 0;
+      height: 100%;
+      max-height: 110px;
+      overflow-y: auto;
+      padding: var(--field-pad-y) var(--field-pad-x);
+      font-size: 14px;
+      line-height: var(--field-line-h);
+      background: transparent;
+      box-shadow: none;
+      flex: 1;
+      z-index: 1;
+      font-family: inherit;
+      font-weight: 400;
+    }
+    .action-desc-editor .rt-field > * {
+      margin: 0;
+      line-height: inherit;
+    }
+    .action-desc-editor .rt-field:focus {
+      outline: none;
+      border: 0;
+      box-shadow: none;
+    }
+    .action-desc-editor .rt-field[data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: #8a97a9;
+      display: block;
+      line-height: var(--field-line-h);
+      pointer-events: none;
+    }
+    .action-simple-row .row-remove-btn {
+      justify-self: center;
+      align-self: center;
+    }
+    .special-simple-row .row-remove-btn {
+      justify-self: center;
+      align-self: center;
+    }
+    .special-newline-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: var(--field-h);
+    }
+    .special-newline-cell input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      accent-color: #2b5f96;
+      cursor: pointer;
+    }
+    .special-newline-cell input[type="checkbox"][disabled] {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
 
     label {
       display: flex;
@@ -749,12 +1110,35 @@
     textarea {
       border: 1px solid #cfd7e6;
       border-radius: var(--radius-sm);
-      min-height: var(--field-h);
-      padding: 5px var(--field-pad-x);
+      height: var(--field-h);
+      padding: var(--field-pad-y) var(--field-pad-x);
       font-size: 14px;
+      line-height: var(--field-line-h);
       color: var(--ink);
       background: #fff;
       font-family: inherit;
+    }
+
+    textarea {
+      min-height: var(--field-h);
+      height: auto;
+    }
+
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2323364f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 9px center;
+      background-size: 10px 6px;
+      padding-right: 28px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #8a97a9;
+      opacity: 1;
     }
 
     label > input[type="text"],
@@ -881,6 +1265,10 @@
     }
     .row-editor-list .row-editor-row:last-child {
       border-bottom: 0;
+    }
+    .row-editor-list .row-editor-row.is-last-visible {
+      border-bottom: 0;
+      border-radius: 0 0 7px 7px;
     }
 
     .class-list-head {
@@ -1129,7 +1517,7 @@
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     @media (max-width: 920px) {
-      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .spell-row, .action-top, .action-head, .class-row, .combat-core, .movement-list-head, .movement-row, .damage-list-head, .damage-row, .condition-list-head, .condition-rule-row, .attr-matrix-head, .attr-matrix-row {
+      .grid-3, .grid-2, .grid-stat, .flag-row, .condition-row, .skill-row, .skills-summary-core, .skills-list-head, .skills-rule-row, .spell-row, .action-top, .action-head, .class-row, .combat-core, .movement-list-head, .movement-row, .damage-list-head, .damage-row, .condition-list-head, .condition-rule-row, .attr-matrix-head, .attr-matrix-row {
         grid-template-columns: 1fr;
       }
       .row-head-inline { flex-direction: column; align-items: flex-start; }
@@ -1261,8 +1649,15 @@
       "Survival": "Sur"
     };
     var ADV_OPTIONS = ["", "Advantage", "Disadvantage"];
+    var ACTION_SYMBOL_OPTIONS = [
+      { label: "Resistance", symbol: "\u24C7" },
+      { label: "Vulnerability", symbol: "\u24CB" },
+      { label: "Immunity", symbol: "\u24D8" },
+      { label: "Advantage", symbol: "\u25B2" },
+      { label: "Disadvantage", symbol: "\u25BC" }
+    ];
     var SIMPLE_KEYS = [
-      "name", "class", "size", "race", "ac", "hp", "speed", "climb speed", "swim speed", "fly speed",
+      "name", "class", "size", "race", "cr", "ac", "hp", "speed", "climb speed", "swim speed", "fly speed",
       "strength", "strength mod", "strength save", "dexterity", "dexterity mod", "dexterity save",
       "constitution", "constitution mod", "constitution save", "intelligence", "intelligence mod", "intelligence save",
       "wisdom", "wisdom mod", "wisdom save", "charisma", "charisma mod", "charisma save",
@@ -1535,7 +1930,8 @@
       html += "<div class='identity-class-wrap'>" + classEditorHtml(data) + "</div>";
       html += "<div class='grid-2 identity-size-race'>";
       html += simpleField("Size", "size", data, false, { selectOptions: DND_SIZE_OPTIONS });
-      html += simpleField("Race / Type", "race", data, false);
+      html += simpleField("Race / Type", "race", data, false, { placeholder: "Human" });
+      html += simpleField("CR", "cr", data, false, { type: "cr", stepper: true, allowBlank: true, labelClass: "identity-cr-field" });
       html += "</div></div>";
 
       html += "<div class='section'><h2>2. Combat Stats</h2>";
@@ -1560,12 +1956,7 @@
       html += "<div class='row-editor-list damage-list'>";
       data.damage.forEach(function(row, i) {
         var hiddenClass = damageMeta.visible[i] ? "" : " is-hidden";
-        html += "<div class='damage-row row-editor-row expand-row expand-damage" + hiddenClass + "' data-row-index='" + i + "'>";
-        html += selectInput("damage-" + i + "-value", DAMAGE_TYPE_OPTIONS, row.value);
-        html += selectInput("damage-" + i + "-flag1", DAMAGE_FLAG1_OPTIONS, row.flag1);
-        html += selectInput("damage-" + i + "-flag2", DAMAGE_FLAG2_OPTIONS, row.flag2);
-        html += repeatRowRemoveButton("damage", i, "damage rule");
-        html += "</div>";
+        html += damageRuleRowHtml(i, row, hiddenClass);
       });
       html += "</div>";
       html += renderAddRowButton("damage", "Add Damage Row", damageMeta.hiddenCount, true);
@@ -1581,12 +1972,7 @@
       html += "<div class='row-editor-list condition-list'>";
       data.conditions.forEach(function(row, i) {
         var conditionHiddenClass = conditionMeta.visible[i] ? "" : " is-hidden";
-        var conditionFlagValue = row.flag1 || row.flag2 || "";
-        html += "<div class='condition-rule-row row-editor-row expand-row expand-conditions" + conditionHiddenClass + "' data-row-index='" + i + "'>";
-        html += selectInput("cond-" + i + "-value", DND_CONDITION_OPTIONS, row.value);
-        html += selectInput("cond-" + i + "-flag", CONDITION_FLAG_OPTIONS, conditionFlagValue);
-        html += repeatRowRemoveButton("conditions", i, "condition rule");
-        html += "</div>";
+        html += conditionRuleRowHtml(i, row, conditionHiddenClass);
       });
       html += "</div>";
       html += renderAddRowButton("conditions", "Add Condition Row", conditionMeta.hiddenCount, true);
@@ -1598,51 +1984,85 @@
       html += "</div>";
 
       html += "<div class='section'><h2>5. Skills &amp; Senses</h2>";
-      html += "<div class='grid-2'>";
-      html += simpleField("Proficiency Bonus", "proficiency bonus", data, false);
-      html += simpleField("Initiative", "initiative", data, false);
-      html += "</div><div class='grid-2'>";
-      html += simpleField("Passive Perception", "passive perception", data, false);
-      html += simpleField("Vision", "vision", data, false);
-      html += "</div>";
+      var proficiencyValue = data.simple["proficiency bonus"] ? data.simple["proficiency bonus"].value : "";
+      var initiativeValue = data.simple["initiative"] ? data.simple["initiative"].value : "";
+      var passiveRawValue = data.simple["passive perception"] ? data.simple["passive perception"].value : "";
+      var passiveValue = String(normalizeNonNegativeInt(passiveRawValue, 10));
+      var visionValue = data.simple["vision"] ? data.simple["vision"].value : "";
+      html += "<div class='skills-summary-core'>"
+        + "<label>Proficiency" + numberInput("field-proficiency-bonus", proficiencyValue, { min: 1, step: 1, allowBlank: true, stepper: true, defaultValue: 1, clearAtMinOnDecrement: true, extraClass: "skills-signed-input" }) + "</label>"
+        + "<label>Initiative" + numberInput("field-initiative", initiativeValue, { step: 1, allowBlank: true, stepper: true, defaultValue: 0, extraClass: "skills-signed-input" }) + "</label>"
+        + "<label>Pass Perception" + numberInput("field-passive-perception", passiveValue, { min: 0, step: 1, allowBlank: true, stepper: true, defaultValue: 10, blankSeed: 10, extraClass: "skills-passive-input" }) + "</label>"
+        + "</div>";
+      html += "<div class='skills-vision-row'>"
+        + "<label>Vision<input type='text' id='field-vision' class='skills-vision-input' value='" + escAttr(visionValue || "") + "' placeholder='e.g. 60dv, 10bs'></label>"
+        + "</div>";
       html += "<h3>Skills</h3>";
       var skillMeta = getExpandableMeta(data.skills, "skills");
+      html += "<div class='skills-subsection'>";
+      html += "<div class='skills-list-head'>"
+        + "  <div>Skill</div>"
+        + "  <div>Mod</div>"
+        + "  <div>Adv</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+      html += "<div class='row-editor-list skills-list'>";
       data.skills.forEach(function(skill, i) {
         var skillHiddenClass = skillMeta.visible[i] ? "" : " is-hidden";
-        html += "<div class='skill-row repeat-row repeat-inline expand-row expand-skills" + skillHiddenClass + "' data-row-index='" + i + "'>";
-        html += "<label>Skill" + selectInput("skill-" + i + "-name", SKILL_OPTIONS, skill.name) + "</label>";
-        html += "<label>Mod" + textInput("skill-" + i + "-mod", skill.modifier) + "</label>";
-        html += "<label>Adv" + selectInput("skill-" + i + "-flag", ADV_OPTIONS, skill.flag) + "</label>";
-        html += repeatRowClearButton("skills", i);
+        html += "<div class='skills-rule-row row-editor-row expand-row expand-skills" + skillHiddenClass + "' data-row-index='" + i + "'>";
+        html += selectInput("skill-" + i + "-name", SKILL_OPTIONS, skill.name);
+        html += numberInput("skill-" + i + "-mod", skill.modifier, { step: 1, allowBlank: true, stepper: true, defaultValue: 0, extraClass: "skills-mod-input" });
+        html += selectInput("skill-" + i + "-flag", ADV_OPTIONS, skill.flag);
+        html += repeatRowRemoveButton("skills", i, "skill row");
         html += "</div>";
       });
-      html += renderAddRowButton("skills", "Add Skill Row", skillMeta.hiddenCount);
+      html += "</div>";
+      html += renderAddRowButton("skills", "Add Skill Row", skillMeta.hiddenCount, true);
+      html += "</div>";
       html += "</div>";
 
       html += "<div class='section'><h2>6. Actions</h2>";
+      html += "<p class='action-simple-helper'>Name auto-bolds with a colon. Prefixes and suffixes are comma-separated and auto-bracketed. Italicize dice rolls in Description.</p>";
       var actionMeta = getExpandableMeta(data.actions, "actions");
+      html += "<div class='action-simple-table'>";
+      html += actionRowHeaderHtml();
+      html += "<div class='row-editor-list action-simple-list'>";
       data.actions.forEach(function(action, i) {
         var actionHiddenClass = actionMeta.visible[i] ? "" : " is-hidden";
-        html += actionBlock("act", i, action, "expand-row expand-actions" + actionHiddenClass, "actions");
+        html += actionBlock("act", i, action, "actions", actionHiddenClass);
       });
+      html += "</div>";
+      html += "</div>";
       html += renderAddRowButton("actions", "Add Action Row", actionMeta.hiddenCount);
       html += "</div>";
 
       html += "<div class='section'><h2>7. Bonus Actions</h2>";
+      html += "<p class='action-simple-helper'>Name auto-bolds with a colon. Prefixes and suffixes are comma-separated and auto-bracketed. Italicize dice rolls in Description.</p>";
       var bonusMeta = getExpandableMeta(data.bonusActions, "bonusActions");
+      html += "<div class='action-simple-table'>";
+      html += actionRowHeaderHtml();
+      html += "<div class='row-editor-list action-simple-list'>";
       data.bonusActions.forEach(function(action, i) {
         var bonusHiddenClass = bonusMeta.visible[i] ? "" : " is-hidden";
-        html += actionBlock("bonus", i, action, "expand-row expand-bonusActions" + bonusHiddenClass, "bonusActions");
+        html += actionBlock("bonus", i, action, "bonusActions", bonusHiddenClass);
       });
+      html += "</div>";
+      html += "</div>";
       html += renderAddRowButton("bonusActions", "Add Bonus Action Row", bonusMeta.hiddenCount);
       html += "</div>";
 
       html += "<div class='section'><h2>8. Reactions</h2>";
+      html += "<p class='action-simple-helper'>Name auto-bolds with a colon. Prefixes and suffixes are comma-separated and auto-bracketed. Italicize dice rolls in Description.</p>";
       var reactionMeta = getExpandableMeta(data.reactions, "reactions");
+      html += "<div class='action-simple-table'>";
+      html += actionRowHeaderHtml();
+      html += "<div class='row-editor-list action-simple-list'>";
       data.reactions.forEach(function(action, i) {
         var reactionHiddenClass = reactionMeta.visible[i] ? "" : " is-hidden";
-        html += actionBlock("react", i, action, "expand-row expand-reactions" + reactionHiddenClass, "reactions");
+        html += actionBlock("react", i, action, "reactions", reactionHiddenClass);
       });
+      html += "</div>";
+      html += "</div>";
       html += renderAddRowButton("reactions", "Add Reaction Row", reactionMeta.hiddenCount);
       html += "</div>";
 
@@ -1664,17 +2084,15 @@
 
       html += "<div class='section'><h2>10. Special</h2>";
       var specialMeta = getExpandableMeta(data.special, "special");
+      html += "<div class='action-simple-table'>";
+      html += specialRowHeaderHtml();
+      html += "<div class='row-editor-list action-simple-list special-simple-list'>";
       data.special.forEach(function(item, i) {
-        var checked = ((item.newLine || "") + "").toUpperCase() === "TRUE" ? " checked" : "";
         var specialHiddenClass = specialMeta.visible[i] ? "" : " is-hidden";
-        html += "<div class='action-row repeat-row expand-row expand-special" + specialHiddenClass + "' data-row-index='" + i + "'>";
-        html += "<div class='row-head-inline'>";
-        html += "<label class='checkbox-row'><input type='checkbox' id='special-" + i + "-newline'" + checked + "> Start on new line</label>";
-        html += repeatRowClearButton("special", i);
-        html += "</div>";
-        html += richTextField("special-" + i + "-text", item.text || "");
-        html += "</div>";
+        html += specialBlock(i, item, specialHiddenClass);
       });
+      html += "</div>";
+      html += "</div>";
       html += renderAddRowButton("special", "Add Special Row", specialMeta.hiddenCount);
       html += "</div>";
 
@@ -1695,23 +2113,33 @@
       var value = data.simple[key] ? data.simple[key].value : "";
       var id = "field-" + key.replace(/\s+/g, "-");
       var rich = useRich || !!RICH_SIMPLE_KEYS[key];
+      var labelClassAttr = opts.labelClass ? " class='" + escAttr(String(opts.labelClass)) + "'" : "";
       if (rich) {
-        return "<label>" + escHtml(label) + "</label>" + richTextField(id, value);
+        return "<label" + labelClassAttr + ">" + escHtml(label) + "</label>" + richTextField(id, value);
       }
 
       if (opts.type === "number") {
-        return "<label>" + escHtml(label) + numberInput(id, value, opts) + "</label>";
+        return "<label" + labelClassAttr + ">" + escHtml(label) + numberInput(id, value, opts) + "</label>";
+      }
+
+      if (opts.type === "cr") {
+        return "<label" + labelClassAttr + ">" + escHtml(label) + numberInput(id, value, {
+          allowBlank: true,
+          stepper: !!opts.stepper,
+          sequence: "cr",
+          extraClass: opts.extraClass
+        }) + "</label>";
       }
 
       if (opts.selectOptions) {
-        return "<label>" + escHtml(label) + selectInput(id, opts.selectOptions, value) + "</label>";
+        return "<label" + labelClassAttr + ">" + escHtml(label) + selectInput(id, opts.selectOptions, value) + "</label>";
       }
 
       if (opts.signed) {
-        return "<label>" + escHtml(label) + textInput(id, normalizeSignedValue(value, opts.defaultValue || "+0"), !!opts.readonly) + "</label>";
+        return "<label" + labelClassAttr + ">" + escHtml(label) + textInput(id, normalizeSignedValue(value, opts.defaultValue || "+0"), !!opts.readonly, opts) + "</label>";
       }
 
-      return "<label>" + escHtml(label) + textInput(id, value, !!opts.readonly) + "</label>";
+      return "<label" + labelClassAttr + ">" + escHtml(label) + textInput(id, value, !!opts.readonly, opts) + "</label>";
     }
 
     function attributeMatrixHtml(data) {
@@ -1808,6 +2236,26 @@
       return html;
     }
 
+    function damageRuleRowHtml(index, row, hiddenClass) {
+      var hc = hiddenClass || "";
+      return "<div class='damage-row row-editor-row expand-row expand-damage" + hc + "' data-row-index='" + index + "'>"
+        + selectInput("damage-" + index + "-value", DAMAGE_TYPE_OPTIONS, (row && row.value) || "")
+        + selectInput("damage-" + index + "-flag1", DAMAGE_FLAG1_OPTIONS, (row && row.flag1) || "")
+        + selectInput("damage-" + index + "-flag2", DAMAGE_FLAG2_OPTIONS, (row && row.flag2) || "")
+        + repeatRowRemoveButton("damage", index, "damage rule")
+        + "</div>";
+    }
+
+    function conditionRuleRowHtml(index, row, hiddenClass) {
+      var hc = hiddenClass || "";
+      var conditionFlagValue = (row && (row.flag1 || row.flag2)) || "";
+      return "<div class='condition-rule-row row-editor-row expand-row expand-conditions" + hc + "' data-row-index='" + index + "'>"
+        + selectInput("cond-" + index + "-value", DND_CONDITION_OPTIONS, (row && row.value) || "")
+        + selectInput("cond-" + index + "-flag", CONDITION_FLAG_OPTIONS, conditionFlagValue)
+        + repeatRowRemoveButton("conditions", index, "condition rule")
+        + "</div>";
+    }
+
     function classEditorHtml(data) {
       var rawClass = data.simple["class"] ? data.simple["class"].value : "";
       var entries = parseClassEntries(rawClass);
@@ -1841,7 +2289,7 @@
         : "<button type='button' class='btn class-remove-btn' style='visibility:hidden' tabindex='-1'>&minus;</button>";
 
       return "<div class='class-row row-editor-row'>"
-        + "<input type='text' class='class-name-input' aria-label='Class name' placeholder='Class Name' value='" + escAttr((entry && entry.className) || "") + "'>"
+        + "<input type='text' class='class-name-input' aria-label='Class name' placeholder='Fighter' value='" + escAttr((entry && entry.className) || "") + "'>"
         + numberInput("", (entry && entry.level) || "", { min: 1, step: 1, allowBlank: true, stepper: true, defaultValue: 1, clearAtMinOnDecrement: true, extraClass: "class-level-input" })
         + removeBtn
         + "</div>";
@@ -1958,20 +2406,25 @@
       return parts.join(" / ");
     }
 
-    function textInput(id, value, readOnly) {
+    function textInput(id, value, readOnly, options) {
+      var opts = options || {};
       var ro = readOnly ? " readonly" : "";
-      return "<input type='text' id='" + id + "' value='" + escAttr(value || "") + "'" + ro + ">";
+      var placeholderAttr = opts.placeholder ? " placeholder='" + escAttr(String(opts.placeholder)) + "'" : "";
+      return "<input type='text' id='" + id + "' value='" + escAttr(value || "") + "'" + placeholderAttr + ro + ">";
     }
 
     function numberInput(id, value, opts) {
       var options = opts || {};
+      var isCrSequence = options.sequence === "cr";
       var hasMin = options.min !== undefined;
       var minAttr = hasMin ? " min='" + escAttr(String(options.min)) + "'" : "";
       var stepAttr = options.step !== undefined ? " step='" + escAttr(String(options.step)) + "'" : "";
       var raw = ((value === undefined || value === null) ? "" : String(value)).trim();
       var fallback = options.defaultValue !== undefined ? options.defaultValue : (hasMin ? options.min : 0);
       var normalized = "";
-      if (options.allowBlank && raw === "") {
+      if (isCrSequence) {
+        normalized = normalizeCrValue(raw);
+      } else if (options.allowBlank && raw === "") {
         normalized = "";
       } else if (hasMin) {
         normalized = String(normalizeMinInt(raw, fallback, options.min));
@@ -1985,9 +2438,17 @@
       var disabledAttr = options.disabled ? " disabled" : "";
       var placeholderAttr = options.placeholder ? " placeholder='" + escAttr(String(options.placeholder)) + "'" : "";
       var clearAtMinAttr = options.clearAtMinOnDecrement ? " data-clear-at-min='true'" : "";
+      var sequenceAttr = isCrSequence ? " data-sequence='cr'" : "";
+      var blankSeedAttr = options.blankSeed !== undefined ? " data-blank-seed='" + escAttr(String(options.blankSeed)) + "'" : "";
       var extraClass = options.extraClass ? (" " + options.extraClass) : "";
-      var inputHtml = "<input type='number' class='num-input" + extraClass + "'" + idAttr
-        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + placeholderAttr + clearAtMinAttr + " inputmode='numeric'" + readonlyAttr + disabledAttr + ">";
+      var inputType = isCrSequence ? "text" : "number";
+      var inputMode = isCrSequence ? "text" : "numeric";
+      if (isCrSequence) {
+        minAttr = "";
+        stepAttr = "";
+      }
+      var inputHtml = "<input type='" + inputType + "' class='num-input" + extraClass + "'" + idAttr
+        + " value='" + escAttr(normalized) + "'" + minAttr + stepAttr + placeholderAttr + clearAtMinAttr + sequenceAttr + blankSeedAttr + " inputmode='" + inputMode + "'" + readonlyAttr + disabledAttr + ">";
 
       if (!options.stepper) return inputHtml;
 
@@ -2026,14 +2487,35 @@
 
           function adjust(delta) {
             if (input.disabled || input.readOnly) return;
+            var sequenceType = input.getAttribute("data-sequence") || "";
+            if (sequenceType === "cr") {
+              var currentCrIndex = crValueToIndex(input.value);
+              var nextCrIndex = currentCrIndex;
+              if (delta > 0) nextCrIndex = currentCrIndex <= 0 ? 1 : (currentCrIndex + 1);
+              if (delta < 0) nextCrIndex = currentCrIndex <= 1 ? 0 : (currentCrIndex - 1);
+              input.value = crIndexToValue(nextCrIndex);
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+              return;
+            }
             var minAttr = input.getAttribute("min");
             var hasMin = minAttr !== null && minAttr !== "";
             var min = hasMin ? parseInt(minAttr, 10) : 0;
             if (isNaN(min)) min = 0;
             var clearAtMin = input.getAttribute("data-clear-at-min") === "true";
+            var blankSeedAttr = input.getAttribute("data-blank-seed");
             var raw = (input.value || "").trim();
             if (raw === "") {
               if (delta < 0 && clearAtMin) return;
+              if (blankSeedAttr !== null && blankSeedAttr !== "") {
+                var blankSeed = parseInt(blankSeedAttr, 10);
+                if (!isNaN(blankSeed)) {
+                  input.value = String(blankSeed);
+                  input.dispatchEvent(new Event("input", { bubbles: true }));
+                  input.dispatchEvent(new Event("change", { bubbles: true }));
+                  return;
+                }
+              }
               input.value = String(hasMin ? min : 0);
               input.dispatchEvent(new Event("input", { bubbles: true }));
               input.dispatchEvent(new Event("change", { bubbles: true }));
@@ -2052,6 +2534,15 @@
             input.value = String(next);
             input.dispatchEvent(new Event("input", { bubbles: true }));
             input.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+
+          if (input.getAttribute("data-sequence") === "cr") {
+            var normalizeCrInput = function() {
+              var normalizedCr = normalizeCrValue(input.value);
+              if (input.value !== normalizedCr) input.value = normalizedCr;
+            };
+            input.addEventListener("blur", normalizeCrInput);
+            input.addEventListener("change", normalizeCrInput);
           }
 
           function startHold(delta, ev) {
@@ -2132,20 +2623,168 @@
       return html;
     }
 
-    function actionBlock(prefix, index, action, extraClasses, sectionKey) {
+    function actionRowHeaderHtml() {
+      return "<div class='action-simple-head'>"
+        + "  <div>Name</div>"
+        + "  <div>Prefixes</div>"
+        + "  <div>Description</div>"
+        + "  <div>Suffixes</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+    }
+
+    function specialRowHeaderHtml() {
+      return "<div class='special-simple-head'>"
+        + "  <div>New Line</div>"
+        + "  <div>Name</div>"
+        + "  <div>Prefixes</div>"
+        + "  <div>Description</div>"
+        + "  <div>Suffixes</div>"
+        + "  <div>Remove</div>"
+        + "</div>";
+    }
+
+    function actionBlock(prefix, index, action, sectionKey, hiddenClass) {
+      var row = action || {};
       var id = prefix + "-" + index;
-      var html = "<div class='action-row repeat-row" + (extraClasses ? " " + extraClasses : "") + "' data-row-index='" + index + "'>";
-      html += "<div class='action-head'>";
-      html += "<div class='action-top'>";
-      html += "<label>Cost" + textInput(id + "-cost", action.cost || "") + "</label>";
-      html += "<label>Name" + textInput(id + "-name", action.name || "") + "</label>";
-      html += "</div>";
-      html += repeatRowClearButton(sectionKey, index);
-      html += "</div>";
-      html += "<label>Description</label>";
-      html += richTextField(id + "-desc", action.description || "");
-      html += "</div>";
-      return html;
+      var prefixCsv = parseActionBracketRows(row.cost || "").join(", ");
+      var descParts = parseActionDescriptionParts(row.description || "");
+      var suffixCsv = descParts.suffixRows.join(", ");
+      var classes = "action-simple-row row-editor-row expand-row expand-" + sectionKey + (hiddenClass || "");
+
+      return "<div class='" + classes + "' data-row-index='" + index + "'>"
+        + "<input type='text' id='" + id + "-name' class='action-name-input' value='" + escAttr(row.name || "") + "' placeholder='Flurry of Blows'>"
+        + "<input type='text' id='" + id + "-prefixes' class='action-prefixes-input' value='" + escAttr(prefixCsv) + "' placeholder='1 Ki, 2/day'>"
+        + "<div class='action-desc-editor'>" + richTextField(id + "-desc", descParts.descriptionHtml || "", "+9 (1d8+5) Topple: (DC14 CON)", "action-menu") + "</div>"
+        + "<input type='text' id='" + id + "-suffixes' class='action-suffixes-input' value='" + escAttr(suffixCsv) + "' placeholder='4 free/day'>"
+        + repeatRowRemoveButton(sectionKey, index, "action row")
+        + "</div>";
+    }
+
+    function parseSpecialEditorParts(rawText) {
+      var text = ((rawText || "") + "").trim();
+      if (!text) {
+        return { name: "", prefixCsv: "", descHtml: "", suffixCsv: "" };
+      }
+
+      var match = text.match(/^\s*((?:\[[^\]]+\]\s*)*)<strong>([^:<]+):<\/strong>\s*([\s\S]*)$/i);
+      if (!match) {
+        return { name: "", prefixCsv: "", descHtml: text, suffixCsv: "" };
+      }
+
+      var prefixCsv = parseActionBracketRows(match[1] || "").join(", ");
+      var descParts = parseActionDescriptionParts(match[3] || "");
+      return {
+        name: (match[2] || "").trim(),
+        prefixCsv: prefixCsv,
+        descHtml: descParts.descriptionHtml || "",
+        suffixCsv: descParts.suffixRows.join(", ")
+      };
+    }
+
+    function specialBlock(index, row, hiddenClass) {
+      var item = row || {};
+      var id = "special-" + index;
+      var parsed = parseSpecialEditorParts(item.text || "");
+      var isFirst = index === 0;
+      var checked = (!isFirst && ((item.newLine || "") + "").toUpperCase() === "TRUE") ? " checked" : "";
+      var disabled = isFirst ? " disabled tabindex='-1'" : "";
+      var classes = "special-simple-row action-simple-row row-editor-row expand-row expand-special" + (hiddenClass || "");
+
+      return "<div class='" + classes + "' data-row-index='" + index + "'>"
+        + "<div class='special-newline-cell'><input type='checkbox' id='" + id + "-newline'" + checked + disabled + " aria-label='Start on new line'></div>"
+        + "<input type='text' id='" + id + "-name' class='action-name-input' value='" + escAttr(parsed.name) + "' placeholder='Flicker Strike'>"
+        + "<input type='text' id='" + id + "-prefixes' class='action-prefixes-input' value='" + escAttr(parsed.prefixCsv) + "' placeholder='2 LA'>"
+        + "<div class='action-desc-editor'>" + richTextField(id + "-desc", parsed.descHtml || "", "Teleport 30ft, then atk▲ if behind", "action-menu") + "</div>"
+        + "<input type='text' id='" + id + "-suffixes' class='action-suffixes-input' value='" + escAttr(parsed.suffixCsv) + "' placeholder='[5-6 Recharge]'>"
+        + repeatRowRemoveButton("special", index, "special row")
+        + "</div>";
+    }
+
+    function parseActionBracketRows(raw) {
+      var text = ((raw || "") + "").trim();
+      if (!text) return [];
+      var rows = [];
+      var match;
+      var bracketRe = /\[\s*([^\]]+?)\s*\]/g;
+      while ((match = bracketRe.exec(text))) {
+        var token = (match[1] || "").trim();
+        if (token) rows.push(token);
+      }
+      if (!rows.length) {
+        var fallback = text.replace(/^\[+|\]+$/g, "").trim();
+        if (fallback) rows.push(fallback);
+      }
+      return rows;
+    }
+
+    function parseActionDescriptionParts(raw) {
+      var text = ((raw || "") + "").trim();
+      var suffixRows = [];
+      if (!text) return { descriptionHtml: "", suffixRows: suffixRows };
+
+      var suffixTailMatch = text.match(/(?:\s*\[[^\[\]]+\]\s*)+$/);
+      if (suffixTailMatch) {
+        var tail = suffixTailMatch[0];
+        var match;
+        var suffixRe = /\[\s*([^\]]+?)\s*\]/g;
+        while ((match = suffixRe.exec(tail))) {
+          var suffix = (match[1] || "").trim();
+          if (suffix) suffixRows.push(suffix);
+        }
+        text = text.slice(0, text.length - tail.length).trim();
+      }
+
+      return { descriptionHtml: text, suffixRows: suffixRows };
+    }
+
+    function parseCommaSeparatedTags(raw) {
+      var text = ((raw || "") + "").trim();
+      if (!text) return [];
+      var split = text.split(",");
+      var tags = [];
+      for (var i = 0; i < split.length; i++) {
+        var cleaned = split[i].replace(/^\s*\[+/, "").replace(/\]+\s*$/, "").trim();
+        if (cleaned) tags.push(cleaned);
+      }
+      return tags;
+    }
+
+    function formatBracketTagList(tags) {
+      if (!tags || !tags.length) return "";
+      return tags.map(function(tag) { return "[" + tag + "]"; }).join(" ");
+    }
+
+    function buildActionRowValues(prefix, index) {
+      var name = getInputValue(prefix + "-" + index + "-name");
+      var description = getRichValue(prefix + "-" + index + "-desc");
+      var prefixes = parseCommaSeparatedTags(getInputValue(prefix + "-" + index + "-prefixes"));
+      var suffixes = parseCommaSeparatedTags(getInputValue(prefix + "-" + index + "-suffixes"));
+      var cost = formatBracketTagList(prefixes);
+      var suffixTail = formatBracketTagList(suffixes);
+      var descriptionWithSuffix = description + (suffixTail ? (description ? " " : "") + suffixTail : "");
+      return {
+        name: name,
+        cost: cost,
+        description: descriptionWithSuffix
+      };
+    }
+
+    function buildSpecialRowText(index) {
+      var values = buildActionRowValues("special", index);
+      var name = values.name;
+      var cost = values.cost;
+      var description = values.description;
+
+      if (name) {
+        var line = (cost ? escHtml(cost) + " " : "") + "<strong>" + escHtml(name) + ":</strong>";
+        if (description) line += " " + description;
+        return line;
+      }
+      if (cost) {
+        return description ? (escHtml(cost) + " " + description) : escHtml(cost);
+      }
+      return description;
     }
 
     function hasAnyValue(values) {
@@ -2170,7 +2809,7 @@
         return hasAnyValue([row.cost, row.name, row.description]);
       }
       if (rowType === "special") {
-        return hasAnyValue([row.text, row.newLine]);
+        return hasAnyValue([row.text]) || String(row.newLine || "").toUpperCase() === "TRUE";
       }
       return false;
     }
@@ -2202,9 +2841,65 @@
     }
 
     function renderAddRowButton(sectionKey, label, hiddenCount, alwaysShow) {
-      if (!hiddenCount && !alwaysShow) return "";
-      var disabledAttr = hiddenCount ? "" : " disabled";
+      var allowDynamicAdd = sectionKey === "damage" || sectionKey === "conditions" || sectionKey === "special";
+      if (!hiddenCount && !alwaysShow && !allowDynamicAdd) return "";
+      var disabledAttr = (hiddenCount || allowDynamicAdd) ? "" : " disabled";
       return "<div class='section-add-row'><button type='button' class='btn add-row-btn' data-section='" + escAttr(sectionKey) + "'" + disabledAttr + ">+ " + escHtml(label) + "</button></div>";
+    }
+
+    function appendDynamicDefenseRow(rowType) {
+      if (!state.parsedData || !state.rawRows) return false;
+
+      if (rowType === "damage") {
+        var damageIndex = state.parsedData.damage.length;
+        var damageRowIndex = state.rawRows.length;
+        var damageItem = { rowIndex: damageRowIndex, value: "", flag1: "", flag2: "" };
+        state.rawRows.push(["Damage", "", "", ""]);
+        state.parsedData.damage.push(damageItem);
+        var damageList = document.querySelector(".damage-list");
+        if (!damageList) return false;
+        damageList.insertAdjacentHTML("beforeend", damageRuleRowHtml(damageIndex, damageItem, ""));
+        var newDamageRow = damageList.lastElementChild;
+        if (newDamageRow) wireDirtyTracking(newDamageRow);
+        initRepeatableRowActions();
+        syncRepeatRowRemoveButtons("damage");
+        return true;
+      }
+
+      if (rowType === "conditions") {
+        var conditionIndex = state.parsedData.conditions.length;
+        var conditionRowIndex = state.rawRows.length;
+        var conditionItem = { rowIndex: conditionRowIndex, value: "", flag1: "", flag2: "" };
+        state.rawRows.push(["Conditions", "", "", ""]);
+        state.parsedData.conditions.push(conditionItem);
+        var conditionList = document.querySelector(".condition-list");
+        if (!conditionList) return false;
+        conditionList.insertAdjacentHTML("beforeend", conditionRuleRowHtml(conditionIndex, conditionItem, ""));
+        var newConditionRow = conditionList.lastElementChild;
+        if (newConditionRow) wireDirtyTracking(newConditionRow);
+        initRepeatableRowActions();
+        syncRepeatRowRemoveButtons("conditions");
+        return true;
+      }
+
+      if (rowType === "special") {
+        var specialIndex = state.parsedData.special.length;
+        var specialRowIndex = state.rawRows.length;
+        var specialItem = { rowIndex: specialRowIndex, text: "", newLine: "FALSE" };
+        state.rawRows.push(["Special", "", "FALSE", ""]);
+        state.parsedData.special.push(specialItem);
+        var specialList = document.querySelector(".special-simple-list");
+        if (!specialList) return false;
+        specialList.insertAdjacentHTML("beforeend", specialBlock(specialIndex, specialItem, ""));
+        var newSpecialRow = specialList.lastElementChild;
+        if (newSpecialRow) wireDirtyTracking(newSpecialRow);
+        initRichTextFields();
+        initRepeatableRowActions();
+        syncRepeatRowRemoveButtons("special");
+        return true;
+      }
+
+      return false;
     }
 
     function repeatRowClearButton(sectionKey, index) {
@@ -2217,20 +2912,56 @@
     }
 
     function initExpandableSections() {
+      function getNextHiddenRowAfterVisible(sectionKey) {
+        var visibleRows = document.querySelectorAll(".expand-row.expand-" + sectionKey + ":not(.is-hidden)");
+        var maxVisibleIndex = -1;
+        for (var v = 0; v < visibleRows.length; v++) {
+          var visibleIdx = parseInt(visibleRows[v].getAttribute("data-row-index"), 10);
+          if (!isNaN(visibleIdx) && visibleIdx > maxVisibleIndex) {
+            maxVisibleIndex = visibleIdx;
+          }
+        }
+
+        var hiddenRows = document.querySelectorAll(".expand-row.expand-" + sectionKey + ".is-hidden");
+        var bestHidden = null;
+        var bestHiddenIndex = Number.POSITIVE_INFINITY;
+        for (var h = 0; h < hiddenRows.length; h++) {
+          var hiddenIdx = parseInt(hiddenRows[h].getAttribute("data-row-index"), 10);
+          if (isNaN(hiddenIdx) || hiddenIdx <= maxVisibleIndex) continue;
+          if (hiddenIdx < bestHiddenIndex) {
+            bestHidden = hiddenRows[h];
+            bestHiddenIndex = hiddenIdx;
+          }
+        }
+        return bestHidden;
+      }
+
       var addButtons = document.querySelectorAll(".add-row-btn[data-section]");
       for (var i = 0; i < addButtons.length; i++) {
         (function(btn) {
           btn.addEventListener("click", function() {
             var key = btn.getAttribute("data-section");
             if (!key) return;
-            var nextHidden = document.querySelector(".expand-row.expand-" + key + ".is-hidden");
+            var allowDynamicAdd = key === "damage" || key === "conditions" || key === "special";
+            var nextHidden = null;
+            if (key === "special" || key === "actions" || key === "bonusActions" || key === "reactions") {
+              nextHidden = getNextHiddenRowAfterVisible(key);
+            } else {
+              nextHidden = document.querySelector(".expand-row.expand-" + key + ".is-hidden");
+            }
             if (!nextHidden) {
+              if (allowDynamicAdd && appendDynamicDefenseRow(key)) {
+                btn.disabled = false;
+                setDirty(true);
+                updatePreview();
+                return;
+              }
               btn.disabled = true;
               return;
             }
             nextHidden.classList.remove("is-hidden");
             if (!document.querySelector(".expand-row.expand-" + key + ".is-hidden")) {
-              btn.disabled = true;
+              btn.disabled = !allowDynamicAdd;
             }
             syncRepeatRowRemoveButtons(key);
           });
@@ -2289,7 +3020,14 @@
 
       if (rowType === "special") {
         clearInputValue("special-" + index + "-newline");
-        clearRichFieldValue("special-" + index + "-text");
+        clearInputValue("special-" + index + "-name");
+        clearInputValue("special-" + index + "-prefixes");
+        clearInputValue("special-" + index + "-suffixes");
+        clearRichFieldValue("special-" + index + "-desc");
+        if (index === 0) {
+          var firstRowCheckbox = document.getElementById("special-" + index + "-newline");
+          if (firstRowCheckbox) firstRowCheckbox.checked = false;
+        }
         return;
       }
 
@@ -2298,8 +3036,9 @@
       if (rowType === "bonusActions") prefix = "bonus";
       if (rowType === "reactions") prefix = "react";
       if (!prefix) return;
-      clearInputValue(prefix + "-" + index + "-cost");
       clearInputValue(prefix + "-" + index + "-name");
+      clearInputValue(prefix + "-" + index + "-prefixes");
+      clearInputValue(prefix + "-" + index + "-suffixes");
       clearRichFieldValue(prefix + "-" + index + "-desc");
     }
 
@@ -2317,11 +3056,35 @@
       addBtn.disabled = false;
     }
 
+    function syncSpecialNewlineControls() {
+      var visibleRows = document.querySelectorAll(".expand-row.expand-special:not(.is-hidden)");
+      for (var i = 0; i < visibleRows.length; i++) {
+        var checkbox = visibleRows[i].querySelector("input[type='checkbox'][id$='-newline']");
+        if (!checkbox) continue;
+        if (i === 0) {
+          checkbox.checked = false;
+          checkbox.disabled = true;
+          checkbox.setAttribute("tabindex", "-1");
+        } else {
+          checkbox.disabled = false;
+          checkbox.removeAttribute("tabindex");
+        }
+      }
+    }
+
     function syncRepeatRowRemoveButtons(rowType) {
+      if (rowType === "special") syncSpecialNewlineControls();
       var buttons = document.querySelectorAll(".row-remove-btn[data-row-remove='" + rowType + "']");
+      var rows = document.querySelectorAll(".expand-row.expand-" + rowType);
+      for (var r = 0; r < rows.length; r++) {
+        rows[r].classList.remove("is-last-visible");
+      }
       if (!buttons.length) return;
 
       var visibleRows = document.querySelectorAll(".expand-row.expand-" + rowType + ":not(.is-hidden)");
+      if (visibleRows.length) {
+        visibleRows[visibleRows.length - 1].classList.add("is-last-visible");
+      }
       var show = visibleRows.length > 1;
       for (var i = 0; i < buttons.length; i++) {
         buttons[i].style.visibility = show ? "visible" : "hidden";
@@ -2335,6 +3098,8 @@
         var buttons = document.querySelectorAll(selector);
         for (var j = 0; j < buttons.length; j++) {
           (function(btn) {
+            if (btn.getAttribute("data-row-action-bound") === "true") return;
+            btn.setAttribute("data-row-action-bound", "true");
             btn.addEventListener("click", function() {
               var rowType = btn.getAttribute(attrName);
               var index = parseInt(btn.getAttribute("data-row-index"), 10);
@@ -2357,29 +3122,254 @@
       syncRepeatRowRemoveButtons("movement");
       syncRepeatRowRemoveButtons("damage");
       syncRepeatRowRemoveButtons("conditions");
+      syncRepeatRowRemoveButtons("skills");
+      syncRepeatRowRemoveButtons("actions");
+      syncRepeatRowRemoveButtons("bonusActions");
+      syncRepeatRowRemoveButtons("reactions");
+      syncRepeatRowRemoveButtons("special");
     }
 
-    function richTextField(id, value) {
+    function richTextField(id, value, placeholder, mode) {
+      var placeholderAttr = placeholder ? " data-placeholder='" + escAttr(String(placeholder)) + "'" : "";
+      var toolbar = "";
+      if (mode === "action-menu") {
+        toolbar = ""
+          + "<div class='rt-toolbar rt-toolbar-menu' data-for='" + escAttr(id) + "'>"
+          + "  <div class='rt-menu-wrap'>"
+            + "    <button type='button' class='rt-menu-trigger' data-popover='format' title='Text formatting'>Aa</button>"
+            + "    <div class='rt-popover' data-popover-panel='format' role='menu'>"
+          + "      <button type='button' data-cmd='bold'>Bold</button>"
+          + "      <button type='button' data-cmd='italic'>Italic</button>"
+          + "      <button type='button' data-cmd='underline'>Underline</button>"
+          + "      <button type='button' data-cmd='removeFormat'>Clear Formatting</button>"
+          + "    </div>"
+          + "  </div>"
+          + "  <div class='rt-menu-wrap'>"
+          + "    <button type='button' class='rt-menu-trigger' data-popover='symbol' title='Insert symbol' aria-label='Insert symbol'>&oplus;</button>"
+            + "    <div class='rt-popover' data-popover-panel='symbol' role='menu'>"
+          + ACTION_SYMBOL_OPTIONS.map(function(item) {
+            return "<button type='button' data-insert-symbol='" + escAttr(item.symbol) + "'>"
+              + "<span>" + escHtml(item.label) + "</span>"
+              + "<span class='rt-popover-symbol'>" + escHtml(item.symbol) + "</span>"
+              + "</button>";
+          }).join("")
+          + "    </div>"
+          + "  </div>"
+          + "</div>";
+      } else {
+        toolbar = ""
+          + "<div class='rt-toolbar' data-for='" + escAttr(id) + "'>"
+          + "  <button type='button' data-cmd='bold' title='Bold'><b>B</b></button>"
+          + "  <button type='button' data-cmd='italic' title='Italic'><i>I</i></button>"
+          + "  <button type='button' data-cmd='underline' title='Underline'><u>U</u></button>"
+          + "  <button type='button' data-cmd='removeFormat' title='Clear'>X</button>"
+          + "</div>";
+      }
       return ""
-        + "<div class='rt-toolbar'>"
-        + "  <button type='button' data-cmd='bold' title='Bold'><b>B</b></button>"
-        + "  <button type='button' data-cmd='italic' title='Italic'><i>I</i></button>"
-        + "  <button type='button' data-cmd='underline' title='Underline'><u>U</u></button>"
-        + "  <button type='button' data-cmd='removeFormat' title='Clear'>X</button>"
-        + "</div>"
-        + "<div class='rt-field' contenteditable='true' id='" + id + "'>" + (value || "") + "</div>";
+        + toolbar
+        + "<div class='rt-field' contenteditable='true' id='" + id + "'" + placeholderAttr + ">" + (value || "") + "</div>";
+    }
+
+    var richSelectionRanges = {};
+    var richTextGlobalListenersBound = false;
+
+    function isRangeWithinField(range, field) {
+      return !!(range && field && field.contains(range.commonAncestorContainer));
+    }
+
+    function captureRichFieldSelection(field) {
+      if (!field || !field.id) return;
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+      var range = sel.getRangeAt(0);
+      if (!isRangeWithinField(range, field)) return;
+      richSelectionRanges[field.id] = range.cloneRange();
+    }
+
+    function restoreRichFieldSelection(field, fallbackToEnd) {
+      if (!field) return null;
+      var sel = window.getSelection();
+      var range = null;
+      var cached = field.id ? richSelectionRanges[field.id] : null;
+      if (cached && isRangeWithinField(cached, field)) {
+        range = cached.cloneRange();
+      } else if (sel && sel.rangeCount) {
+        var active = sel.getRangeAt(0);
+        if (isRangeWithinField(active, field)) range = active.cloneRange();
+      }
+      if (!range && fallbackToEnd !== false) {
+        range = document.createRange();
+        range.selectNodeContents(field);
+        range.collapse(false);
+      }
+      if (!range || !sel) return null;
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return range;
+    }
+
+    function closeOpenRichPopovers(exceptWrap) {
+      var openWraps = document.querySelectorAll(".action-desc-editor .rt-menu-wrap.is-open");
+      for (var i = 0; i < openWraps.length; i++) {
+        if (exceptWrap && openWraps[i] === exceptWrap) continue;
+        openWraps[i].classList.remove("is-open");
+      }
+    }
+
+    function normalizeRichFieldPlaceholderState(field) {
+      if (!field) return;
+      var plain = (field.textContent || "").replace(/\u00a0/g, " ").trim();
+      if (plain !== "") return;
+      field.innerHTML = "";
+    }
+
+    function alignPopoverToToolbarStart(wrap) {
+      if (!wrap) return;
+      var panel = wrap.querySelector(".rt-popover");
+      var trigger = wrap.querySelector(".rt-menu-trigger[data-popover]");
+      if (!panel || !trigger) return;
+      panel.style.left = "-1px";
+      panel.style.right = "auto";
+    }
+
+    function applyActionSelectionCommand(fieldId, cmd) {
+      var field = document.getElementById(fieldId);
+      if (!field) return;
+      field.focus();
+      var range = restoreRichFieldSelection(field, false);
+      if (!range || range.collapsed) return;
+      document.execCommand(cmd, false, null);
+      normalizeRichFieldPlaceholderState(field);
+      captureRichFieldSelection(field);
+      setDirty(true);
+      updatePreview();
+    }
+
+    function insertActionSymbol(fieldId, symbol) {
+      var field = document.getElementById(fieldId);
+      if (!field) return;
+      field.focus();
+      var range = restoreRichFieldSelection(field, true);
+      if (!range) return;
+      range.deleteContents();
+      var textNode = document.createTextNode(symbol || "");
+      range.insertNode(textNode);
+      range.setStartAfter(textNode);
+      range.collapse(true);
+      var sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      normalizeRichFieldPlaceholderState(field);
+      captureRichFieldSelection(field);
+      setDirty(true);
+      updatePreview();
     }
 
     function initRichTextFields() {
+      var fields = document.querySelectorAll(".rt-field");
+      for (var f = 0; f < fields.length; f++) {
+        (function(field) {
+          if (field.getAttribute("data-rich-selection-bound") === "true") return;
+          field.setAttribute("data-rich-selection-bound", "true");
+          normalizeRichFieldPlaceholderState(field);
+          field.addEventListener("keyup", function() { captureRichFieldSelection(field); });
+          field.addEventListener("mouseup", function() { captureRichFieldSelection(field); });
+          field.addEventListener("focus", function() { captureRichFieldSelection(field); });
+          field.addEventListener("input", function() {
+            normalizeRichFieldPlaceholderState(field);
+            captureRichFieldSelection(field);
+          });
+          field.addEventListener("blur", function() {
+            normalizeRichFieldPlaceholderState(field);
+          });
+        })(fields[f]);
+      }
+
+      if (!richTextGlobalListenersBound) {
+        document.addEventListener("click", function(e) {
+          if (e.target.closest(".action-desc-editor .rt-menu-wrap")) return;
+          closeOpenRichPopovers();
+        });
+        document.addEventListener("keydown", function(e) {
+          if (e.key === "Escape") closeOpenRichPopovers();
+        });
+        richTextGlobalListenersBound = true;
+      }
+
+      var triggers = document.querySelectorAll(".rt-toolbar-menu .rt-menu-trigger[data-popover]");
+      for (var t = 0; t < triggers.length; t++) {
+        (function(trigger) {
+          if (trigger.getAttribute("data-rt-menu-bound") === "true") return;
+          trigger.setAttribute("data-rt-menu-bound", "true");
+          trigger.addEventListener("mousedown", function(e) {
+            e.preventDefault();
+          });
+          trigger.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var wrap = trigger.closest(".rt-menu-wrap");
+            if (!wrap) return;
+            var willOpen = !wrap.classList.contains("is-open");
+            closeOpenRichPopovers(willOpen ? wrap : null);
+            if (willOpen) {
+              alignPopoverToToolbarStart(wrap);
+              wrap.classList.add("is-open");
+              var toolbar = trigger.closest(".rt-toolbar");
+              var fieldId = toolbar ? toolbar.getAttribute("data-for") : "";
+              var field = fieldId ? document.getElementById(fieldId) : null;
+              if (field) captureRichFieldSelection(field);
+            } else {
+              wrap.classList.remove("is-open");
+            }
+          });
+        })(triggers[t]);
+      }
+
       var buttons = document.querySelectorAll(".rt-toolbar button[data-cmd]");
       for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener("mousedown", function(e) {
-          e.preventDefault();
-          var cmd = this.getAttribute("data-cmd");
-          document.execCommand(cmd, false, null);
-          setDirty(true);
-          updatePreview();
-        });
+        (function(btn) {
+          if (btn.getAttribute("data-rt-cmd-bound") === "true") return;
+          btn.setAttribute("data-rt-cmd-bound", "true");
+          btn.addEventListener("mousedown", function(e) {
+            e.preventDefault();
+          });
+          btn.addEventListener("click", function(e) {
+            e.preventDefault();
+            var cmd = btn.getAttribute("data-cmd");
+            if (!cmd) return;
+            var toolbar = btn.closest(".rt-toolbar");
+            if (toolbar && toolbar.classList.contains("rt-toolbar-menu")) {
+              var fieldId = toolbar.getAttribute("data-for") || "";
+              applyActionSelectionCommand(fieldId, cmd);
+              closeOpenRichPopovers();
+            } else {
+              document.execCommand(cmd, false, null);
+              setDirty(true);
+              updatePreview();
+            }
+          });
+        })(buttons[i]);
+      }
+
+      var symbolButtons = document.querySelectorAll(".rt-toolbar button[data-insert-symbol]");
+      for (var s = 0; s < symbolButtons.length; s++) {
+        (function(btn) {
+          if (btn.getAttribute("data-rt-symbol-bound") === "true") return;
+          btn.setAttribute("data-rt-symbol-bound", "true");
+          btn.addEventListener("mousedown", function(e) {
+            e.preventDefault();
+          });
+          btn.addEventListener("click", function(e) {
+            e.preventDefault();
+            var symbol = btn.getAttribute("data-insert-symbol") || "";
+            var toolbar = btn.closest(".rt-toolbar");
+            var fieldId = toolbar ? (toolbar.getAttribute("data-for") || "") : "";
+            insertActionSymbol(fieldId, symbol);
+            closeOpenRichPopovers();
+          });
+        })(symbolButtons[s]);
       }
     }
 
@@ -2404,6 +3394,22 @@
           }
         }
       });
+
+      var proficiencyEl = document.getElementById("field-proficiency-bonus");
+      if (proficiencyEl) {
+        var profRaw = (proficiencyEl.value || "").trim();
+        if (profRaw !== "") {
+          proficiencyEl.value = normalizePositiveIntOrBlank(profRaw);
+        }
+      }
+
+      var passiveEl = document.getElementById("field-passive-perception");
+      if (passiveEl) {
+        var passiveRaw = (passiveEl.value || "").trim();
+        if (passiveRaw !== "") {
+          passiveEl.value = String(normalizeNonNegativeInt(passiveRaw, 10));
+        }
+      }
     }
 
     function wireDirtyTracking(root) {
@@ -2432,7 +3438,14 @@
 
       for (var i = 0; i < SIMPLE_KEYS.length; i++) {
         var key = SIMPLE_KEYS[i];
-        if (!state.parsedData.simple[key]) continue;
+        if (!state.parsedData.simple[key]) {
+          if (key === "cr") {
+            rows.push(["CR", "", "", ""]);
+            state.parsedData.simple[key] = { rowIndex: rows.length - 1, value: "", flag1: "", flag2: "" };
+          } else {
+            continue;
+          }
+        }
         var row = state.parsedData.simple[key].rowIndex;
         var inputId = "field-" + key.replace(/\s+/g, "-");
         if (RICH_SIMPLE_KEYS[key]) {
@@ -2464,26 +3477,32 @@
 
       state.parsedData.skills.forEach(function(item, idx) {
         setCellOnRows(rows, item.rowIndex, 1, "skill-" + idx + "-name");
-        setCellOnRows(rows, item.rowIndex, 2, "skill-" + idx + "-mod");
+        var skillModRaw = getInputValue("skill-" + idx + "-mod");
+        rows[item.rowIndex][2] = ((skillModRaw || "").trim() === "")
+          ? ""
+          : normalizeSignedValue(skillModRaw, "+0");
         setCellOnRows(rows, item.rowIndex, 3, "skill-" + idx + "-flag");
       });
 
       state.parsedData.actions.forEach(function(item, idx) {
-        setCellOnRows(rows, item.rowIndex, 1, "act-" + idx + "-cost");
-        setCellOnRows(rows, item.rowIndex, 2, "act-" + idx + "-name");
-        setRichCellOnRows(rows, item.rowIndex, 3, "act-" + idx + "-desc");
+        var actionValues = buildActionRowValues("act", idx);
+        rows[item.rowIndex][1] = actionValues.cost;
+        rows[item.rowIndex][2] = actionValues.name;
+        rows[item.rowIndex][3] = actionValues.description;
       });
 
       state.parsedData.bonusActions.forEach(function(item, idx) {
-        setCellOnRows(rows, item.rowIndex, 1, "bonus-" + idx + "-cost");
-        setCellOnRows(rows, item.rowIndex, 2, "bonus-" + idx + "-name");
-        setRichCellOnRows(rows, item.rowIndex, 3, "bonus-" + idx + "-desc");
+        var bonusValues = buildActionRowValues("bonus", idx);
+        rows[item.rowIndex][1] = bonusValues.cost;
+        rows[item.rowIndex][2] = bonusValues.name;
+        rows[item.rowIndex][3] = bonusValues.description;
       });
 
       state.parsedData.reactions.forEach(function(item, idx) {
-        setCellOnRows(rows, item.rowIndex, 1, "react-" + idx + "-cost");
-        setCellOnRows(rows, item.rowIndex, 2, "react-" + idx + "-name");
-        setRichCellOnRows(rows, item.rowIndex, 3, "react-" + idx + "-desc");
+        var reactionValues = buildActionRowValues("react", idx);
+        rows[item.rowIndex][1] = reactionValues.cost;
+        rows[item.rowIndex][2] = reactionValues.name;
+        rows[item.rowIndex][3] = reactionValues.description;
       });
 
       if (state.parsedData.spells.cantrips) {
@@ -2499,9 +3518,9 @@
       }
 
       state.parsedData.special.forEach(function(item, idx) {
-        setRichCellOnRows(rows, item.rowIndex, 1, "special-" + idx + "-text");
+        rows[item.rowIndex][1] = buildSpecialRowText(idx);
         var checkbox = document.getElementById("special-" + idx + "-newline");
-        rows[item.rowIndex][2] = checkbox && checkbox.checked ? "TRUE" : "FALSE";
+        rows[item.rowIndex][2] = (checkbox && !checkbox.disabled && checkbox.checked) ? "TRUE" : "FALSE";
       });
     }
 
@@ -2515,12 +3534,19 @@
       var classValue = buildClassValueFromForm();
       var nameValue = getSimpleValue("name") || "--";
       var speedValues = getSpeedValuesFromVariants();
+      var proficiencyRaw = getSimpleValue("proficiency bonus");
+      var initiativeRaw = getSimpleValue("initiative");
+      var passiveRaw = getSimpleValue("passive perception");
+      var normalizedProficiency = normalizePositiveIntOrBlank(proficiencyRaw);
+      var visionText = (getSimpleValue("vision") || "").trim();
+      var crValue = normalizeCrValue(getSimpleValue("cr"));
       var data = {
         name: nameValue,
         classHtml: escHtml(classValue),
         class: classValue,
         size: getSimpleValue("size"),
         race: getSimpleValue("race"),
+        cr: crValue,
         ac: String(getCoreStatValue("ac")),
         hp: String(getCoreStatValue("hp")),
         speed: String(getCoreStatValue("speed")),
@@ -2548,10 +3574,10 @@
         damage: "",
         conditions: "",
         skills: {
-          proficiency: getSimpleValue("proficiency bonus"),
-          initiative: getSimpleValue("initiative"),
-          passive_perception: getSimpleValue("passive perception"),
-          vision: getSimpleValue("vision"),
+          proficiency: normalizedProficiency ? formatSignedNumber(parseInt(normalizedProficiency, 10)) : "",
+          initiative: normalizeSignedValue(initiativeRaw, "+0"),
+          passive_perception: String(normalizeNonNegativeInt(passiveRaw, 10)),
+          vision: visionText || "normal",
           skills: ""
         },
         back: {
@@ -2595,8 +3621,9 @@
         var skillName = getInputValue("skill-" + idx + "-name");
         var mod = getInputValue("skill-" + idx + "-mod");
         if (!skillName) return;
+        var signedMod = ((mod || "").trim() === "") ? "" : normalizeSignedValue(mod, "+0");
         skillRows.push(
-          abbreviateSkill(skillName) + (mod ? (" " + escHtml(mod)) : "") + mapSkillFlag(getInputValue("skill-" + idx + "-flag"))
+          abbreviateSkill(skillName) + (signedMod ? (" " + escHtml(signedMod)) : "") + mapSkillFlag(getInputValue("skill-" + idx + "-flag"))
         );
       });
       data.skills.skills = skillRows.join(", ");
@@ -2616,6 +3643,7 @@
       if (cardData.classHtml) subtitleBits.push(cardData.classHtml);
       var sizeRace = (cardData.size + " " + cardData.race).trim();
       if (sizeRace) subtitleBits.push(escHtml(sizeRace));
+      if (cardData.cr) subtitleBits.push("CR " + escHtml(cardData.cr));
       var subtitle = subtitleBits.join(" &bull; ");
 
       frontEl.innerHTML = ""
@@ -2709,12 +3737,10 @@
     function buildActionBlockForPreview(prefix, count) {
       var rows = [];
       for (var i = 0; i < count; i++) {
-        var cost = getInputValue(prefix + "-" + i + "-cost");
-        var name = getInputValue(prefix + "-" + i + "-name");
-        var desc = getRichValue(prefix + "-" + i + "-desc");
-        if (!name) continue;
-        var line = (cost ? escHtml(cost) + " " : "") + "<strong>" + escHtml(name) + ":</strong>";
-        if (desc) line += " " + desc;
+        var actionValues = buildActionRowValues(prefix, i);
+        if (!actionValues.name) continue;
+        var line = (actionValues.cost ? escHtml(actionValues.cost) + " " : "") + "<strong>" + escHtml(actionValues.name) + ":</strong>";
+        if (actionValues.description) line += " " + actionValues.description;
         rows.push(line);
       }
       return rows.join("<br>");
@@ -2723,13 +3749,14 @@
     function buildSpecialBlockForPreview() {
       var rows = [];
       for (var i = 0; i < state.parsedData.special.length; i++) {
-        var text = getRichValue("special-" + i + "-text");
+        var text = buildSpecialRowText(i);
         if (!text) continue;
         var newLine = document.getElementById("special-" + i + "-newline");
-        if (rows.length === 0 || (newLine && newLine.checked)) {
+        var forceNewLine = newLine && !newLine.disabled && newLine.checked;
+        if (rows.length === 0 || forceNewLine) {
           rows.push(text);
         } else {
-          rows[rows.length - 1] += " • " + text;
+          rows[rows.length - 1] += " &bull; " + text;
         }
       }
       return rows.join("<br>");
@@ -2811,6 +3838,48 @@
       return normalizeNonNegativeInt(getSimpleValue(key), defaults[key] || 0);
     }
 
+    function normalizeCrValue(raw) {
+      var text = String(raw || "").trim();
+      if (!text) return "";
+      text = text.replace(/^cr\s*/i, "").trim();
+      if (!text) return "";
+      var compact = text.replace(/\s+/g, "");
+      if (compact === "0") return "";
+      if (compact === "1/8" || compact === "1/4" || compact === "1/2") return compact;
+      if (/^\d+$/.test(compact)) {
+        var n = parseInt(compact, 10);
+        return n > 0 ? String(n) : "";
+      }
+      if (/^\d*\.?\d+$/.test(compact)) {
+        var numeric = parseFloat(compact);
+        if (Math.abs(numeric - 0.125) < 0.000001) return "1/8";
+        if (Math.abs(numeric - 0.25) < 0.000001) return "1/4";
+        if (Math.abs(numeric - 0.5) < 0.000001) return "1/2";
+        if (numeric >= 1 && Math.floor(numeric) === numeric) return String(numeric);
+      }
+      return "";
+    }
+
+    function crValueToIndex(raw) {
+      var normalized = normalizeCrValue(raw);
+      if (!normalized) return 0;
+      if (normalized === "1/8") return 1;
+      if (normalized === "1/4") return 2;
+      if (normalized === "1/2") return 3;
+      var integerValue = parseInt(normalized, 10);
+      if (isNaN(integerValue) || integerValue <= 0) return 0;
+      return integerValue + 3;
+    }
+
+    function crIndexToValue(index) {
+      var idx = parseInt(index, 10);
+      if (isNaN(idx) || idx <= 0) return "";
+      if (idx === 1) return "1/8";
+      if (idx === 2) return "1/4";
+      if (idx === 3) return "1/2";
+      return String(idx - 3);
+    }
+
     function getPersistedSimpleValue(key) {
       if (key === "name") {
         var safeName = getSimpleValue("name");
@@ -2819,8 +3888,21 @@
       if (key === "class") {
         return buildClassValueFromForm();
       }
+      if (key === "cr") {
+        return normalizeCrValue(getSimpleValue("cr"));
+      }
       if (key === "ac" || key === "hp" || key === "speed") {
         return String(getCoreStatValue(key));
+      }
+      if (key === "proficiency bonus") {
+        var normalizedProficiency = normalizePositiveIntOrBlank(getSimpleValue(key));
+        return normalizedProficiency ? formatSignedNumber(parseInt(normalizedProficiency, 10)) : "";
+      }
+      if (key === "initiative") {
+        return normalizeSignedValue(getSimpleValue(key), "+0");
+      }
+      if (key === "passive perception") {
+        return String(normalizeNonNegativeInt(getSimpleValue(key), 10));
       }
       if (key === "climb speed" || key === "swim speed" || key === "fly speed") {
         var speedValues = getSpeedValuesFromVariants();
@@ -2884,6 +3966,12 @@
       return n;
     }
 
+    function normalizePositiveIntOrBlank(raw) {
+      var n = parseInt(String(raw || "").replace(/[^\d-]/g, ""), 10);
+      if (isNaN(n) || n < 1) return "";
+      return String(n);
+    }
+
     function getRichOrSimpleValue(key) {
       var id = "field-" + key.replace(/\s+/g, "-");
       return RICH_SIMPLE_KEYS[key] ? getRichValue(id) : getInputValue(id);
@@ -2930,9 +4018,6 @@
 
       try {
         var draftRows = buildDraftRowsFromForm();
-        var cdeRows = draftRows.map(function(r) {
-          return [r[1] || "", r[2] || "", r[3] || ""];
-        });
 
         google.script.run
           .withSuccessHandler(function() {
@@ -2945,7 +4030,7 @@
             saveBtn.disabled = false;
             setStatus("Save failed: " + (err && err.message ? err.message : err), "error");
           })
-          .webApp_saveData(state.currentSheetName, cdeRows);
+          .webApp_saveData(state.currentSheetName, draftRows);
       } catch (err) {
         saveBtn.disabled = false;
         setStatus("Save failed: " + (err && err.message ? err.message : err), "error");
@@ -3016,4 +4101,5 @@
   </script>
 </body>
 </html>
+
 

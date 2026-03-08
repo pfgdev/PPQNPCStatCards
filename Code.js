@@ -460,7 +460,7 @@ function buildSkillsData(sheet) {
     proficiency: proficiency,
     initiative: initiative,
     passive_perception: passivePerception,
-    vision: vision,
+    vision: vision || "normal",
     skills: skillsArr.join(", ")
   };
 }
@@ -810,16 +810,36 @@ function webApp_getRawData(sheetName) {
 }
 
 /**
- * Saves edited data back to columns C:E of the named sheet.
- * Column B (category labels) is never modified.
+ * Saves edited data back to the named sheet.
+ * Accepts either [B, C, D, E] rows or legacy [C, D, E] rows.
  * @param {string} sheetName
- * @param {string[][]} cdeRows - 2D array of [C, D, E] per row from row 2.
+ * @param {string[][]} rows - 2D array per row from row 2.
  */
-function webApp_saveData(sheetName, cdeRows) {
+function webApp_saveData(sheetName, rows) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(sheetName);
   if (!sheet) throw new Error('Sheet not found: ' + sheetName);
-  sheet.getRange(2, 3, cdeRows.length, 3).setValues(cdeRows);
+  if (!rows || !rows.length) return;
+
+  var width = rows[0] ? rows[0].length : 0;
+
+  if (width === 4) {
+    var bCdeRows = rows.map(function(r) {
+      return [(r && r[0]) || "", (r && r[1]) || "", (r && r[2]) || "", (r && r[3]) || ""];
+    });
+    sheet.getRange(2, 2, bCdeRows.length, 4).setValues(bCdeRows);
+    return;
+  }
+
+  if (width === 3) {
+    var cdeRows = rows.map(function(r) {
+      return [(r && r[0]) || "", (r && r[1]) || "", (r && r[2]) || ""];
+    });
+    sheet.getRange(2, 3, cdeRows.length, 3).setValues(cdeRows);
+    return;
+  }
+
+  throw new Error("Invalid row payload width for save: expected 3 or 4 columns.");
 }
 
 /**
